@@ -8,7 +8,8 @@ const Table: React.FC<ITable> = ({children, onButtonClick, buttonText}) => {
             <div className="sm:flex sm:items-center">
                 <div className="sm:flex-auto">
                 </div>
-                <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+                { buttonText && <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+
                     <Button
                         onClick={onButtonClick}
                         buttonType="button"
@@ -18,6 +19,7 @@ const Table: React.FC<ITable> = ({children, onButtonClick, buttonText}) => {
                         {buttonText}
                     </Button>
                 </div>
+                }
             </div>
 
             <div className="-mx-4 mt-8 sm:-mx-0">

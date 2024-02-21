@@ -1,13 +1,12 @@
 "use client"
 import React from 'react'
 import DashboardLayout from "@/components/layout/DashboardLayout";
+import CustomerList from "@/app/customers/CustomerList";
 
 const CustomersPage: React.FC = () => {
     return (
         <DashboardLayout>
-            <div>
-                Customers works!
-            </div>
+           <CustomerList></CustomerList>
         </DashboardLayout>
     )
 }
