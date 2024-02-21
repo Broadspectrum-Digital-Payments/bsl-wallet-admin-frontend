@@ -13,7 +13,9 @@ import {
     RectangleGroupIcon,
     Squares2X2Icon,
     BanknotesIcon,
-    ArrowsRightLeftIcon
+    ArrowsRightLeftIcon,
+    BuildingOffice2Icon,
+    WalletIcon,
 } from '@heroicons/react/24/outline';
 import {IconsType} from "@/utils/types/IconType";
 
@@ -28,9 +30,10 @@ const MenuItem: React.FC<IMenuItem> = ({menuItem}) => {
     const getIcons: IconsType = {
         overview: <Squares2X2Icon className="h-6 w-6 shrink-0" aria-hidden="true"/>,
         admins: <RectangleGroupIcon className="h-6 w-6 shrink-0" aria-hidden="true"/>,
-        maintenance: <CogIcon className="h-6 w-6 shrink-0" aria-hidden="true"/>,
         customers: <UsersIcon className="h-6 w-6 shrink-0" aria-hidden="true"/>,
-        loans: <BanknotesIcon className="h-6 w-6 shrink-0" aria-hidden="true"/>,
+        agents: <BuildingOffice2Icon className="h-6 w-6 shrink-0" aria-hidden="true"/>,
+        lenders: <BanknotesIcon className="h-6 w-6 shrink-0" aria-hidden="true"/>,
+        loans: <WalletIcon className="h-6 w-6 shrink-0" aria-hidden="true"/>,
         transactions: <ArrowsRightLeftIcon className="h-6 w-6 shrink-0" aria-hidden="true"/>,
         reports: <ChartPieIcon className="h-6 w-6 shrink-0" aria-hidden="true"/>,
         merchants: <UserCircleIcon className="h-6 w-6 shrink-0" aria-hidden="true"/>,

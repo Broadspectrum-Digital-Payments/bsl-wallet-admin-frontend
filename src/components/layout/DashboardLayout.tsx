@@ -17,12 +17,12 @@ const DashboardLayout: React.FC<IDashboardLayout> = ({children}) => {
 
     const mainMenuItems = [
         {name: 'overview', label: 'Overview', href: '/overview', icon: true, category: 'Dashboard'},
-        {name: 'admins', label: 'Admins', href: '/admins', icon: true, category: ''},
-        {name: 'merchants', label: 'Merchants', href: '/merchants', icon: true, category: ''},
+        {name: 'admins', label: 'Admins', href: '/admins', icon: true, category: 'Management'},
+        {name: 'lenders', label: 'Lenders', href: '/lenders', icon: true, category: ''},
+        {name: 'agents', label: 'Agents', href: '/agents', icon: true, category: ''},
         {name: 'customers', label: 'Customers', href: '/customers', icon: true, category: ''},
-
-        {name: 'transactions', label: 'Transactions', href: '/transactions', icon: true, category: 'Core'},
-        {name: 'loans', label: 'Loans', href: '/loans', icon: true, category: ''},
+        {name: 'loans', label: 'Loans', href: '/loans', icon: true, category: 'Core'},
+        {name: 'transactions', label: 'Transactions', href: '/transactions', icon: true, category: ''},
         {name: 'reports', label: 'Reports & Analytics', href: 'reports', icon: true, category: 'Other'},
     ]
 

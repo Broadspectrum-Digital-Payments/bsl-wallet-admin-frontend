@@ -6,7 +6,7 @@ const AssetsPage: React.FC = () => {
     return (
         <DashboardLayout>
             <div className="flex">
-                Merchants works!
+                Lenders works!
             </div>
         </DashboardLayout>
     )

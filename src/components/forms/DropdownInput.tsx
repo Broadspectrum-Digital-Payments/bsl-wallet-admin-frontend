@@ -27,7 +27,6 @@ export const DropdownInput: React.FC<IDropdownInputProps> = ({label, selected, s
                             <span
                                 className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
                                 <Svg name="caret-down.svg"/>
-                                {/*<Image src="/assets/icons/" alt="caret down" width={24} height={24}/>*/}
                             </span>
                         </Listbox.Button>
 
