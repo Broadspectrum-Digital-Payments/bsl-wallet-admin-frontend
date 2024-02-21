@@ -48,6 +48,43 @@ const CustomerShow: React.FC = () => {
 
   }
 
+  const resolveDocumentName = (name: string) => {
+    let resolvedName = name
+    switch (name) {
+      case 'ghana-card-back':
+        resolvedName = 'Ghana Card Back'
+        break
+      case 'ghana-card-front':
+        resolvedName = 'Ghana Card Front'
+        break
+      default:
+        resolvedName = 'Selfie'
+    }
+
+    return resolvedName
+  }
+
+  const documents = [
+    {
+      name: 'ghana-card-back',
+      url:
+          'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80',
+      createdAt: "2024-02-20 22:09:20",
+    },
+    {
+      name: 'ghana-card-front',
+      url:
+          'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80',
+      createdAt: "2024-02-20 22:09:20",
+    },
+    {
+      name: 'selfie',
+      url:
+          'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80',
+      createdAt: "2024-02-20 22:09:20",
+    },
+  ]
+
   return (
     <>
         <div className="">
@@ -204,9 +241,26 @@ const CustomerShow: React.FC = () => {
             {activeSection == 'Documents' && (
                 <div className="divide-y divide-white/5">
 
-                <div className="lg:px-8">
-                  Documents Page
-                </div>
+                  <div className="lg:px-8">
+
+                    <div className="bg-white">
+                      <div className="">
+                        <ul
+                            role="list"
+                            className="mx-auto mt-8 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3"
+                        >
+                          {documents.map((document) => (
+                              <li key={document.name}>
+                                <img className="aspect-[3/2] w-full rounded-2xl object-cover" src={document.url}
+                                     alt=""/>
+                                <h3 className="mt-6 text-lg font-semibold leading-8 tracking-tight text-gray-900">{resolveDocumentName(document.name)}</h3>
+                               <p className="text-base leading-7 text-gray-600"> Uploaded Date: {document.createdAt}</p>
+                              </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                 </div>
             )}
           </main>
