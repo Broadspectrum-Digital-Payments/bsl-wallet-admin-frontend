@@ -5,8 +5,6 @@ import {useParams} from "next/navigation";
 import CustomerShow from "@/app/customers/[customer]/CustomerShow";
 
 const CustomersPage: React.FC = () => {
-    const params = useParams();
-
     return (
         <DashboardLayout>
            <CustomerShow></CustomerShow>
