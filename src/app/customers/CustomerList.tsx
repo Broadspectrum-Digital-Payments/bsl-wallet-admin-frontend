@@ -3,19 +3,10 @@ import TData from "@/components/table/TData";
 import Pagination from "@/components/table/Pagination";
 import React, {useState} from "react";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
+import Link from "next/link";
 
 
 const CustomerList: React.FC = () => {
-
-    const [formData, setFormData] = useState({externalId: '', name: '', phone: '', status: ''});
-    const [hasError, setHasError] = useState<boolean | undefined>(false);
-    const [error, setError] = useState<string | null>(null);
-    const [selectedAdmin, setSelectedCustomer] = useState<{
-        externalId: string;
-        name: string;
-        phone: string;
-        status: string;
-    } | null>(null);
 
     const tableHeaders = [
         {label: 'Id', classes: 'py-3.5 pl-4 pr-3 text-left  sm:pl-0'},
@@ -49,39 +40,12 @@ const CustomerList: React.FC = () => {
         value: '10'
     });
 
-    const [modalOpen, setModalOpen] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(false);
 
     const perPageOptions: IListBoxItem [] = [
         {label: '10', value: '10'},
         {label: '20', value: '20'},
     ]
 
-    const handleOpenAdminModal = () => {
-        setFormData({name: '', phone: '', status: '', externalId: ''});
-        setModalOpen(true)
-    }
-
-    const handleAddAdmin = () => {
-        console.log(formData)
-        setModalOpen(false)
-    }
-
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = event.target;
-        setFormData({...formData, [name]: value});
-    };
-
-    const handleEditCustomer = (customer: {
-        externalId: string;
-        name: string;
-        phone: string;
-        status: string;
-    }) => {
-        setSelectedCustomer(customer);
-        setFormData({...customer});
-        setModalOpen(true);
-    };
 
     return (
         <>
@@ -105,13 +69,12 @@ const CustomerList: React.FC = () => {
 
                                         <TData label=""
                                                customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
-                                            <a
-                                                href="#"
-                                                onClick={() => handleEditCustomer(customer)}
+
+                                            <Link
                                                 className="text-indigo-600 hover:text-indigo-900"
-                                            >
+                                             href={`/customers/${customer.externalId}`}>
                                                 View <span className="sr-only">, {customer.name}</span>
-                                            </a>
+                                            </Link>
                                         </TData>
                                     </tr>
                                 ))}
