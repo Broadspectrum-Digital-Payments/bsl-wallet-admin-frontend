@@ -1,4 +1,4 @@
-import {getGreeting, plotGraphData} from "@/utils/helpers";
+import {getGreeting, plotGraphData, splitName} from "@/utils/helpers";
 import React, {useEffect, useState} from "react";
 import {useUserStore} from "@/store/UserStore";
 import OverviewCardsContainer from "@/components/overview/OverviewCardsContainer";
@@ -54,8 +54,8 @@ const OverviewContent = () => {
                     <div className="sm:mx-0 lg:col-span-3 lg:row-span-3 lg:row-end-3 mb-8">
                         <div className="">
                             <div className=" flex flex-col mb-10">
-                                <span className="font-semibold">{`${getGreeting()}, ${user?.firstName}!`}</span>
-                                <span className="text-xs text-gray-500">NADABS INC.</span>
+                                <span className="font-semibold capitalize">{`${getGreeting()}, ${splitName(user?.name ?? '')[0]}!`}</span>
+                                <span className="text-xs text-gray-500">Welcome to your dashboard!</span>
                             </div>
 
                             <div className=" flex flex-col">
@@ -70,10 +70,10 @@ const OverviewContent = () => {
             </div>
 
             <div className="mt-auto min-h-full flex flex-col items-end justify-end">
-                {!firstTimeLogin && <OverviewCardsContainer/>}
+                {firstTimeLogin && <OverviewCardsContainer/>}
             </div>
 
-            {firstTimeLogin && <div className="flex sm:flex-col md:flex-row lg:flex gap-5">
+            {!firstTimeLogin && <div className="flex sm:flex-col md:flex-row lg:flex gap-5">
                 <Card
                     customStyles={`lg:w-2/3 flex flex-col border border-gray-200 w-full rounded-2xl h-[417px] px-[40px] p-3 my-5`}>
                     <div className="flex flex-col h-full">

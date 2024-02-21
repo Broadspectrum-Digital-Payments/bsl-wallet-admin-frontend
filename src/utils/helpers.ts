@@ -37,6 +37,9 @@ export const getGreeting = () => {
     return "Good " + (hour < 12 && "morning" || hour < 18 && "afternoon" || "evening")
 };
 
+export const splitName = (name: string) => {
+    return name.split(' ')
+};
 
 export const downloadFile = async (response: Response | Blob, fileName: string = 'sample.txt') => {
     try {
@@ -130,3 +133,10 @@ export const plotGraphData = (data: MonthlyTransactionSummaryType = {}) => {
         {volume: [], value: []} as { volume: any[]; value: any[] }
     );
 };
+
+export const getJSONHeaders = (bearerToken: string = '') => {
+    return {
+        'Authorization': `Bearer ${bearerToken}`,
+        'Content-Type': 'application/json',
+    }
+}

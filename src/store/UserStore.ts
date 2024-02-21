@@ -9,12 +9,21 @@ export const useUserStore = create<UserStoreType>()(
             (set) => ({
                 setUser: (user?: UserType) => set({user}),
                 user: {
-                    fullName: 'Jonadab Kwamlah',
-                    role: 'Super user',
+                    externalId: 'JonadabKwamlah',
+                    name: 'Jonadab Kwamlah',
+                    email: 'jonadab@gmail.com',
+                    status: 'active',
+                    createdAt: '2024-02-21 20:32',
                 },
-                isAuthenticated: false,
-                firstTimeLogin: true,
                 setIsAuthenticated: (isAuthenticated) => set({isAuthenticated}),
+                isAuthenticated: false,
+                setFirstTimeLogin: (firstTimeLogin) => set({firstTimeLogin}),
+                firstTimeLogin: true,
+                resetUserStore: () => set({
+                    user: {},
+                    isAuthenticated: false,
+                    firstTimeLogin: false
+                }),
             }),
             {name: 'user'},
         ),

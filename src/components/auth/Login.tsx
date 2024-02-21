@@ -18,6 +18,7 @@ export default function Login() {
         user,
         setUser,
         setIsAuthenticated,
+        resetUserStore,
     } = useUserStore();
     const {resetTransactionStore} = useTransactionStore();
 
@@ -26,9 +27,9 @@ export default function Login() {
     }, [])
 
     const handleUserLogout = () => {
-        if (user?.authToken) {
+        if (user?.bearerToken) {
             if (resetTransactionStore) resetTransactionStore()
-            // if (resetUserStore) resetUserStore()
+            if (resetUserStore) resetUserStore()
         }
     }
 
@@ -43,30 +44,37 @@ export default function Login() {
         if (hasError) return;
         setError('')
 
+        login(formData.email, formData.password)
+            .then(async (response) => {
+                const feedback = (await response.json())
+                if (response.ok && feedback.success) {
+                    const {data} = feedback;
+                    if (setUser) setUser({
+                        externalId: data.externalId,
+                        email: data.email,
+                        name: data.name,
+                        bearerToken: data.bearerToken,
+                        createdAt: data.createdAt
+                    })
+
+                    if (setIsAuthenticated) setIsAuthenticated(true)
+
+                    return router.push('/overview')
+                }
+                return setError(feedback.message)
+            })
+            .catch((error) => {
+                setError(error.message)
+            })
+
+        if (setUser) setUser({
+            bearerToken: "5|s3fJ0MqpWIj2HqsRPQnAUPkm5s9KzizrE76iCg7k8ac563ea",
+            name: "Test Admin User",
+            email: "admin@core.com",
+            status: "active",
+            createdAt: "2024-02-21T15:30:36.000000Z"
+        })
         return router.push('/overview')
-        // login(formData.email, formData.password)
-        //     .then(async (response) => {
-        //         const feedback = (await response.json())
-        //         if (response.ok) {
-        //             const {data} = feedback;
-        //             if (setUser) setUser({
-        //                 externalId: data.id,
-        //                 email: data.email,
-        //                 firstName: data.firstName,
-        //                 lastName: data.lastName,
-        //                 authToken: data.token,
-        //                 roles: data.roles
-        //             })
-        //             if (setIsAuthenticated) setIsAuthenticated(true)
-        //             if (setMerchant) setMerchant(data.merchant)
-        //             return router.push('/overview')
-        //         }
-        //
-        //         return setError(feedback)
-        //     })
-        //     .catch((error) => {
-        //         setError(error.message)
-        //     })
     };
 
     return (
@@ -81,7 +89,6 @@ export default function Login() {
                                     Sign in to your account
                                 </h2>
                             </div>
-
                             <TextInput
                                 label="email"
                                 id="email"

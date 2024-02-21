@@ -13,12 +13,18 @@ import {
 import {Bars3Icon, MagnifyingGlassIcon} from '@heroicons/react/20/solid'
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import CustomerShow from "@/app/customers/[customer]/CustomerShow";
-import LenderShow from "@/app/lenders/[lender]/LenderShow";
-
+import LenderShow from "@/app/lenders/[lender]/LenderShow";    
 
 export default function MerchantDetailsPage() {
-
-
+    const [sidebarOpen, setSidebarOpen] = useState(false)
+    const secondaryNavigation = [
+        {name: 'Account', href: '#', current: true},
+        {name: 'Notifications', href: '#', current: false},
+        {name: 'Billing', href: '#', current: false},
+        {name: 'Teams', href: '#', current: false},
+        {name: 'Integrations', href: '#', current: false},
+    ]
+    
     return (
         <DashboardLayout>
             <LenderShow></LenderShow>
