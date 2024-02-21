@@ -140,7 +140,7 @@ const AdminList : React.FC = () => {
                 <div className="text-center sm:ml-4 sm:mt-0 sm:text-left">
                     <Dialog.Title as="h3"
                                   className="text-base font-semibold leading-6 text-gray-900 text-center">
-                        {'Add New Admin'}
+                        {formData?.externalId && formData?.externalId?.length > 0 ? 'Edit Admin' : 'Add New Admin'}
                     </Dialog.Title>
                     <div className="mt-4">
                         <p className="text-xs text-gray-500 text-center">
@@ -179,7 +179,7 @@ const AdminList : React.FC = () => {
                 className={`sm:mt-4 sm:flex sm:flex-row-reverse`}>
                 <Button buttonType="submit" styleType="primary" customStyles="p-4 md:p-5 rounded-lg"
                         onClick={handleAddAdmin}>
-                    Add Admin
+                    { formData?.externalId && formData?.externalId?.length > 0 ? 'Update Admin' : 'Add Admin'}
                     {loading && <Loader type="default"
                                         customClasses="relative"
                                         customAnimationClasses="w-10 h-10 text-white dark:text-gray-600 fill-purple-900"
