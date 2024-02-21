@@ -21,7 +21,8 @@ const TextInput: React.FC<ITextInput> = ({
                                              customInputClasses,
                                              customLabelClasses = 'capitalize',
                                              min,
-                                             max
+                                             max,
+                                             value = '',
                                          }) => {
     const [inputValue, setInputValue] = useState('');
     const [error, setError] = useState<string | null>(null);
@@ -94,6 +95,7 @@ const TextInput: React.FC<ITextInput> = ({
                                     ${customInputClasses}`}
                             disabled={disabled}
                             onWheel={numberInputOnWheelPreventChange}
+                            value={value}
                         />
 
                         {children?.right && (

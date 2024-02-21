@@ -22,4 +22,5 @@ export interface ITextInput {
     height?: number
     min?: number
     max?: number
+    value?: string
 }
