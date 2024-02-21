@@ -46,7 +46,7 @@ const Pagination: React.FC<IPagination> = ({
     }
 
     return (
-        <div className="flex items-center justify-between bg-white sm:px-6 mt-3">
+        <div className="flex items-center justify-between bg-white mt-3">
             <div className="flex flex-1 justify-between items-center sm:hidden">
                 <div className="text-xs">
                     <span className="font-medium">{getInitialOffset()}</span> to <span
@@ -96,4 +96,3 @@ const Pagination: React.FC<IPagination> = ({
 }
 
 export default Pagination;
-
