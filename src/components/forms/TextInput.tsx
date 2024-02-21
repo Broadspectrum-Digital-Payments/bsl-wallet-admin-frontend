@@ -31,12 +31,12 @@ const TextInput: React.FC<ITextInput> = ({
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         const inputValue = event.target.value ?? value;
         setInputValue(inputValue);
-        if (inputValue !== '') handleBlur();
+        // if (inputValue !== '') handleBlur();
         if (onInputChange) onInputChange(event);
     };
 
     const handleBlur = () => {
-        if (inputValue === '' && required && !value) {-
+        if (inputValue === '' && required && !value) {
             setError(`${capitalize(camelCaseToWords(name))} is required!`);
             if (hasError) hasError(true);
         } else if (type === 'email' && !isValidEmail(inputValue) && !isValidEmail(value)) {

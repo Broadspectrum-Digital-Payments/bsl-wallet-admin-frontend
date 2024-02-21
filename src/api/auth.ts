@@ -46,7 +46,7 @@ export async function resendOtp(accessKey: string | undefined) {
 }
 
 export async function login(email: string | undefined, password: string | undefined) {
-    return await fetcher('api/v1/auth/login', {
+    return await fetcher('api/v1/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

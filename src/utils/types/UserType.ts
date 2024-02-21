@@ -1,12 +1,9 @@
 export type UserType = {
     externalId?: string,
-    firstName?: string,
-    lastName?: string,
-    fullName?: string,
-    role?: string,
-    createdAt?: string,
-    updatedAt?: string,
+    name?: string,
     email?: string,
+    status?: string,
     verificationToken?: string,
-    authToken?: string,
+    bearerToken?: string,
+    createdAt?: string,
 }

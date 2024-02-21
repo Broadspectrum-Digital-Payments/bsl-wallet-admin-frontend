@@ -11,7 +11,7 @@ import {MenuItemType} from "@/utils/types/MenuItemType";
 
 const ProfileDropdown: React.FC = () => {
     const {profileDropdownItems, setActiveSidebarMenu} = useDashboardStore()
-    const {user, setUser} = useUserStore()
+    const {user} = useUserStore()
 
     const getIcons: IconsType = {
         account: <UserCircleIcon className="h-5 w-5 shrink-0 mr-1" aria-hidden="true"/>,
@@ -19,12 +19,6 @@ const ProfileDropdown: React.FC = () => {
     };
 
     useEffect(() => {
-        if (setUser) setUser({
-            firstName: "Jonadab",
-            lastName: "Kwamlah",
-            fullName: "Jonadab Kwamlah",
-            role: "Super user"
-        })
     }, []);
 
     const handleActiveMenuItemClick = (menuItem: MenuItemType) => {
@@ -38,7 +32,7 @@ const ProfileDropdown: React.FC = () => {
         <Menu as="div" className="relative">
             <Menu.Button className="-m-1.5 flex items-center p-1.5">
                 <span className="sr-only">Open user menu</span>
-                <Avatar name={user?.fullName} size="35" color="white" fgColor="black" round
+                <Avatar name={user?.name} size="35" color="white" fgColor="black" round
                         style={{border: '1px solid #4b5563'}}/>
 
                 <span className="hidden lg:flex lg:items-center">
@@ -62,8 +56,8 @@ const ProfileDropdown: React.FC = () => {
                     >
                         <div className="min-w-0 flex-1">
                             <span className="absolute inset-0" aria-hidden="true"/>
-                            <p className="text-sm font-medium text-gray-900">{user?.fullName}</p>
-                            <p className="truncate text-sm text-gray-500">{user?.role}</p>
+                            <p className="text-sm font-medium text-gray-900">{user?.name}</p>
+                            <p className="truncate text-sm text-gray-500">Admin</p>
                         </div>
 
                         <div className="absolute inset-0 flex items-end" aria-hidden="true">

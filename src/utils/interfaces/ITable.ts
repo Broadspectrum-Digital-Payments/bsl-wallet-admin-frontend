@@ -7,7 +7,7 @@ export interface ITable {
     },
     customClasses?: string,
     buttonText?: string,
-    onButtonClick: () => void,
+    onButtonClick?: () => void,
 }
 
 export interface ITableHeader {
