@@ -29,17 +29,17 @@ const TextInput: React.FC<ITextInput> = ({
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value;
-        setInputValue(value);
+        const inputValue = event.target.value ?? value;
+        setInputValue(inputValue);
         if (inputValue !== '') handleBlur();
         if (onInputChange) onInputChange(event);
     };
 
     const handleBlur = () => {
-        if (inputValue === '' && required) {
+        if (inputValue === '' && required && !value) {-
             setError(`${capitalize(camelCaseToWords(name))} is required!`);
             if (hasError) hasError(true);
-        } else if (type === 'email' && !isValidEmail(inputValue)) {
+        } else if (type === 'email' && !isValidEmail(inputValue) && !isValidEmail(value)) {
             setError('Please enter a valid email address.');
             if (hasError) hasError(true);
         } else {
