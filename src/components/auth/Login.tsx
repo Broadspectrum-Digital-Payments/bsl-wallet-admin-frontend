@@ -89,6 +89,7 @@ export default function Login() {
                                 type="email"
                                 placeholder="email"
                                 required={true}
+                                value={formData.email}
                                 onInputChange={handleInputChange}
                                 hasError={setHasError} autoComplete="false"/>
                             <TextInput
@@ -98,6 +99,7 @@ export default function Login() {
                                 type="password"
                                 placeholder="password"
                                 required={true}
+                                value={formData.password}
                                 onInputChange={handleInputChange}
                                 hasError={setHasError} autoComplete="false"/>
 
