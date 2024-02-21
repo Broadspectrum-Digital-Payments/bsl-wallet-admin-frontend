@@ -15,7 +15,7 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-const CustomerShow: React.FC = () => {
+const LenderShow: React.FC = () => {
   const [activeSection, setActiveSection] = useState('Account');
   const [customer, setCustomer] = useState({
     externalId: '',
@@ -166,41 +166,6 @@ const CustomerShow: React.FC = () => {
                               disabled={true}
                           />
                         </div>
-
-                        <div className="flex-1">
-                          <TextInput
-                              label="Actual Balance"
-                              id="actualBalance"
-                              name="actualBalance"
-                              type="text"
-                              placeholder="Actual Balance"
-                              value={customer.actualBalance.toFixed(2)}
-                              required={true}
-                              onInputChange={handleInputChange}
-                              hasError={setHasError}
-                              autoComplete="false"
-                              disabled={true}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="flex lg:px-8 px-4">
-                        <div className="flex-1 mr-4">
-                          <TextInput
-                              label="Available Balance"
-                              id="availableBalance"
-                              name="availableBalance"
-                              type="text"
-                              placeholder="Actual Balance"
-                              value={customer.actualBalance.toFixed(2)}
-                              required={true}
-                              onInputChange={handleInputChange}
-                              hasError={setHasError}
-                              autoComplete="false"
-                              disabled={true}
-                          />
-                        </div>
-
                         <div className="flex-1">
                           <TextInput
                               label="KYC Status"
@@ -216,7 +181,9 @@ const CustomerShow: React.FC = () => {
                               disabled={true}
                           />
                         </div>
+
                       </div>
+
 
                       <div
                           className={`sm:mt-4 flex lg:px-8`}>
@@ -270,4 +237,4 @@ const CustomerShow: React.FC = () => {
   )
 }
 
-export default CustomerShow
+export default LenderShow

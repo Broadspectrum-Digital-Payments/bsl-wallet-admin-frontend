@@ -15,7 +15,7 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
 
-const CustomerShow: React.FC = () => {
+const AgentShow: React.FC = () => {
   const [activeSection, setActiveSection] = useState('Account');
   const [customer, setCustomer] = useState({
     externalId: '',
@@ -32,7 +32,7 @@ const CustomerShow: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
 
-  const customerId = useParams()?.customer
+  const agentId = useParams()?.agent
 
 
   const handleNavigationClick = (sectionName: string) => {
@@ -270,4 +270,4 @@ const CustomerShow: React.FC = () => {
   )
 }
 
-export default CustomerShow
+export default AgentShow
