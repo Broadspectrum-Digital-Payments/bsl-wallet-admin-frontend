@@ -5,4 +5,5 @@ export type UserStoreType = {
     user?: UserType,
     setIsAuthenticated?: (isAuthenticated: boolean) => void,
     isAuthenticated?: boolean,
+    firstTimeLogin?: boolean,
 }

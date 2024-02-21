@@ -7,9 +7,10 @@ import {useUserStore} from "@/store/UserStore";
 import {LockClosedIcon, UserCircleIcon} from "@heroicons/react/24/outline";
 import {IconsType} from "@/utils/types/IconType";
 import Avatar from 'react-avatar';
+import {MenuItemType} from "@/utils/types/MenuItemType";
 
 const ProfileDropdown: React.FC = () => {
-    const {profileDropdownItems} = useDashboardStore()
+    const {profileDropdownItems, setActiveSidebarMenu} = useDashboardStore()
     const {user, setUser} = useUserStore()
 
     const getIcons: IconsType = {
@@ -26,11 +27,19 @@ const ProfileDropdown: React.FC = () => {
         })
     }, []);
 
+    const handleActiveMenuItemClick = (menuItem: MenuItemType) => {
+        if (menuItem.name === 'account') {
+            if (setActiveSidebarMenu) setActiveSidebarMenu(
+                {name: 'settings', label: 'Settings', href: '/settings', icon: true, category: ''})
+        }
+    }
+
     return (
         <Menu as="div" className="relative">
             <Menu.Button className="-m-1.5 flex items-center p-1.5">
                 <span className="sr-only">Open user menu</span>
-                <Avatar name={user?.fullName} size="35" color="white" fgColor="black" round style={{ border: '1px solid #4b5563' }}/>
+                <Avatar name={user?.fullName} size="35" color="white" fgColor="black" round
+                        style={{border: '1px solid #4b5563'}}/>
 
                 <span className="hidden lg:flex lg:items-center">
                   <ChevronDownIcon className="ml-2 h-5 w-5 text-gray-400" aria-hidden="true"/>
@@ -60,14 +69,13 @@ const ProfileDropdown: React.FC = () => {
                         <div className="absolute inset-0 flex items-end" aria-hidden="true">
                             <div className="divide-y w-full border-t border-gray-200"/>
                         </div>
-
                     </div>
-
 
                     {profileDropdownItems.map((menuItem) => (
                         <Menu.Item key={menuItem.name}>
                             {({active}) => (
                                 <Link
+                                    onClick={() => handleActiveMenuItemClick(menuItem)}
                                     href={menuItem.href}
                                     className={
                                         `${active ? 'bg-gray-50 ' : ''} flex items-center px-5 py-2 text-sm leading-6 text-gray-900`}

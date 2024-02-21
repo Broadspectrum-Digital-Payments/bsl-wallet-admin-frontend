@@ -26,10 +26,11 @@ const SectionCard: React.FC<ISectionCard> = ({item, customClasses}) => {
              className={`overflow-hidden rounded-xl shadow flex flex-col max-w-xs ${item.background} ${customClasses}`}>
             <div className="flex flex-grow items-center justify-center mt-5">
                 <Image src={`/assets/illustrations/${item.image}`}
-                       className="flex-none" height={100} width={200} alt={item.image} style={{height: "auto"}}/>
+                       className="flex-none" height={200} width={100} alt={item.image}
+                       style={{width: "auto", height: 200}} priority/>
             </div>
             <div className="-my-3 px-6 mb-5 text-sm leading-6 mt-auto">
-                <div className="flex flex-col gap-x-4 py-3 gap-y-4">
+                <div className="flex flex-col gap-x-6 py-3 gap-y-4">
                     <dt className="text-gray-900 font-semibold">
                         {item.name}
                     </dt>

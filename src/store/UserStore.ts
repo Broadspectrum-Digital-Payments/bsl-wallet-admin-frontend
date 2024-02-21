@@ -13,6 +13,7 @@ export const useUserStore = create<UserStoreType>()(
                     role: 'Super user',
                 },
                 isAuthenticated: false,
+                firstTimeLogin: true,
                 setIsAuthenticated: (isAuthenticated) => set({isAuthenticated}),
             }),
             {name: 'user'},

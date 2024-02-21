@@ -3,50 +3,50 @@ import React from "react";
 import Slider from "@/components/overview/Slider";
 
 const OverviewCardsContainer = () => {
-    const clients = [
+    const pages = [
         {
             id: 1,
-            name: 'Assets',
+            name: 'Merchants',
             color: 'sky',
             background: 'bg-sky-100',
             description: 'We would like to ensure that your account is in safe hands. Verify your email today to enjoy the full features on the platform.',
             image: 'assets.gif',
-            href: '/assets',
+            href: '/merchants',
         },
         {
             id: 2,
-            name: 'Maintenance',
+            name: 'Customers',
             color: 'gray',
             background: 'bg-gray-100',
             description: 'We would like to ensure that your account is in safe hands. Verify your email today to enjoy the full features on the platform.',
             image: 'maintenance.gif',
-            href: '/maintenance'
+            href: '/customers',
         },
         {
             id: 3,
-            name: 'Users',
+            name: 'Transactions',
             color: 'teal',
             background: 'bg-teal-100',
             description: 'We would like to ensure that your account is in safe hands. Verify your email today to enjoy the full features on the platform.',
             image: 'users.gif',
-            href: '/users'
+            href: '/transactions'
         },
         {
             id: 4,
-            name: 'Reports',
+            name: 'Loans',
             color: 'fuchsia',
             background: 'bg-fuchsia-100',
             description: 'We would like to ensure that your account is in safe hands. Verify your email today to enjoy the full features on the platform.',
             image: 'reports.gif',
-            href: '/reports'
+            href: '/loans'
         },
     ]
 
     return (
         <div className="w-full flex">
             <Slider customClasses="gap-5">
-                {clients.map((client) => (
-                    <SectionCard item={client} customClasses="max-w-sm carousel-item"/>
+                {pages.map((page) => (
+                    <SectionCard key={page.id} item={page} customClasses="max-w-sm carousel-item"/>
                 ))}
             </Slider>
         </div>
