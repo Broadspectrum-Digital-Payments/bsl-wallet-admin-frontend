@@ -6,4 +6,5 @@ export type ApiMetaType = {
     onFirstPage: null | boolean
     pageSize: null | number
     total: null | number
+    numberOfRecords: null | number
 }

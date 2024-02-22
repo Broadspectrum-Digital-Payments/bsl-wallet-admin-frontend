@@ -9,20 +9,20 @@ import Loader from "@/components/Loader";
 import React, {useEffect, useState} from "react";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
 import TextInput from "@/components/forms/TextInput";
-import {listAdmins} from "@/api/admin";
+import {listAdmins, storeAdmin, updateAdmin} from "@/api/admin";
 import {useAdminStore} from "@/store/AdminStore";
-import {useUserStore} from "@/store/UserStore";
-import {extractPaginationData} from "@/utils/helpers";
-import {UserType} from "@/utils/types/UserType";
+import {extractPaginationData, getError} from "@/utils/helpers";
 import {DropdownInputItemType} from "@/utils/types/DropdownInputItemType";
 import {DropdownInput} from "@/components/forms/DropdownInput";
+import {AdminType} from "@/utils/types/AdminType";
+import Badge from "@/components/Badge";
+import Link from "next/link";
 
 const AdminList: React.FC = () => {
-
-    const [formData, setFormData] = useState<UserType>({externalId: '', name: '', email: '', status: ''});
+    const [formData, setFormData] = useState<AdminType>({externalId: '', name: '', email: '', status: ''});
     const [hasError, setHasError] = useState<boolean | undefined>(false);
     const [error, setError] = useState<string | null>(null);
-    const [selectedAdmin, setSelectedAdmin] = useState<UserType | null>({
+    const [selectedAdmin, setSelectedAdmin] = useState<AdminType | null>({
         externalId: '',
         name: '',
         email: '',
@@ -37,18 +37,16 @@ const AdminList: React.FC = () => {
         {label: 'Action', classes: 'relative py-3.5 pl-3 pr-4 sm:pr-0'},
     ]
 
-    const {user} = useUserStore()
-    const {admins, setAdmins} = useAdminStore()
-
+    const {admins, setAdmins, authenticatedAdmin} = useAdminStore()
     useEffect(() => {
         fetchAdmins()
     }, [])
 
     const fetchAdmins = (params: string = '') => {
-        listAdmins(user?.bearerToken, params)
-            .then(async (response) => {
-                if (response) {
-                    const feedback = await response.json();
+        listAdmins(authenticatedAdmin?.bearerToken, params)
+            .then(async response => {
+                const feedback = await response.json();
+                if (response.ok && feedback.success) {
                     const {data, meta} = feedback
                     const pagination = extractPaginationData(meta)
                     if (setAdmins) setAdmins({pagination, data});
@@ -92,23 +90,61 @@ const AdminList: React.FC = () => {
     ]
 
     const handleOpenAdminModal = () => {
-        setFormData({name: '', email: '', status: '', externalId: ''});
         setModalOpen(true)
     }
 
+    const handleSubmitAdminData = () => formData?.externalId && formData.externalId !== '' ? handleEditAdminAction() : handleAddAdmin()
+
     const handleAddAdmin = () => {
-        setModalOpen(false)
+        setLoading(true)
+        storeAdmin(authenticatedAdmin.bearerToken, {
+            ...formData,
+            password: 'P@$$w0rd?',
+            password_confirmation: 'P@$$w0rd?'
+        })
+            .then(async response => {
+                const feedback = await response.json()
+                setLoading(false)
+                if (response.ok && feedback.success) {
+                    const {data} = feedback
+                    if (setAdmins) setAdmins({pagination: admins.pagination, data: [data, ...admins.data]})
+                    return setModalOpen(false)
+                }
+                setError(getError(feedback))
+            }).catch((error) => console.log('error: ', error))
     }
+
+    const handleEditAdminAction = () => {
+        updateAdmin(authenticatedAdmin?.bearerToken, authenticatedAdmin?.externalId, {...formData})
+            .then(async response => {
+                const feedback = await response.json();
+                console.log(feedback)
+                setLoading(false)
+
+                if (response.ok && feedback.success) {
+                    const updatedAdminIndex = admins.data.findIndex(admin => admin.externalId === formData.externalId)
+                    if (updatedAdminIndex !== -1) {
+                        const updatedAdminsData = [...admins.data];
+                        updatedAdminsData[updatedAdminIndex] = {...updatedAdminsData[updatedAdminIndex], ...formData}
+
+                        if (setAdmins) setAdmins({pagination: admins.pagination, data: updatedAdminsData});
+                    }
+                    setModalOpen(false)
+                }
+            }).catch((error) => {
+            console.log('error: ', error)
+        })
+    };
+
+    const handleEditAdmin = (admin: AdminType) => {
+        setSelectedAdmin(admin)
+        setFormData(admin)
+        setModalOpen(true)
+    };
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = event.target;
         setFormData({...formData, [name]: value});
-    };
-
-    const handleEditAdmin = (admin: UserType) => {
-        setSelectedAdmin(admin);
-        setFormData(admin);
-        setModalOpen(true);
     };
 
     const statuses: DropdownInputItemType[] = [{name: 'Active', id: 'Active'}, {name: 'Inactive', id: 'Inactive'}]
@@ -130,18 +166,19 @@ const AdminList: React.FC = () => {
                                                customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
                                         <TData label={admin.email ?? ''}
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                        <TData label={admin.status ?? ''}
-                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                        <TData customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
+                                            <Badge text={admin.status ?? ''} customClasses="capitalize"/>
+                                        </TData>
 
                                         <TData label=""
                                                customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
-                                            <a
-                                                href="#"
+                                            <Link
+                                                href=""
                                                 onClick={() => handleEditAdmin(admin)}
                                                 className="text-indigo-600 hover:text-indigo-900"
                                             >
                                                 Edit<span className="sr-only">, {admin.name}</span>
-                                            </a>
+                                            </Link>
                                         </TData>
                                     </tr>
                                 ))}
@@ -162,20 +199,16 @@ const AdminList: React.FC = () => {
                    customClasses="relative z-50">
 
                 <div className="flex flex-col p-10">
-                    {error && <Alert alertType="error" description={error} customClasses="rounded p-2 mt-3 mb-1"/>}
                     <div className="sm:flex sm:items-start justify-center">
                         <div className="text-center sm:ml-4 sm:mt-0 sm:text-left">
                             <Dialog.Title as="h3"
-                                          className="text-base font-semibold leading-6 text-gray-900 text-center">
+                                          className="text-base font-semibold leading-6 text-gray-900 text-center mb-4">
                                 {formData?.externalId && formData.externalId !== '' ? 'Edit Admin' : 'Add New Admin'}
                             </Dialog.Title>
-                            <div className="mt-4">
-                                <p className="text-xs text-gray-500 text-center">
-
-                                </p>
-                            </div>
                         </div>
                     </div>
+
+                    {error && <Alert alertType="error" description={error} customClasses="rounded p-2 mt-3 mb-1"/>}
 
                     <div className="">
                         <TextInput
@@ -200,18 +233,19 @@ const AdminList: React.FC = () => {
                             onInputChange={handleInputChange}
                             hasError={setHasError} autoComplete="false"/>
 
-                        {formData.externalId && <DropdownInput label="Status" data={statuses}
-                                                               selected={selectedStatus}
-                                                               setSelected={setSelectedStatus}
+                        {formData?.externalId && <DropdownInput label="Status" data={statuses}
+                                                                selected={selectedStatus}
+                                                                setSelected={setSelectedStatus}
                         />}
-
                     </div>
 
                     <div
                         className={`sm:mt-4 sm:flex sm:flex-row-reverse`}>
                         <Button buttonType="submit" styleType="primary" customStyles="p-4 md:p-5 rounded-lg"
-                                onClick={handleAddAdmin}>
-                            {formData?.externalId && formData.externalId !== '' ? 'Update Admin' : 'Add Admin'}
+                                onClick={handleSubmitAdminData} disabled={loading}>
+                            {!loading && <span>
+                                {formData?.externalId && formData.externalId !== '' ? 'Update Admin' : 'Add Admin'}
+                            </span>}
                             {loading && <Loader type="default"
                                                 customClasses="relative"
                                                 customAnimationClasses="w-10 h-10 text-white dark:text-gray-600 fill-purple-900"

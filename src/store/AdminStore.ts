@@ -1,37 +1,36 @@
 import {create} from 'zustand'
 import {devtools, persist} from 'zustand/middleware';
-import {UserType} from "@/utils/types/UserType";
 import {AdminStoreType} from "@/utils/types/AdminStoreType";
 import {getEmptyPaginationData} from "@/utils/helpers";
+import {AdminType} from "@/utils/types/AdminType";
 
 export const useAdminStore = create<AdminStoreType>()(
     devtools(
         persist(
             (set, get) => ({
-                setAdmin: (admin?: UserType) => set({admin}),
-                admin: {},
                 setAdmins: (data) => set({admins: data}),
                 admins: get()?.admins,
+
+                setAuthenticatedAdmin: (authenticatedAdmin?: AdminType) => set({authenticatedAdmin}),
+                authenticatedAdmin: {},
+
+                setIsAuthenticated: (isAuthenticated?: boolean) => set({isAuthenticated}),
+                isAuthenticated: false,
+
+                setFirstTimeLogin: (firstTimeLogin?: boolean) => set({firstTimeLogin}),
+                firstTimeLogin: false,
 
                 setLoading: (loading) => set({loading}),
                 loading: false,
 
                 resetAdminStore: () => set({
-                    admin: {},
+                    authenticatedAdmin: {},
                     admins: {
-                        pagination: {
-                            from: 0,
-                            to: 0,
-                            pageSize: 0,
-                            lastPage: false,
-                            firstPage: false,
-                            previousPage: null,
-                            nextPage: null,
-                            currentPage: null,
-                            totalElements: 0
-                        },
+                        pagination: getEmptyPaginationData(),
                         data: []
                     },
+                    isAuthenticated: false,
+                    firstTimeLogin: false,
                     loading: false
                 }),
             }),

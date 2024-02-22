@@ -143,9 +143,10 @@ export const plotGraphData = (data: MonthlyTransactionSummaryType = {}) => {
 
 export const getJSONHeaders = (bearerToken: string = '') => {
     return {
-        'Authorization': `Bearer ${bearerToken}`,
+        // Authorization: `Bearer ${bearerToken}`,
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'X-Admin-Header': 'bsl-wallet-admin',
     }
 }
 
@@ -159,8 +160,9 @@ export const extractPaginationData = (meta: ApiMetaType): PaginationType => {
         pageSize: meta.pageSize,
         previousPage: meta.previousPage,
         nextPage: meta.nextPage,
-        currentPage: meta.currentPage
-    };
+        currentPage: meta.currentPage,
+        numberOfRecords: meta.numberOfRecords
+    }
 };
 
 export const getEmptyPaginationData = (): PaginationType => {
@@ -173,7 +175,8 @@ export const getEmptyPaginationData = (): PaginationType => {
         previousPage: null,
         nextPage: null,
         currentPage: null,
-        totalElements: 0
-    };
+        totalElements: 0,
+        numberOfRecords: 0
+    }
 };
 
