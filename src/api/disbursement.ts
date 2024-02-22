@@ -1,23 +1,5 @@
-import {fetcher} from "@/api/http";
+import {walletFetcher} from "@/api/http";
 import {downloadFile} from "@/utils/helpers";
-
-export async function listDisbursements(merchant?: string, authToken: string = '', params: string = '') {
-    return await fetcher(`api/v1/merchants/${merchant}/transactions?type=DISBURSEMENT${params ? '&' + params : ''}`, {
-        headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Content-Type': 'application/json',
-        },
-    });
-}
-
-export async function listScheduledPayments(merchant?: string, authToken: string = '') {
-    return await fetcher(`api/v1/merchants/${merchant}/transactions?scheduled=true`, {
-        headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Content-Type': 'application/json',
-        },
-    });
-}
 
 export async function disburse(type: string = 'single', authToken?: string, data?: object) {
     let requestBody: Record<string, string> | FormData | string | undefined;
@@ -33,7 +15,7 @@ export async function disburse(type: string = 'single', authToken?: string, data
         requestHeaders['Content-Type'] = 'application/json';
     }
 
-    return await fetcher(`api/v1/merchants/${type}-disbursements`, {
+    return await walletFetcher(`api/v1/merchants/${type}-disbursements`, {
         method: 'POST',
         headers: {...requestHeaders},
         body: type === 'bulk' ? bulkRequestBody : requestBody
@@ -42,7 +24,7 @@ export async function disburse(type: string = 'single', authToken?: string, data
 
 
 export async function downloadBulkDisbursementTemplate(authToken: string = '') {
-    const response = await fetcher('api/v1/files/download/bulk-disbursement-template', {
+    const response = await walletFetcher('api/v1/files/download/bulk-disbursement-template', {
         headers: {
             'Authorization': `Bearer ${authToken}`,
             'Content-Disposition': 'attachment; filename=bulkDisbursementTemplate.xlsx',
