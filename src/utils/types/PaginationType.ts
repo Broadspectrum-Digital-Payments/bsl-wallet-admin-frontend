@@ -3,6 +3,7 @@ export type PaginationType = {
     to: null | number
     totalElements: number
     pageSize: null | number
+    numberOfRecords: null | number
     previousPage: null | string
     nextPage: null | string
     currentPage: null | number
