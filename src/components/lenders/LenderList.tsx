@@ -4,8 +4,11 @@ import Pagination from "@/components/table/Pagination";
 import React, {useState} from "react";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
 import Link from "next/link";
+import {useRouter} from "next/navigation";
 
 const LenderList: React.FC = () => {
+    const router = useRouter();
+
     const tableHeaders = [
         {label: 'Id', classes: 'py-3.5 pl-4 pr-3 text-left  sm:pl-0'},
         {label: 'Name', classes: 'hidden px-3 py-3.5 text-left lg:table-cell'},
@@ -44,12 +47,14 @@ const LenderList: React.FC = () => {
         {label: '20', value: '20'},
     ]
 
+    const handleAddLender = () => {
+        return router.push('lenders/create');
+    }
 
     return (
         <>
             <div>
-                <Table onButtonClick={() => {
-                }}>
+                <Table buttonText="Add Lender"  onButtonClick={handleAddLender}>
                     {{
                         headers: tableHeaders,
                         body:
