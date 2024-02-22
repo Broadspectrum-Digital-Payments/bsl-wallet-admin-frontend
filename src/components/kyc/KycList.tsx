@@ -4,7 +4,7 @@ import Pagination from "@/components/table/Pagination";
 import React, {useState} from "react";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
 import Link from "next/link";
-import WarningBadge from "@/components/badge/WarningBadge";
+import Badge from "@/components/Badge";
 
 
 const KycList: React.FC = () => {
@@ -70,7 +70,7 @@ const KycList: React.FC = () => {
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
                                         <TData label=""
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
-                                            <WarningBadge text={user.status == 'queued' ? 'Queued' : user.status}></WarningBadge>
+                                            <Badge text={user.status} customClasses="capitalize"/>
                                         </TData>
 
                                         <TData label=""
