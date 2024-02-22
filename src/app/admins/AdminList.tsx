@@ -9,6 +9,10 @@ import Loader from "@/components/Loader";
 import React, {useState} from "react";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
 import TextInput from "@/components/forms/TextInput";
+import {DropdownInput} from "@/components/forms/DropdownInput";
+import {DropdownInputItemType} from "@/utils/types/DropdownInputItemType";
+import SuccessBadge from "@/components/badge/SuccessBadge";
+import DangerBadge from "@/components/badge/DangerBadge";
 
 
 
@@ -25,6 +29,7 @@ const AdminList : React.FC = () => {
         status: string;
     } | null>(null);
 
+
     const tableHeaders = [
         {label: 'Id', classes: 'py-3.5 pl-4 pr-3 text-left  sm:pl-0'},
         {label: 'Name', classes: 'hidden px-3 py-3.5 text-left lg:table-cell'},
@@ -33,9 +38,10 @@ const AdminList : React.FC = () => {
         {label: 'Action', classes: 'relative py-3.5 pl-3 pr-4 sm:pr-0'},
     ]
     const admins = [
-        {externalId: 'bhjsdhvsg', name: 'Lindsay Walton', email: 'lindsay.walton@example.com', status: 'Active'},
-        {externalId: 'ajhvskdaj', name: 'Joana Mensah', email: 'joana.walton@example.com', status: 'Inactive'}
+        {externalId: 'bhjsdhvsg', name: 'Lindsay Walton', email: 'lindsay.walton@example.com', status: 'active'},
+        {externalId: 'ajhvskdaj', name: 'Joana Mensah', email: 'joana.walton@example.com', status: 'inactive'}
     ]
+
 
     const handlePrevious = () => {
         // if (collections) {
@@ -65,12 +71,19 @@ const AdminList : React.FC = () => {
         {label: '20', value: '20'},
     ]
 
+    const statuses : DropdownInputItemType[] = [{name: 'Active', id: 'Active'}, {name: 'Inactive', id: 'Inactive'}]
+
+    const [selected, setSelected] = useState(statuses[0])
+
     const handleOpenAdminModal = () => {
         setFormData({name: '', email: '', status: '', externalId: ''});
         setModalOpen(true)
     }
 
     const handleAddAdmin = () => {
+        if (formData.externalId){
+            formData.status = selected.name.toLowerCase()
+        }
         console.log(formData)
         setModalOpen(false)
     }
@@ -88,8 +101,19 @@ const AdminList : React.FC = () => {
     }) => {
         setSelectedAdmin(admin);
         setFormData({...admin});
+
+        const selectedStatus = admin.status === 'active' ? statuses[0] : statuses[1]
+
+        setSelected(selectedStatus)
+
         setModalOpen(true);
     };
+
+
+    const handleSetStatus = (status: DropdownInputItemType) => {
+        setSelected(status)
+    }
+
 
     return (
         <>
@@ -107,8 +131,10 @@ const AdminList : React.FC = () => {
                                            customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
                                     <TData label={admin.email}
                                            customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                    <TData label={admin.status}
-                                           customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                    <TData label=""
+                                           customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
+                                        {admin.status == 'active' ? <SuccessBadge text="Active"></SuccessBadge> : <DangerBadge text="Inactive"></DangerBadge> }
+                                    </TData>
 
                                     <TData label=""
                                            customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
@@ -172,6 +198,12 @@ const AdminList : React.FC = () => {
                     required={true}
                     onInputChange={handleInputChange}
                     hasError={setHasError} autoComplete="false"/>
+
+
+                {formData.externalId && <DropdownInput label="Status" data={[{name: 'Active', id: 'Active'}, {name: 'Inactive', id: 'Inactive'}]}
+                               selected={selected}
+                               setSelected={(value) => handleSetStatus(value)}
+                ></DropdownInput>}
 
             </div>
 
