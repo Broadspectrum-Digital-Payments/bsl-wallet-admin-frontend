@@ -1,5 +1,8 @@
 import {DateTime, DateTimeUnit} from "luxon";
 import {MonthlyTransactionSummaryType} from "@/utils/types/MonthlyTransactionSummaryType";
+import {ApiMetaType} from "@/utils/types/ApiMetaType";
+import {ApiLinksType} from "@/utils/types/ApiLinksType";
+import {PaginationType} from "@/utils/types/PaginationType";
 
 export const camelCaseToWords = (text: string = '') => {
     return text.replace(/([A-Z])/g, ' $1').toLowerCase();
@@ -140,3 +143,32 @@ export const getJSONHeaders = (bearerToken: string = '') => {
         'Content-Type': 'application/json',
     }
 }
+
+export const extractPaginationData = (meta: ApiMetaType): PaginationType => {
+    return {
+        firstPage: meta.onFirstPage,
+        lastPage: meta.onLastPage,
+        from: 1,
+        to: meta.pageSize ?? 0,
+        totalElements: meta.total ?? 0,
+        pageSize: meta.pageSize,
+        previousPage: meta.previousPage,
+        nextPage: meta.nextPage,
+        currentPage: meta.currentPage
+    };
+};
+
+export const getEmptyPaginationData = (): PaginationType => {
+    return {
+        from: 0,
+        to: 0,
+        pageSize: 0,
+        lastPage: false,
+        firstPage: false,
+        previousPage: null,
+        nextPage: null,
+        currentPage: null,
+        totalElements: 0
+    };
+};
+

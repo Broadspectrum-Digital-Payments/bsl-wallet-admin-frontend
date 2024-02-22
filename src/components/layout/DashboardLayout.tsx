@@ -99,8 +99,8 @@ const DashboardLayout: React.FC<IDashboardLayout> = ({children}) => {
                                     className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4 ring-1 ring-white/10">
                                     <div className="flex h-16 shrink-0 items-center">
                                         <Image
-                                            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                                            alt="opta" className="h-8 w-auto" height={20} width={20}
+                                            src="/assets/images/logo.svg"
+                                            alt="wallet" className="h-8 w-auto" height={20} width={20}
                                             style={{width: "auto"}}/>
                                     </div>
                                     <MainMenuItemsList/>
@@ -114,11 +114,10 @@ const DashboardLayout: React.FC<IDashboardLayout> = ({children}) => {
             <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
                 <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4">
                     <div className="flex h-16 shrink-0 items-center">
-                        <img
-                            className="h-8 w-auto"
-                            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                            alt="Your Company"
-                        />
+                        <Image
+                            src="/assets/images/logo.svg"
+                            alt="wallet" className="h-8 w-auto" height={20} width={20}
+                            style={{width: "auto"}}/>
                     </div>
                     <MainMenuItemsList/>
                 </div>

@@ -5,9 +5,7 @@ import React, {useState} from "react";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
 import Link from "next/link";
 
-
-const CustomerList: React.FC = () => {
-
+const LenderList: React.FC = () => {
     const tableHeaders = [
         {label: 'Id', classes: 'py-3.5 pl-4 pr-3 text-left  sm:pl-0'},
         {label: 'Name', classes: 'hidden px-3 py-3.5 text-left lg:table-cell'},
@@ -15,7 +13,7 @@ const CustomerList: React.FC = () => {
         {label: 'Status', classes: 'px-3 py-3.5 text-left'},
         {label: 'Action', classes: 'relative py-3.5 pl-3 pr-4 sm:pr-0'},
     ]
-    const customers = [
+    const lenders = [
         {externalId: 'bhjsdhvsg', name: 'Lindsay Walton', phone: '0244554456', status: 'Active'},
         {externalId: 'ajhvskdaj', name: 'Joana Mensah', phone: '0244538475', status: 'Inactive'}
     ]
@@ -56,24 +54,23 @@ const CustomerList: React.FC = () => {
                         headers: tableHeaders,
                         body:
                             <>
-                                {customers.map((customer) => (
-                                    <tr key={customer.externalId}>
-                                        <TData label={customer.externalId}
+                                {lenders.map((lender) => (
+                                    <tr key={lender.externalId}>
+                                        <TData label={lender.externalId}
                                                customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                        <TData label={customer.name}
+                                        <TData label={lender.name}
                                                customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                        <TData label={customer.phone}
+                                        <TData label={lender.phone}
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                        <TData label={customer.status}
+                                        <TData label={lender.status}
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
 
                                         <TData label=""
                                                customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
-
                                             <Link
                                                 className="text-indigo-600 hover:text-indigo-900"
-                                             href={`/customers/${customer.externalId}`}>
-                                                View <span className="sr-only">, {customer.name}</span>
+                                             href={`/lenders/${lender.externalId}`}>
+                                                View <span className="sr-only">, {lender.name}</span>
                                             </Link>
                                         </TData>
                                     </tr>
@@ -90,4 +87,4 @@ const CustomerList: React.FC = () => {
     )
 }
 
-export default CustomerList
+export default LenderList

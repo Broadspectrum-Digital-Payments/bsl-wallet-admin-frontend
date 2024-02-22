@@ -2,6 +2,7 @@ import {create} from 'zustand'
 import {TransactionType} from '@/utils/types/TransactionType'
 import {TransactionStoreType} from "@/utils/types/TransactionStoreType";
 import {devtools, persist} from 'zustand/middleware';
+import {getEmptyPaginationData} from "@/utils/helpers";
 
 export const useTransactionStore = create<TransactionStoreType>()(
     devtools(
@@ -13,20 +14,7 @@ export const useTransactionStore = create<TransactionStoreType>()(
                 transaction: {},
                 setTransactions: (data) => set({transactions: data}),
                 transactions: {
-                    pagination: {
-                        size: 0,
-                        pageNumber: 0,
-                        offset: 0,
-                        lastPage: false,
-                        firstPage: true,
-                        sorting: {
-                            empty: true,
-                            unsorted: false,
-                            sorted: true,
-                        },
-                        totalPages: 0,
-                        totalElements: 0
-                    },
+                    pagination: getEmptyPaginationData(),
                     data: []
                 },
 
@@ -48,71 +36,19 @@ export const useTransactionStore = create<TransactionStoreType>()(
                 resetTransactionStore: () => set({
                     transaction: {},
                     transactions: {
-                        pagination: {
-                            pageNumber: 0,
-                            offset: 0,
-                            size: 0,
-                            lastPage: false,
-                            firstPage: false,
-                            sorting: {
-                                empty: false,
-                                unsorted: false,
-                                sorted: false
-                            },
-                            totalPages: 0,
-                            totalElements: 0,
-                        },
+                        pagination: getEmptyPaginationData(),
                         data: []
                     },
                     collections: {
-                        pagination: {
-                            pageNumber: 0,
-                            offset: 0,
-                            size: 0,
-                            lastPage: false,
-                            firstPage: false,
-                            sorting: {
-                                empty: false,
-                                unsorted: false,
-                                sorted: false
-                            },
-                            totalPages: 0,
-                            totalElements: 0,
-                        },
+                        pagination: getEmptyPaginationData(),
                         transactions: []
                     },
                     disbursements: {
-                        pagination: {
-                            pageNumber: 0,
-                            offset: 0,
-                            size: 0,
-                            lastPage: false,
-                            firstPage: false,
-                            sorting: {
-                                empty: false,
-                                unsorted: false,
-                                sorted: false
-                            },
-                            totalPages: 0,
-                            totalElements: 0,
-                        },
+                        pagination: getEmptyPaginationData(),
                         transactions: []
                     },
                     scheduledPayments: {
-                        pagination: {
-                            pageNumber: 0,
-                            offset: 0,
-                            size: 0,
-                            lastPage: false,
-                            firstPage: false,
-                            sorting: {
-                                empty: false,
-                                unsorted: false,
-                                sorted: false
-                            },
-                            totalPages: 0,
-                            totalElements: 0,
-                        },
+                        pagination: getEmptyPaginationData(),
                         transactions: []
                     },
                     transactionSummary: {},

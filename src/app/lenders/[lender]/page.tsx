@@ -12,8 +12,8 @@ import {
 } from '@heroicons/react/24/outline'
 import {Bars3Icon, MagnifyingGlassIcon} from '@heroicons/react/20/solid'
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import CustomerShow from "@/app/customers/[customer]/CustomerShow";
-import LenderShow from "@/app/lenders/[lender]/LenderShow";    
+import CustomerShow from "@/components/customers/CustomerShow";
+import LenderShow from "@/components/lenders/LenderShow";
 
 export default function MerchantDetailsPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false)

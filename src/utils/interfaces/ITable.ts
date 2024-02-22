@@ -16,7 +16,7 @@ export interface ITableHeader {
 }
 
 export interface ITableData {
-    label: string;
-    customClasses: string;
+    label?: string;
+    customClasses?: string;
     children?: React.ReactNode,
 }

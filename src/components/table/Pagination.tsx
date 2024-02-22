@@ -11,36 +11,21 @@ const Pagination: React.FC<IPagination> = ({
                                                setPageOption,
                                                perPageOptions
                                            }) => {
-    const getPaginationSize = () => {
-        if (pagination) {
-            const {size, totalElements} = pagination;
-            return size > totalElements ? totalElements : size;
-        } else
-            return 10;
-    };
-
-    const getCaretColor = (page: string) => {
-        if (page === 'first') {
-            return pagination?.firstPage ? '#d1d5db' : '#4F4F4F';
-        } else if (page === 'last') {
-            return pagination?.lastPage ? '#d1d5db' : '#4F4F4F';
-        }
-        return '#4F4F4F';
-    }
-
     const getInitialOffset = () => {
         if (pagination) {
-            const {offset} = pagination
-            return offset === 0 ? 1 : offset + 1
+            const {pageSize, currentPage, firstPage} = pagination
+            if (pageSize && currentPage) return firstPage ? 1 : pageSize * currentPage
         } else
-            return 0;
+            return 1;
     }
 
     const getFinalOffset = () => {
         if (pagination) {
-            const {size, offset, totalElements, pageNumber} = pagination
-            const finalOffset = size * pageNumber
-            return offset === 0 ? getPaginationSize() : finalOffset > totalElements ? totalElements : finalOffset
+            const {pageSize, totalElements, currentPage} = pagination
+            if (pageSize && currentPage) {
+                const finalOffset = (pageSize * currentPage) + pageSize
+                return finalOffset > totalElements ? totalElements : finalOffset
+            }
         } else
             return 10;
     }
