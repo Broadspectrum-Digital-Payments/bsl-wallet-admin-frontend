@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import CustomerList from "@/app/customers/CustomerList";
+import CustomerList from "@/components/customers/CustomerList";
 
 const CustomersPage: React.FC = () => {
     return (
