@@ -14,7 +14,7 @@ const TextInput: React.FC<ITextInput> = ({
                                              onInputChange,
                                              hasError,
                                              passwordIcon,
-                                             height = 56,
+                                             height = 40,
                                              disabled = false,
                                              children,
                                              customClasses,
