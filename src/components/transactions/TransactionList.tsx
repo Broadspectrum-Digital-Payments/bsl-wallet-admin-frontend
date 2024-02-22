@@ -3,14 +3,9 @@ import TData from "@/components/table/TData";
 import Pagination from "@/components/table/Pagination";
 import React, {useState} from "react";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
-import Link from "next/link";
-import SuccessBadge from "@/components/badge/SuccessBadge";
-import DangerBadge from "@/components/badge/DangerBadge";
-import WarningBadge from "@/components/badge/WarningBadge";
-
+import Badge from "@/components/Badge";
 
 const TransactionList: React.FC = () => {
-
     const tableHeaders = [
         {label: 'Id', classes: 'py-3.5 pl-4 pr-3 text-left  sm:pl-0'},
         {label: 'Account Number', classes: 'hidden px-3 py-3.5 text-left lg:table-cell'},
@@ -108,26 +103,10 @@ const TransactionList: React.FC = () => {
         value: '10'
     });
 
-
     const perPageOptions: IListBoxItem [] = [
         {label: '10', value: '10'},
         {label: '20', value: '20'},
     ]
-
-
-    const getStatusBadge = (status: string) => {
-        if (status === 'completed') {
-            return <SuccessBadge  text='Completed'></SuccessBadge>
-        }
-
-        if (status === 'failed') {
-            return <DangerBadge text='Failed'></DangerBadge>
-        }
-
-
-        return <WarningBadge text='Queued'></WarningBadge>
-    }
-
 
     return (
         <>
@@ -158,8 +137,7 @@ const TransactionList: React.FC = () => {
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
                                         <TData label=""
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
-
-                                            {getStatusBadge(lender.status)}
+                                            <Badge text={lender.status} customClasses="capitalize"/>
                                         </TData>
                                     </tr>
                                 ))}

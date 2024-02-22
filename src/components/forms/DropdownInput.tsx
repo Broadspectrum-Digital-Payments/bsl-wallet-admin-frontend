@@ -3,8 +3,6 @@ import {Listbox, Transition} from '@headlessui/react'
 import {CheckIcon} from '@heroicons/react/20/solid'
 import {IDropdownInputProps} from "@/utils/interfaces/IDropdownInputProps";
 import Svg from "@/components/Svg";
-import Image from "next/image";
-import {isImageAvailable} from "@/utils/helpers";
 
 export const DropdownInput: React.FC<IDropdownInputProps> = ({label, selected, setSelected, data, customClasses}) => {
 
@@ -18,10 +16,6 @@ export const DropdownInput: React.FC<IDropdownInputProps> = ({label, selected, s
                         <Listbox.Button
                             className="relative min-w-full cursor-default rounded-md bg-white py-4 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-100 focus:outline-none sm:text-sm sm:leading-6">
                             <span className="flex items-center">
-                            {/*{isImageAvailable(selected?.name) &&*/}
-                            {/*    <Image className="flex-shrink-0 rounded-full"*/}
-                            {/*           src={`/assets/images/${selected?.name}.png`}*/}
-                            {/*           alt={selected?.name ?? ''} width={20} height={20} style={{width: 'auto'}}/>}*/}
                                 <span className="ml-3 block truncate">{selected?.name}</span>
                             </span>
                             <span
@@ -42,16 +36,12 @@ export const DropdownInput: React.FC<IDropdownInputProps> = ({label, selected, s
                                 {data.map((item) => (
                                     <Listbox.Option
                                         key={item?.id}
-                                        className={({active}) => `${active ? 'bg-violet-300 text-white' : 'text-gray-900'} relative cursor-pointer select-none py-2 pl-3 pr-9`}
+                                        className={({active}) => `${active ? 'bg-slate-400 text-white' : 'text-gray-900'} relative cursor-pointer select-none py-2 pl-3 pr-9`}
                                         value={item}
                                     >
                                         {({selected, active}) => (
                                             <>
                                                 <div className="flex items-center">
-                                                    {/*{isImageAvailable(item.name) &&*/}
-                                                    {/*    <Image className="flex-shrink-0 rounded-full"*/}
-                                                    {/*           src={`/assets/images/${item.name}.png`} alt={item.name}*/}
-                                                    {/*           width={20} height={20} style={{width: 'auto'}}/>}*/}
                                                     <span
                                                         className={`ml-3 block truncate ${selected ? 'font-semibold' : 'font-normal'}`}>
                                                         {item.name}

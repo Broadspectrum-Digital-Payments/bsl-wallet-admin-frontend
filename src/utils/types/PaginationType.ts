@@ -1,14 +1,11 @@
 export type PaginationType = {
-    pageNumber: number
-    offset: number
-    size: number
-    lastPage: boolean
-    firstPage: boolean
-    sorting?: {
-        empty?: boolean
-        unsorted?: boolean
-        sorted?: boolean
-    }
-    totalPages: number
+    from: null | number
+    to: null | number
     totalElements: number
+    pageSize: null | number
+    previousPage: null | string
+    nextPage: null | string
+    currentPage: null | number
+    firstPage: null | boolean
+    lastPage: null | boolean
 }

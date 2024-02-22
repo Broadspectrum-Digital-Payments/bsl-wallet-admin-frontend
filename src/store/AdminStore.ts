@@ -2,6 +2,7 @@ import {create} from 'zustand'
 import {devtools, persist} from 'zustand/middleware';
 import {UserType} from "@/utils/types/UserType";
 import {AdminStoreType} from "@/utils/types/AdminStoreType";
+import {getEmptyPaginationData} from "@/utils/helpers";
 
 export const useAdminStore = create<AdminStoreType>()(
     devtools(
@@ -19,18 +20,15 @@ export const useAdminStore = create<AdminStoreType>()(
                     admin: {},
                     admins: {
                         pagination: {
-                            pageNumber: 0,
-                            offset: 0,
-                            size: 0,
+                            from: 0,
+                            to: 0,
+                            pageSize: 0,
                             lastPage: false,
                             firstPage: false,
-                            sorting: {
-                                empty: false,
-                                unsorted: false,
-                                sorted: false
-                            },
-                            totalPages: 0,
-                            totalElements: 0,
+                            previousPage: null,
+                            nextPage: null,
+                            currentPage: null,
+                            totalElements: 0
                         },
                         data: []
                     },

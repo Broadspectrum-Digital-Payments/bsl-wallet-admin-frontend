@@ -1,15 +1,12 @@
 "use client"
-import React, {useState} from 'react'
+import React from 'react'
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import AdminList from './AdminList';
-
+import AdminList from '@/components/admins/AdminList';
 
 const AdminsPage: React.FC = () => {
-
-
     return (
         <DashboardLayout>
-            <AdminList></AdminList>
+            <AdminList/>
         </DashboardLayout>
     )
 }
