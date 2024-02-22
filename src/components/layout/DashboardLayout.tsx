@@ -21,6 +21,7 @@ const DashboardLayout: React.FC<IDashboardLayout> = ({children}) => {
         {name: 'lenders', label: 'Lenders', href: '/lenders', icon: true, category: ''},
         {name: 'agents', label: 'Agents', href: '/agents', icon: true, category: ''},
         {name: 'customers', label: 'Customers', href: '/customers', icon: true, category: ''},
+        {name: 'kyc', label: 'KYC', href: '/kyc', icon: true, category: ''},
         {name: 'loans', label: 'Loans', href: '/loans', icon: true, category: 'Core'},
         {name: 'transactions', label: 'Transactions', href: '/transactions', icon: true, category: ''},
         {name: 'reports', label: 'Reports & Analytics', href: 'reports', icon: true, category: 'Other'},

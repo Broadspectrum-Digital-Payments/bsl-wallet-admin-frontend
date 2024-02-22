@@ -16,6 +16,7 @@ import {
     ArrowsRightLeftIcon,
     BuildingOffice2Icon,
     WalletIcon,
+    UserPlusIcon
 } from '@heroicons/react/24/outline';
 import {IconsType} from "@/utils/types/IconType";
 
@@ -39,6 +40,7 @@ const MenuItem: React.FC<IMenuItem> = ({menuItem}) => {
         merchants: <UserCircleIcon className="h-6 w-6 shrink-0" aria-hidden="true"/>,
         logout: <LockClosedIcon className="h-6 w-6 shrink-0" aria-hidden="true"/>,
         settings: <Cog6ToothIcon className="h-6 w-6 shrink-0" aria-hidden="true"/>,
+        kyc: <UserPlusIcon className="h-6 w-6 shrink-0" aria-hidden="true"/>,
     };
 
     return (
