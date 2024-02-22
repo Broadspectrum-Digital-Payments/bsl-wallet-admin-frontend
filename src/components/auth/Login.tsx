@@ -11,29 +11,32 @@ import TextInput from "@/components/forms/TextInput";
 import Alert from "@/components/Alert";
 import Loader from "@/components/Loader";
 import AuthLayout from "@/components/layout/AuthLayout";
+import {useAdminStore} from "@/store/AdminStore";
+import {useDashboardStore} from "@/store/DashboardStore";
 
 export default function Login() {
-    const router = useRouter();
-    const [formData, setFormData] = useState({email: '', password: ''});
-    const [hasError, setHasError] = useState<boolean | undefined>(false);
-    const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(false);
+    const router = useRouter()
+    const [formData, setFormData] = useState({email: '', password: ''})
+    const [hasError, setHasError] = useState<boolean | undefined>(false)
+    const [error, setError] = useState<string | null>(null)
+    const [loading, setLoading] = useState<boolean>(false)
     const {
-        user,
-        setUser,
+        authenticatedAdmin,
+        setAuthenticatedAdmin,
         setIsAuthenticated,
-        resetUserStore,
-    } = useUserStore();
-    const {resetTransactionStore} = useTransactionStore();
+        resetAdminStore,
+    } = useAdminStore()
+    const {resetTransactionStore} = useTransactionStore()
+    const {mainMenuItemsList, setActiveSidebarMenu} = useDashboardStore();
 
     useEffect(() => {
         handleUserLogout()
     }, [])
 
     const handleUserLogout = () => {
-        if (user?.bearerToken) {
+        if (authenticatedAdmin?.bearerToken) {
             if (resetTransactionStore) resetTransactionStore()
-            if (resetUserStore) resetUserStore()
+            if (resetAdminStore) resetAdminStore()
         }
     }
 
@@ -55,15 +58,18 @@ export default function Login() {
                 setLoading(false)
                 if (response.ok && feedback.success) {
                     const {data} = feedback;
-                    if (setUser) setUser({
+                    if (setAuthenticatedAdmin) setAuthenticatedAdmin({
                         externalId: data.externalId,
                         email: data.email,
                         name: data.name,
+                        status: data.status,
+                        userType: data.userType,
                         bearerToken: data.bearerToken,
                         createdAt: data.createdAt
                     })
 
                     if (setIsAuthenticated) setIsAuthenticated(true)
+                    if (setActiveSidebarMenu) setActiveSidebarMenu(mainMenuItemsList[0]);
                     return router.push('/overview')
                 }
                 return setError(feedback.message)
