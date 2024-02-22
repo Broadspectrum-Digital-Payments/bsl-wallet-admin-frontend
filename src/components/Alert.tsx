@@ -13,8 +13,8 @@ const Alert: React.FC<IAlert> = ({
         success: 'check-circle.svg',
         info: 'check-circle.svg',
         warning: 'check-circle.svg',
-        error: 'x-circle.svg',
-        failed: 'x-circle.svg',
+        error: 'x-circle-red.svg',
+        failed: 'x-circle-red.svg',
         completed: 'check-circle.svg',
     };
 

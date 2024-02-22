@@ -88,9 +88,8 @@ const OverviewContent = () => {
                             <h5 className="flex text-md md:font-medium leading-6">Total Values</h5>
                         </div>
 
-
                         <div className="flex flex-col mx-5">
-                            <div className="flex-grow pt-[50px]">
+                            <div className="flex-grow pt-[80px]">
                                 <ReAreaGraph data={areaGraphData} dataKey={activeNav} customClasses="flex-grow"/>
                             </div>
                         </div>
