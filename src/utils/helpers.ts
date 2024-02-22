@@ -1,8 +1,8 @@
 import {DateTime, DateTimeUnit} from "luxon";
 import {MonthlyTransactionSummaryType} from "@/utils/types/MonthlyTransactionSummaryType";
 import {ApiMetaType} from "@/utils/types/ApiMetaType";
-import {ApiLinksType} from "@/utils/types/ApiLinksType";
 import {PaginationType} from "@/utils/types/PaginationType";
+import {ErrorType} from "@/utils/types/ErrorType";
 
 export const camelCaseToWords = (text: string = '') => {
     return text.replace(/([A-Z])/g, ' $1').toLowerCase();
@@ -42,6 +42,10 @@ export const getGreeting = () => {
 
 export const splitName = (name: string) => {
     return name.split(' ')
+};
+
+export const getError = (error: ErrorType): string => {
+    return error.message ?? ''
 };
 
 export const downloadFile = async (response: Response | Blob, fileName: string = 'sample.txt') => {
@@ -141,6 +145,7 @@ export const getJSONHeaders = (bearerToken: string = '') => {
     return {
         'Authorization': `Bearer ${bearerToken}`,
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
     }
 }
 
