@@ -1,12 +1,15 @@
-import React, { ChangeEvent, DragEvent, useState } from 'react';
-import Image from "next/image";
+import React, {ChangeEvent, DragEvent, useState} from 'react';
+import {PhotoIcon} from "@heroicons/react/24/solid";
 
 interface IDragAndDropProps {
     filesUploaded: (files: FileList) => void;
+    types?: string[];
+    maximumFileSize?: number;
 }
 
-const DragAndDrop: React.FC<IDragAndDropProps> = ({ filesUploaded }) => {
+const DragAndDrop: React.FC<IDragAndDropProps> = ({ filesUploaded, types, maximumFileSize }) => {
     const [isDragging, setIsDragging] = useState(false);
+    const [fileIsUploaded, setFileIsUploaded] = useState(false);
 
     const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
         event.preventDefault();
@@ -18,8 +21,10 @@ const DragAndDrop: React.FC<IDragAndDropProps> = ({ filesUploaded }) => {
     };
 
     const validateFile = (file: File): boolean => {
-        const allowedTypes = ['text/csv'];
-        const maxSize = 5 * 1024 * 1024; // 5MB
+
+        const allowedTypes = types ?? ['text/csv', 'image/png', 'image/jpg', 'image/jpeg'];
+
+        const maxSize = maximumFileSize ? maximumFileSize * 1024 * 1024 : 5 * 1024 * 1024; // 5MB
 
         return allowedTypes.includes(file.type) && file.size <= maxSize;
     };
@@ -28,6 +33,7 @@ const DragAndDrop: React.FC<IDragAndDropProps> = ({ filesUploaded }) => {
         event.preventDefault();
 
         let files = null;
+
         if (event.type === 'change') {
             const inputEvent = event as ChangeEvent<HTMLInputElement>;
             files = inputEvent.target.files;
@@ -41,10 +47,14 @@ const DragAndDrop: React.FC<IDragAndDropProps> = ({ filesUploaded }) => {
             const validFileList = new DataTransfer();
             validFiles.forEach(file => validFileList.items.add(file));
             filesUploaded(validFileList.files);
+
+
+            setFileIsUploaded(true);
         }
 
         setIsDragging(false);
     };
+
 
     return (
         <div className="flex flex-col">
@@ -58,27 +68,39 @@ const DragAndDrop: React.FC<IDragAndDropProps> = ({ filesUploaded }) => {
                 onDrop={setUploadedFile}
             >
                 <div className="text-center">
-                    <Image src="/assets/icons/file-upload" alt="file upload" width={12} height={12}/>
+                    {/*<Image src="/assets/icons/file-upload" alt="file upload" width={12} height={12}/>*/}
+                    <PhotoIcon className="mx-auto h-12 w-12 text-gray-300" aria-hidden="true"/>
+                    <p>{fileIsUploaded ? 'File Uploaded' : ''}</p>
                     <div className="mt-3 flex text-sm leading-6 text-gray-600">
                         <label
                             htmlFor="file-upload"
                             className="relative cursor-pointer rounded-md bg-white"
                         >
               <span>
-                Drag & Drop or{' '}
-                  <span className="font-semibold text-purple-900">Choose file</span> to upload
+                Drag & Drop to Upload File
               </span>
-                            <input
-                                id="file-upload"
-                                name="file-upload"
-                                type="file"
-                                className="sr-only"
-                                onChange={setUploadedFile}
-                            />
                         </label>
                     </div>
+
+              {/*      <label*/}
+              {/*          htmlFor="file-upload"*/}
+              {/*          className="relative cursor-pointer rounded-md bg-white"*/}
+              {/*      >*/}
+              {/*<span>*/}
+
+              {/*</span>*/}
+              {/*          <input*/}
+              {/*              id="file-upload"*/}
+              {/*              name="file-upload"*/}
+              {/*              type="file"*/}
+              {/*              className="my-4"*/}
+              {/*              onChange={setUploadedFile}*/}
+              {/*          />*/}
+              {/*      </label>*/}
+
                     <p className="text-xs leading-5 text-gray-600">
-                        Max file size: <span className="font-semibold">5mb</span>. Supports: csv.
+                        Max file size: <span className="font-semibold">{maximumFileSize + ' mb' ?? '5mb'}</span>.
+                        Supports: {types?.slice().map(type => type).join(', ')}
                     </p>
                 </div>
             </div>

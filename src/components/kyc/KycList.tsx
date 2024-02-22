@@ -9,6 +9,7 @@ import {extractPaginationData, getError} from "@/utils/helpers";
 import {useUserStore} from "@/store/UserStore";
 import {listUsers} from "@/api/user";
 
+
 const KycList: React.FC = () => {
     const tableHeaders = [
         {label: 'Id', classes: 'py-3.5 pl-4 pr-3 text-left  sm:pl-0'},
@@ -87,7 +88,9 @@ const KycList: React.FC = () => {
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
                                         <TData label=""
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
-                                            <Badge text={user.status ?? ''} customClasses="capitalize"/>
+
+                                            <Badge text={user.status} customClasses="capitalize"/>                                     
+
                                         </TData>
 
                                         <TData label=""
