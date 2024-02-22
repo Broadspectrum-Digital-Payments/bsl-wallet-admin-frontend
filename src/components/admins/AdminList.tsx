@@ -14,6 +14,8 @@ import {useAdminStore} from "@/store/AdminStore";
 import {useUserStore} from "@/store/UserStore";
 import {extractPaginationData} from "@/utils/helpers";
 import {UserType} from "@/utils/types/UserType";
+import {DropdownInput} from "@/components/forms/DropdownInput";
+import {DropdownInputItemType} from "@/utils/types/DropdownInputItemType";
 
 const AdminList: React.FC = () => {
 
@@ -109,6 +111,9 @@ const AdminList: React.FC = () => {
         setModalOpen(true);
     };
 
+    const statuses: DropdownInputItemType[] = [{name: 'Active', id: 'Active'}, {name: 'Inactive', id: 'Inactive'}]
+    const [selectedStatus, setSelectedStatus] = useState(statuses[0])
+
     return (
         <>
             <div>
@@ -194,6 +199,11 @@ const AdminList: React.FC = () => {
                             required={true}
                             onInputChange={handleInputChange}
                             hasError={setHasError} autoComplete="false"/>
+
+                        {formData.externalId && <DropdownInput label="Status" data={statuses}
+                                                               selected={selectedStatus}
+                                                               setSelected={setSelectedStatus}
+                        />}
 
                     </div>
 

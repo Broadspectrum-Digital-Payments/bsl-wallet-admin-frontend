@@ -42,7 +42,7 @@ export const DropdownInput: React.FC<IDropdownInputProps> = ({label, selected, s
                                 {data.map((item) => (
                                     <Listbox.Option
                                         key={item?.id}
-                                        className={({active}) => `${active ? 'bg-violet-300 text-white' : 'text-gray-900'} relative cursor-pointer select-none py-2 pl-3 pr-9`}
+                                        className={({active}) => `${active ? 'bg-slate-400 text-white' : 'text-gray-900'} relative cursor-pointer select-none py-2 pl-3 pr-9`}
                                         value={item}
                                     >
                                         {({selected, active}) => (
