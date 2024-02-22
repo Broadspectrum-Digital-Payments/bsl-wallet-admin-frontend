@@ -14,8 +14,8 @@ import {useAdminStore} from "@/store/AdminStore";
 import {useUserStore} from "@/store/UserStore";
 import {extractPaginationData} from "@/utils/helpers";
 import {UserType} from "@/utils/types/UserType";
-import {DropdownInput} from "@/components/forms/DropdownInput";
 import {DropdownInputItemType} from "@/utils/types/DropdownInputItemType";
+import {DropdownInput} from "@/components/forms/DropdownInput";
 
 const AdminList: React.FC = () => {
 
