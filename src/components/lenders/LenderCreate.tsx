@@ -28,14 +28,9 @@ const LenderCreate: React.FC = () => {
     };
 
     const handleFileUploaded = (files: FileList) => {
-        console.log(files)
-        console.log(files[0])
         setUploadedFile(files[0])
         const fileNames = Array.from(files).map((file) => file.name);
         setUploadedFileName(fileNames[0])
-
-        console.log(uploadedFile)
-        console.log(uploadedFileName)
     }
 
     return (
