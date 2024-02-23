@@ -30,7 +30,7 @@ const Button: React.FC<ButtonType> = ({
 
     const defaultStyles: React.CSSProperties = {
         width: '100%',
-        maxHeight: '56px',
+        maxHeight: '40px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

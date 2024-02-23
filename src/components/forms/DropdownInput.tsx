@@ -14,7 +14,7 @@ export const DropdownInput: React.FC<IDropdownInputProps> = ({label, selected, s
                         className="max-w-full block text-sm font-medium leading-6 text-gray-900">{label}</Listbox.Label>
                     <div className="relative mt-2">
                         <Listbox.Button
-                            className="relative min-w-full cursor-default rounded-md bg-white py-4 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-100 focus:outline-none sm:text-sm sm:leading-6">
+                            className="relative min-w-full cursor-default rounded-md bg-white py-2 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-100 focus:outline-none sm:text-sm sm:leading-6">
                             <span className="flex items-center">
                                 <span className="ml-3 block truncate">{selected?.name}</span>
                             </span>

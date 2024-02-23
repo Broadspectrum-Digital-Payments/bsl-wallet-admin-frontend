@@ -9,3 +9,17 @@ export async function listLenders(bearerToken: string = '', params: string = '')
         headers: getJSONHeaders(bearerToken),
     });
 }
+
+export async function showLender(bearerToken: string = '', lenderExternalId: string) {
+    return await lenderFetcher(`${LENDERS_ENDPOINT}/${lenderExternalId}`, {
+        headers: getJSONHeaders(bearerToken),
+    });
+}
+
+export async function updateLender(bearerToken: string = '', lenderExternalId: string, data: object) {
+    return await lenderFetcher(`${LENDERS_ENDPOINT}/${lenderExternalId}`, {
+        headers: getJSONHeaders(bearerToken),
+        method: 'PUT',
+        body: JSON.stringify(data)
+    });
+}
