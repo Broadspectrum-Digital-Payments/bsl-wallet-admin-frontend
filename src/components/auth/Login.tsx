@@ -55,7 +55,6 @@ export default function Login() {
         login(formData.email, formData.password)
             .then(async (response) => {
                 const feedback = (await response.json())
-                setLoading(false)
                 if (response.ok && feedback.success) {
                     const {data} = feedback;
                     if (setAuthenticatedAdmin) setAuthenticatedAdmin({
@@ -72,6 +71,7 @@ export default function Login() {
                     if (setActiveSidebarMenu) setActiveSidebarMenu(mainMenuItemsList[0]);
                     return router.push('/overview')
                 }
+                setLoading(false)
                 return setError(feedback.message)
             })
             .catch((error) => {

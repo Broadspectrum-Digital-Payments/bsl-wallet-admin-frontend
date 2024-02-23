@@ -74,7 +74,7 @@ export const formatAmount = (amount: number | string = 0, currency: string = 'GH
         style: 'decimal',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
-    }).format(Number(amount)))}`
+    }).format(Number(amount)/100))}`
 }
 
 export const calculateDateRange = (range: number = 5, customStart: boolean = false, whereStart: DateTimeUnit = 'month') => {
