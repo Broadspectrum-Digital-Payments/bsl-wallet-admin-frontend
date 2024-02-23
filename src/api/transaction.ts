@@ -1,12 +1,11 @@
-import {walletFetcher} from "@/api/http";
-import {downloadFile} from "@/utils/helpers";
+import {transactionFetcher, walletFetcher} from "@/api/http";
+import {downloadFile, getJSONHeaders} from "@/utils/helpers";
 
-export async function listTransactions(merchant?: string, authToken: string = '', params: string = '') {
-    return await walletFetcher(`api/v1/merchants/${merchant}/transactions?${params}`, {
-        headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Content-Type': 'application/json',
-        },
+
+const TRANSACTION_ENDPOINT = 'v1/admin/transactions'
+export async function listTransactions(bearerToken: string = '', params: string = '') {
+    return await transactionFetcher(`${TRANSACTION_ENDPOINT}?${params}`, {
+        headers: getJSONHeaders(bearerToken),
     });
 }
 

@@ -1,9 +1,13 @@
 import Table from "@/components/table/Table";
 import TData from "@/components/table/TData";
 import Pagination from "@/components/table/Pagination";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
 import Badge from "@/components/Badge";
+import {useTransactionStore} from "@/store/TransactionStore";
+import {extractPaginationData} from "@/utils/helpers";
+import {useAdminStore} from "@/store/AdminStore";
+import {listTransactions} from "@/api/transaction";
 
 const TransactionList: React.FC = () => {
     const tableHeaders = [
@@ -17,86 +21,50 @@ const TransactionList: React.FC = () => {
         {label: 'Description', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
         {label: 'Status', classes: 'px-3 py-3.5 text-left'},
     ]
-    const lenders = [
-        {
-            "externalId": "a52bb4b1-a87f-4c9f-bd1d-85eb96792e52",
-            "stan": "240221175802534960",
-            "processorReference": null,
-            "type": "transfer",
-            "currency": "GHS",
-            "accountNumber": "0249621938",
-            "accountIssuer": "gmo",
-            "amount": 312,
-            "balanceBefore": 2468,
-            "balanceAfter": 2156,
-            "fee": 0,
-            "feeInMajorUnits": "0.00",
-            "amountInMajorUnits": "3.12",
-            "balanceBeforeInMajorUnits": "24.68",
-            "balanceAfterInMajorUnits": "21.56",
-            "description": "cashing in solomon 0192398",
-            "status": "completed",
-            "createdAt": "2024-02-21T17:58:02.000000Z",
-            "updatedAt": "2024-02-21T17:58:02.000000Z"
-        },
-        {
-            "externalId": "717d0b89-93f4-4327-bcae-b5e20e86c076",
-            "stan": "240221175345345068",
-            "processorReference": null,
-            "type": "transfer",
-            "currency": "GHS",
-            "accountNumber": "0249621938",
-            "accountIssuer": "gmo",
-            "amount": 102,
-            "balanceBefore": 2570,
-            "balanceAfter": 2468,
-            "fee": 0,
-            "feeInMajorUnits": "0.00",
-            "amountInMajorUnits": "1.02",
-            "balanceBeforeInMajorUnits": "25.70",
-            "balanceAfterInMajorUnits": "24.68",
-            "description": "cashing in solomon 0192398",
-            "status": "completed",
-            "createdAt": "2024-02-21T17:53:45.000000Z",
-            "updatedAt": "2024-02-21T17:53:45.000000Z"
-        },
-        {
-            "externalId": "ae48f1ef-c2f9-42bb-9d8c-6b00ce9e0bef",
-            "stan": "240221175128939654",
-            "processorReference": null,
-            "type": "transfer",
-            "currency": "GHS",
-            "accountNumber": "0249621938",
-            "accountIssuer": "gmo",
-            "amount": 253,
-            "balanceBefore": 2570,
-            "balanceAfter": 2317,
-            "fee": 0,
-            "feeInMajorUnits": "0.00",
-            "amountInMajorUnits": "2.53",
-            "balanceBeforeInMajorUnits": "25.70",
-            "balanceAfterInMajorUnits": "23.17",
-            "description": "cashing in for user",
-            "status": "queued",
-            "createdAt": "2024-02-21T17:51:28.000000Z",
-            "updatedAt": "2024-02-21T17:51:28.000000Z"
-        }
-    ]
+
+    const {transactions, setTransactions} = useTransactionStore()
+    const {authenticatedAdmin} = useAdminStore()
+
+    useEffect(() => {
+        fetchTransactions()
+    }, [])
+
+
+    const fetchTransactions = (params: string = '') => {
+        listTransactions(authenticatedAdmin?.bearerToken, params)
+            .then(async response => {
+                const feedback = await response.json();
+                if (response.ok && feedback.success) {
+                    const {data, meta} = feedback
+                    const pagination = extractPaginationData(meta)
+                    if (setTransactions) setTransactions({pagination, data});
+                }
+            })
+            .catch((error) => {
+                console.log('error: ', error)
+            })
+    }
+
 
     const handlePrevious = () => {
-        // if (collections) {
-        //     const {pagination} = collections
-        //     const previousPageNumber = pagination.pageNumber - 1
-        //     return pagination.firstPage ? null : getCollectionTransactions(`rows=${pageOption.value}&pageNumber=${previousPageNumber}`)
-        // }
+        if (transactions) {
+            const {pagination} = transactions
+            if (pagination.currentPage) {
+                const previousPageNumber = pagination.currentPage - 1
+                return pagination.firstPage ? null : fetchTransactions(`perPage=${pageOption.value}&page=${previousPageNumber}`)
+            }
+        }
     }
     const handleNext = () => {
-        // if (collections) {
-        //     const {pagination} = collections
-        //     const nextPageNumber = pagination.pageNumber + 1
-        //     return pagination.lastPage ? null : getCollectionTransactions(`rows=${pageOption.value}&pageNumber=${nextPageNumber}`)
-        // }
+        if (transactions) {
+            const {pagination} = transactions
+            if (pagination.currentPage) {
+                const nextPageNumber = pagination.currentPage + 1
+                return pagination.lastPage ? null : fetchTransactions(`perPage=${pageOption.value}&page=${nextPageNumber}`)
+            }
+        }
     }
+
 
     const [pageOption, setPageOption] = useState<IListBoxItem>({
         label: '10',
@@ -117,27 +85,27 @@ const TransactionList: React.FC = () => {
                         headers: tableHeaders,
                         body:
                             <>
-                                {lenders.map((lender) => (
-                                    <tr key={lender.externalId}>
-                                        <TData label={lender.externalId}
+                                {transactions && transactions.data.map((transaction) => (
+                                    <tr key={transaction.externalId}>
+                                        <TData label={transaction.externalId}
                                                customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                        <TData label={lender.accountNumber}
+                                        <TData label={transaction.accountNumber}
                                                customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                        <TData label={`${lender.amount}`}
+                                        <TData label={`${transaction.amount}`}
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                        <TData label={`${lender.balanceBefore}`}
+                                        <TData label={`${transaction.balanceBefore}`}
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                        <TData label={`${lender.balanceAfter}`}
+                                        <TData label={`${transaction.balanceAfter}`}
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                        <TData label={`${lender.fee}`}
+                                        <TData label={`${transaction.fee}`}
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                        <TData label={lender.createdAt}
+                                        <TData label={transaction.createdAt}
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                        <TData label={lender.description}
+                                        <TData label={transaction.description}
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
                                         <TData label=""
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
-                                            <Badge text={lender.status} customClasses="capitalize"/>
+                                            <Badge text={transaction.status ?? ''} customClasses="capitalize"/>
                                         </TData>
                                     </tr>
                                 ))}
@@ -147,7 +115,11 @@ const TransactionList: React.FC = () => {
                 <Pagination
                     perPageOptions={perPageOptions}
                     setPageOption={setPageOption}
-                    pageOption={pageOption}/>
+                    pageOption={pageOption}
+                    handlePrevious={handlePrevious}
+                    handleNext={handleNext}
+                    pagination={transactions?.pagination}
+                />
             </div>
         </>
     )
