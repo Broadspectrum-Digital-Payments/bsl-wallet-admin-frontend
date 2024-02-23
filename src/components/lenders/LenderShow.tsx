@@ -1,22 +1,28 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import TextInput from "@/components/forms/TextInput";
 import {useParams} from "next/navigation";
 import Button from "@/components/forms/Button";
 import Loader from "@/components/Loader";
+import {useLenderStore} from "@/store/LenderStore";
+import {showLender, updateLender} from "@/api/lenders";
+import {useAdminStore} from "@/store/AdminStore";
+import {DropdownInput} from "@/components/forms/DropdownInput";
+import {DropdownInputItemType} from "@/utils/types/DropdownInputItemType";
+import {getError, isObjectEmpty} from "@/utils/helpers";
+import Toast from "@/components/Toast";
+
+type UpdatedData = {
+    status: string;
+    kycStatus: string;
+    [key: string]: string;
+};
 
 const LenderShow: React.FC = () => {
     const [activeSection, setActiveSection] = useState('Account');
-    const [customer, setCustomer] = useState({
-        externalId: '',
-        name: '',
-        ghanaCardNumber: '',
-        phoneNumber: '',
-        type: '',
-        status: '',
-        kycStatus: '',
-        actualBalance: 0,
-        availableBalance: 0
-    });
+    const {lender, setLender} = useLenderStore()
+    const {authenticatedAdmin} = useAdminStore()
+
+
     const [hasError, setHasError] = useState<boolean | undefined>(false);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -26,7 +32,59 @@ const LenderShow: React.FC = () => {
         {name: 'Loans', href: '#', current: false},
     ]
 
-    const customerId = useParams()?.customer
+    const lenderId = useParams()?.lender.toString();
+
+    useEffect(() => {
+        fetchLender(lenderId)
+    }, [lenderId])
+
+
+    const fetchLender = (lenderId: string) => {
+        showLender(authenticatedAdmin?.bearerToken, lenderId)
+            .then(async response => {
+                const feedback = await response.json();
+                if (response.ok && feedback.success) {
+                    const {data} = feedback
+
+                    console.log('data: ', data)
+
+                    if (setLender) setLender(data);
+                }
+            })
+            .catch((error) => {
+                console.log('error: ', error)
+            })
+    }
+
+    const statuses: DropdownInputItemType[] = [
+        {name: 'created', id: 'created'},
+        {name: 'activated', id: 'activated'},
+        {name: 'deactivated', id: 'deactivated'}
+    ]
+
+    const lenderStatus = lender.status == 'created' ? statuses[0] : statuses[1]
+    const [selectedStatus, setSelectedStatus] = useState(lenderStatus)
+
+
+    const kycStatuses: DropdownInputItemType[] = [
+        {name: 'queued', id: 'queued'},
+        {name: 'approved', id: 'approved'},
+        {name: 'rejected', id: 'rejected'},
+        {name: 'submitted', id: 'submitted'},
+    ]
+
+    const lenderKycStatus = kycStatuses.filter((status) => status.name === lender.kycStatus)
+
+    const [selectedKycStatus, setSelectedKycStatus] = useState(lenderKycStatus[0])
+
+    const [error, setError] = useState<string | null>(null);
+    const [toastInfo, setToastInfo] = useState<{
+        type: string,
+        description: string,
+    }>({
+        type: '',
+        description: '',
+    });
 
     const handleNavigationClick = (sectionName: string) => {
         setActiveSection(sectionName);
@@ -34,11 +92,62 @@ const LenderShow: React.FC = () => {
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = event.target;
-        setCustomer({...customer, [name]: value});
+        setLender({...lender, [name]: value});
     };
 
-    const handleUpdateCustomer = () => {
+    const lenderStatusUpdate = () => {
+        lender.status = selectedStatus.name;
+    }
 
+    const lenderKycStatusUpdate = () => {
+        lender.kycStatus = selectedKycStatus.name;
+    }
+
+    const isLenderStatusUpdated = (selectedStatus?.name !== lender.status)
+
+    const isLenderKycStatusUpdated = (selectedKycStatus?.name !== lender.kycStatus)
+
+    const handleUpdateLender = () => {
+
+        setLoading(true)
+
+        const updatedData: UpdatedData = {status: '', kycStatus: ''}
+
+        if (isLenderStatusUpdated){
+            updatedData.status = selectedStatus.name
+        }
+
+        if (isLenderKycStatusUpdated){
+            updatedData.kycStatus = selectedKycStatus.name
+        }
+
+
+        Object.keys(updatedData).forEach(key => updatedData[key] === '' && delete updatedData[key]);
+
+
+        !isObjectEmpty(updatedData) && lender.externalId && updateLender(authenticatedAdmin.bearerToken, lender.externalId, updatedData)
+            .then(async response => {
+
+                setLoading(false)
+                if (response.status == 204) {
+
+                    if (isLenderStatusUpdated){
+                        lenderStatusUpdate()
+                    }
+
+                    if (isLenderKycStatusUpdated){
+                        lenderKycStatusUpdate()
+                    }
+
+                    if (setLender) setLender(lender)
+                    return setToastInfo({type: 'success', description: 'Updated Successfully'})
+                }
+
+                return setToastInfo({type: 'error', description: 'Something went wrong'})
+
+            }).catch((error) => {setToastInfo({type: 'error', description: 'Something went wrong'}); console.log('error: ', error)})
+
+        setLoading(false)
     }
 
     const resolveDocumentName = (name: string) => {
@@ -112,7 +221,7 @@ const LenderShow: React.FC = () => {
 
                                 <form className="">
 
-                                    <div className="flex lg:px-8 px-4 py-4">
+                                    <div className="flex lg:px-8 px-4 py-t">
                                         <div className="flex-1 mr-4">
                                             <TextInput
                                                 label="Name"
@@ -120,11 +229,12 @@ const LenderShow: React.FC = () => {
                                                 name="name"
                                                 type="text"
                                                 placeholder="Name"
-                                                value={customer.name}
+                                                value={lender?.name}
                                                 required={true}
                                                 onInputChange={handleInputChange}
                                                 hasError={setHasError}
                                                 autoComplete="false"
+                                                disabled={true}
                                             />
                                         </div>
 
@@ -135,11 +245,12 @@ const LenderShow: React.FC = () => {
                                                 name="phoneNumber"
                                                 type="text"
                                                 placeholder="Phone Number"
-                                                value={customer.phoneNumber}
+                                                value={lender?.phoneNumber}
                                                 required={true}
                                                 onInputChange={handleInputChange}
                                                 hasError={setHasError}
                                                 autoComplete="false"
+                                                disabled={true}
                                             />
                                         </div>
                                     </div>
@@ -152,22 +263,7 @@ const LenderShow: React.FC = () => {
                                                 name="ghanaCardNumber"
                                                 type="text"
                                                 placeholder="Ghana Card Number"
-                                                value={customer.ghanaCardNumber}
-                                                required={true}
-                                                onInputChange={handleInputChange}
-                                                hasError={setHasError}
-                                                autoComplete="false"
-                                                disabled={true}
-                                            />
-                                        </div>
-                                        <div className="flex-1">
-                                            <TextInput
-                                                label="KYC Status"
-                                                id="kycStatus"
-                                                name="kycStatus"
-                                                type="text"
-                                                placeholder="KYC Status"
-                                                value={customer.kycStatus}
+                                                value={lender?.ghanaCardNumber}
                                                 required={true}
                                                 onInputChange={handleInputChange}
                                                 hasError={setHasError}
@@ -176,14 +272,66 @@ const LenderShow: React.FC = () => {
                                             />
                                         </div>
 
+
+                                    </div>
+
+                                    <div className="flex lg:px-8 px-4">
+                                        <div className="flex-1 mr-4">
+                                            <TextInput
+                                                label="Available Balance"
+                                                id="availableBalance"
+                                                name="availableBalance"
+                                                type="text"
+                                                placeholder="Available Balance"
+                                                value={lender?.availableBalance}
+                                                required={true}
+                                                onInputChange={handleInputChange}
+                                                hasError={setHasError}
+                                                autoComplete="false"
+                                                disabled={true}
+                                            />
+                                        </div>
+
+                                        <div className="flex-1">
+                                            <TextInput
+                                                label="Actual Balance"
+                                                id="actualBalance"
+                                                name="actualBalance"
+                                                type="text"
+                                                placeholder="Actual Balance"
+                                                value={lender?.actualBalance}
+                                                required={true}
+                                                onInputChange={handleInputChange}
+                                                hasError={setHasError}
+                                                autoComplete="false"
+                                                disabled={true}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex lg:px-8 px-4">
+
+                                        <div className="flex-1 mr-4">
+                                            <DropdownInput label="Status" data={statuses}
+                                                           selected={selectedStatus}
+                                                           setSelected={setSelectedStatus}
+                                            />
+                                        </div>
+
+                                        <div className="flex-1">
+                                            <DropdownInput label="KYC Status" data={kycStatuses}
+                                                           selected={selectedKycStatus}
+                                                           setSelected={setSelectedKycStatus}
+                                            />
+                                        </div>
                                     </div>
 
 
                                     <div
-                                        className={`sm:mt-4 flex lg:px-8`}>
-                                        <Button buttonType="submit" styleType="primary"
+                                        className={`sm:mt-4 flex lg:px-8 pt-4`}>
+                                        <Button buttonType="button" styleType="primary"
                                                 customStyles="p-4 md:p-5 rounded-lg"
-                                                onClick={handleUpdateCustomer}>
+                                                onClick={handleUpdateLender}>
                                             {'Save'}
                                             {loading && <Loader type="default"
                                                                 customClasses="relative"
@@ -229,6 +377,8 @@ const LenderShow: React.FC = () => {
                     )}
                 </main>
             </div>
+
+            {/*{toastInfo.type && <Toast toastType={toastInfo.type} toastDescription={toastInfo.description}/>}*/}
 
         </>
     )
