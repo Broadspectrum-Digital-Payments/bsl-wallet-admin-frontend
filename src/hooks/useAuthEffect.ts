@@ -1,22 +1,13 @@
 import {useEffect} from 'react';
 import {useRouter} from 'next/navigation';
+import {IUseAuthHook} from "@/utils/interfaces/IUseAuthHook";
 
-interface AuthHelperProps {
-    isAuthenticated?: boolean;
-    setHeaderDetails: () => void;
-    setIsAuthenticated?: (value: boolean) => void;
-}
-
-export const useAuthHelper = <T extends AuthHelperProps>({
-                                                             isAuthenticated,
-                                                             setHeaderDetails,
-                                                             setIsAuthenticated,
-                                                         }: T) => {
+export const useAuthHelper = <T extends IUseAuthHook>({
+                                                          isAuthenticated,
+                                                          setIsAuthenticated,
+                                                      }: T) => {
     const router = useRouter();
-
     useEffect(() => {
-        setHeaderDetails();
-
         if (!isAuthenticated) {
             if (setIsAuthenticated) setIsAuthenticated(false);
             router.replace('/');

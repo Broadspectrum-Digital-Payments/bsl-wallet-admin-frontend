@@ -10,6 +10,8 @@ import {
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import ProfileDropdown from "@/components/layout/ProfileDropdown";
+import {useAdminStore} from "@/store/AdminStore";
+import {useAuthHelper} from "@/hooks/useAuthEffect";
 
 const DashboardLayout: React.FC<IDashboardLayout> = ({children}) => {
     const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -41,6 +43,12 @@ const DashboardLayout: React.FC<IDashboardLayout> = ({children}) => {
         setProfileDropdownItems,
         setBottomMenuItemsList
     } = useDashboardStore()
+
+    const {isAuthenticated, setIsAuthenticated} = useAdminStore();
+    useAuthHelper({
+        isAuthenticated,
+        setIsAuthenticated
+    })
 
     useEffect(() => {
         setDashboard()

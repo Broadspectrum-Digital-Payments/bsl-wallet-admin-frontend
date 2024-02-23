@@ -1,32 +1,6 @@
 import {walletFetcher, adminFetcher} from "@/api/http";
 import {getJSONHeaders} from "@/utils/helpers";
 
-export async function verifyEmailLink(token: string | null) {
-    return await walletFetcher(`api/auth/verify-email-link?token=${token}`);
-}
-
-export async function verifyOtp(accessKey: string | undefined, otp: string) {
-    return await walletFetcher('api/auth/verify-otp', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${accessKey}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({accessKey, otp})
-    });
-}
-
-export async function verifyPasswordResetOtp(accessKey: string | null, otp: string) {
-    return await walletFetcher('api/auth/reset-password/verify-otp', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${accessKey}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({accessKey, otp})
-    });
-}
-
 export async function createPassword(password: string, confirmPassword: string, authToken: string | undefined) {
     return await walletFetcher('api/auth/create-password', {
         method: 'POST',
@@ -35,14 +9,6 @@ export async function createPassword(password: string, confirmPassword: string, 
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({password, confirmPassword})
-    });
-}
-
-export async function resendOtp(accessKey: string | undefined) {
-    return await walletFetcher(`api/v1/auth/resend-otp?accessKey=${accessKey}`, {
-        headers: {
-            'Content-Type': 'application/json'
-        },
     });
 }
 
@@ -85,13 +51,11 @@ export async function sendResetEmailLink(email: string = '') {
     });
 }
 
-export async function resetPassword(password: string, accessKey: string | undefined) {
-    return await adminFetcher('api/auth/reset-password', {
+export async function resetPassword(password: string = '', token: string | null) {
+    return await adminFetcher('v1/reset-password', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({password, accessKey})
+        headers: getJSONHeaders(),
+        body: JSON.stringify({password, token})
     });
 }
 

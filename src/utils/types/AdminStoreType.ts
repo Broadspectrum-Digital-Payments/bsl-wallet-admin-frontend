@@ -1,5 +1,4 @@
 import {PaginationType} from "@/utils/types/PaginationType";
-import {UserType} from "@/utils/types/UserType";
 import {AdminType} from "@/utils/types/AdminType";
 
 export type AdminStoreType = {

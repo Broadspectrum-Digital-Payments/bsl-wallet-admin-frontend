@@ -109,7 +109,7 @@ const TextInput: React.FC<ITextInput> = ({
                                 className="absolute inset-y-0 right-1 flex items-center cursor-pointer bg-transparent m-2"
                                 onClick={togglePassword}
                             >
-                                <Svg name={showPassword ? "eye-opened.svg" : "eye-close.svg"}
+                                <Svg name={showPassword ? "eye-opened.svg" : "eye-slash.svg"}
                                      customClasses={error ? "text-red-500" : ""}/>
                             </div>
                         )}
