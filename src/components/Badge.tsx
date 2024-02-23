@@ -12,6 +12,7 @@ const Badge: React.FC<IBadge> = ({text, customClasses}) => {
         pending: 'bg-yellow-50 text-yellow-700 ring-yellow-600/20',
         queued: 'bg-yellow-50 text-yellow-700 ring-yellow-600/20',
         active: 'bg-blue-50 text-blue-700 ring-blue-600/20',
+        created: 'bg-blue-50 text-blue-700 ring-blue-600/20',
         inactive: 'bg-gray-50 text-gray-700 ring-gray-600/20',
     }
 

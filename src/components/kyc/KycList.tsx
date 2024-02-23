@@ -45,10 +45,10 @@ const KycList: React.FC = () => {
         listUsers(params)
             .then(async response => {
                 const feedback = await response.json();
-                if (response.ok) {
-                    const {data, meta} = feedback
+                if (response.ok && feedback.success) {
+                    const {users, meta} = feedback.data
                     const pagination = extractPaginationData(meta)
-                    if (setUsers) setUsers({pagination, data});
+                    if (setUsers) setUsers({pagination, data: users});
                 }
             })
             .catch((error) => {
@@ -82,7 +82,7 @@ const KycList: React.FC = () => {
                                         <TData label={user.name ?? ''}
                                                customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
                                         <TData label={user.type ?? ''}
-                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell capitalize"/>
                                         <TData label={user.ghanaCardNumber ?? ''}
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
                                         <TData label=""

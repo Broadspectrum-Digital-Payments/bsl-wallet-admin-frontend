@@ -143,7 +143,7 @@ export const plotGraphData = (data: MonthlyTransactionSummaryType = {}) => {
 
 export const getJSONHeaders = (bearerToken: string = '') => {
     return {
-        // Authorization: `Bearer ${bearerToken}`,
+        Authorization: `Bearer ${bearerToken}`,
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'X-Admin-Header': 'bsl-wallet-admin',
