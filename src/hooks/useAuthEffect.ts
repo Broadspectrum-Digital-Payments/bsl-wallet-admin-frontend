@@ -8,9 +8,9 @@ export const useAuthHelper = <T extends IUseAuthHook>({
                                                       }: T) => {
     const router = useRouter();
     useEffect(() => {
-        if (!isAuthenticated) {
-            if (setIsAuthenticated) setIsAuthenticated(false);
-            router.replace('/');
-        }
-    }, [isAuthenticated]);
+        // if (!isAuthenticated) {
+        //     if (setIsAuthenticated) setIsAuthenticated(false);
+        //     router.replace('/');
+        // }
+    }, []);
 };

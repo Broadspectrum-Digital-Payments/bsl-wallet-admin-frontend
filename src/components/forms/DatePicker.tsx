@@ -1,8 +1,6 @@
 import React, {useState} from 'react';
 import Datepicker from "tailwind-datepicker-react"
 import Svg from "@/components/Svg";
-import {ArrowCircleLeft, ArrowCircleRight} from "../../../public/assets/icons/ArrowCircle";
-import {Calendar} from "../../../public/assets/icons/Calendar";
 
 const DatePicker: React.FC<IDatePickerProps> = ({selectedDate, setSelectedDate, minDate, disabled = false, error}) => {
     const [show, setShow] = useState<boolean>(false)
@@ -32,17 +30,17 @@ const DatePicker: React.FC<IDatePickerProps> = ({selectedDate, setSelectedDate, 
             background: "bg-white dark:bg-gray-700",
             todayBtn: "bg-gray-100 focus:outline-none",
             clearBtn: "bg-gray-100 text-purple-900 focus:outline-none outline-none border-0 p-2 font-normal w-1/3 grid ml-auto mr-3",
-            // icons: <span><Svg fill={"#4F4F4F"} path={Calendar}/></span>,
+            icons: <span><Svg name="calendar.svg"/></span>,
             text: "",
             disabledText: "",
-            input: `h-[56px] focus:outline-none focus:border-purple-900 bg-transparent ${error ? 'border-red-500' : ''}`,
-            // inputIcon: <span><Svg fill={"#4F4F4F"} path={Calendar}/></span>,
+            input: `h-[42px] focus:outline-none focus:border-purple-900 bg-transparent ${error ? 'border-red-500' : ''}`,
+            inputIcon: <span><Svg name="calendar.svg"/></span>,
             selected: "bg-purple-900",
         },
         icons: {
-            // prev: () => <span className="focus:outline-none hover:bg-transparent border-0">
-            //     <Svg fill={"#4F4F4F"} path={ArrowCircleLeft}/></span>,
-            // next: () => <span><Svg fill={"#4F4F4F"} path={ArrowCircleRight}/></span>
+            prev: () => <span className="focus:outline-none hover:bg-transparent border-0">
+                <Svg name="arrow-circle-left.svg"/></span>,
+            next: () => <span><Svg name="arrow-circle-right.svg"/></span>
         },
         datepickerClassNames: "top-[65px] flex-grow border rounded-lg",
         defaultDate: null,

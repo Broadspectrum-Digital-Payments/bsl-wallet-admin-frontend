@@ -89,7 +89,7 @@ const TextInput: React.FC<ITextInput> = ({
                             onInput={handleInputChange}
                             min={isNumberInput() ? min : ''}
                             max={isNumberInput() ? max : ''}
-                            className={`block w-full rounded-md py-1.5 px-3 text-gray-900 placeholder-gray-900
+                            className={`block w-full rounded-md py-2 px-3 text-gray-900 placeholder-gray-900
                                     border-gray-500 placeholder:text-gray-600 focus:outline-none
                                     sm:text-sm sm:leading-6 h-[${height}px] ${disabled ? 'cursor-not-allowed' : ''} 
                                     ${customInputClasses}`}

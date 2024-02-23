@@ -5,9 +5,13 @@ import React, {useEffect, useState} from "react";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
 import Badge from "@/components/Badge";
 import {useTransactionStore} from "@/store/TransactionStore";
-import {extractPaginationData} from "@/utils/helpers";
+import {extractPaginationData, formatAmount} from "@/utils/helpers";
 import {useAdminStore} from "@/store/AdminStore";
 import {listTransactions} from "@/api/transaction";
+import {FilterQueryType} from "@/utils/types/FilterQueryType";
+import FilterWrapper from "@/components/FilterWrapper";
+import TransactionFilter from "@/components/transactions/TransactionFilter";
+import {FilterFormDataType} from "@/utils/types/FilterFormDataType";
 
 const TransactionList: React.FC = () => {
     const tableHeaders = [
@@ -21,6 +25,14 @@ const TransactionList: React.FC = () => {
         {label: 'Description', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
         {label: 'Status', classes: 'px-3 py-3.5 text-left'},
     ]
+    const [pageOption, setPageOption] = useState<IListBoxItem>({
+        label: '10',
+        value: '10'
+    });
+    const perPageOptions: IListBoxItem [] = [
+        {label: '10', value: '10'},
+        {label: '20', value: '20'},
+    ]
 
     const {transactions, setTransactions} = useTransactionStore()
     const {authenticatedAdmin} = useAdminStore()
@@ -28,7 +40,6 @@ const TransactionList: React.FC = () => {
     useEffect(() => {
         fetchTransactions()
     }, [])
-
 
     const fetchTransactions = (params: string = '') => {
         listTransactions(authenticatedAdmin?.bearerToken, params)
@@ -44,7 +55,6 @@ const TransactionList: React.FC = () => {
                 console.log('error: ', error)
             })
     }
-
 
     const handlePrevious = () => {
         if (transactions) {
@@ -65,20 +75,85 @@ const TransactionList: React.FC = () => {
         }
     }
 
-
-    const [pageOption, setPageOption] = useState<IListBoxItem>({
-        label: '10',
-        value: '10'
+    const [resetFilter, setResetFilter] = useState<boolean>(false);
+    const [submitFilter, setSubmitFilter] = useState<boolean>(false);
+    const [formData, setFormData] = useState<FilterFormDataType>({
+        externalId: '',
+        startDate: '',
+        endDate: '',
+        status: ''
     });
 
-    const perPageOptions: IListBoxItem [] = [
-        {label: '10', value: '10'},
-        {label: '20', value: '20'},
-    ]
+    const prepareFilterQueryString = (queryObject: FilterQueryType) => {
+        const queryParams = filterQueryString.split('&')
+            .map(param => param.split('='))
+            .reduce((obj: Record<string, string>, [key, value]) => {
+                if (key !== '' && value != undefined)
+                    return {...obj, [key]: value};
+
+                return obj;
+            }, {});
+
+        const {startDate, endDate, ...remainingParams} = queryParams;
+
+        const mergedParams = {
+            ...remainingParams,
+            ...queryObject,
+        };
+
+        const filteredParams = Object.fromEntries(
+            Object.entries(mergedParams).filter(([key, value]) => {
+                return ![undefined, ''].includes(String(value));
+            })
+        );
+
+        return Object.entries(filteredParams)
+            .map(([key, value]) => `${key}=${value}`)
+            .join('&');
+    };
+
+    const [filterQueryString, setFilterQueryString] = useState<string>('');
+    const [hasError, setHasError] = useState<boolean>(true);
+
+    const handleFilterSubmitButtonClicked = (submit: boolean) => {
+        setSubmitFilter(submit)
+        const queryString = prepareFilterQueryString(formData)
+        fetchTransactions(queryString)
+    }
+
+    const handleResetFilter = (reset: boolean) => {
+        setResetFilter(reset)
+        return fetchTransactions()
+    }
+
+    const handleFilterChange = (data: FilterFormDataType) => {
+        console.log(data)
+        if (Object.values(data).every(value => value.trim() === '')) {
+            return setHasError(true)
+        } else {
+            setFormData({...data})
+            return setHasError(false)
+        }
+    }
+
+    const handleFilterError = (error: boolean) => {
+        setHasError(error)
+    }
 
     return (
         <>
             <div>
+                <FilterWrapper onSubmit={handleFilterSubmitButtonClicked} onReset={handleResetFilter}
+                               hasError={hasError}>
+                    <TransactionFilter
+                        submit={submitFilter}
+                        reset={resetFilter}
+                        onChange={handleFilterChange}
+                        hasError={hasError}
+                        setHasError={handleFilterError}
+                    />
+                </FilterWrapper>
+
                 <Table onButtonClick={() => {
                 }}>
                     {{
@@ -91,11 +166,11 @@ const TransactionList: React.FC = () => {
                                                customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
                                         <TData label={transaction.accountNumber}
                                                customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                        <TData label={`${transaction.amount}`}
+                                        <TData label={`${formatAmount(transaction.amount)}`}
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                        <TData label={`${transaction.balanceBefore}`}
+                                        <TData label={`${formatAmount(transaction.balanceBefore)}`}
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                        <TData label={`${transaction.balanceAfter}`}
+                                        <TData label={`${formatAmount(transaction.balanceAfter)}`}
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
                                         <TData label={`${transaction.fee}`}
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>

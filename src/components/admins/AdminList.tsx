@@ -90,7 +90,9 @@ const AdminList: React.FC = () => {
     ]
 
     const handleOpenAdminModal = () => {
-        setModalOpen(true)
+        setModalOpen(!modalOpen)
+        setError('')
+        setFormData({externalId: '', name: '', email: '', status: ''})
     }
 
     const handleSubmitAdminData = () => formData?.externalId && formData.externalId !== '' ? handleEditAdminAction() : handleAddAdmin()
@@ -131,6 +133,7 @@ const AdminList: React.FC = () => {
                     }
                     setModalOpen(false)
                 }
+                setError(getError(feedback))
             }).catch((error) => {
             console.log('error: ', error)
         })
@@ -195,7 +198,7 @@ const AdminList: React.FC = () => {
                 />
             </div>
 
-            <Modal showCloseButton={true} setModalOpen={setModalOpen} showModal={modalOpen}
+            <Modal showCloseButton={true} setModalOpen={handleOpenAdminModal} showModal={modalOpen}
                    customClasses="relative z-50">
 
                 <div className="flex flex-col p-10">
@@ -242,7 +245,7 @@ const AdminList: React.FC = () => {
                     <div
                         className={`sm:mt-4 sm:flex sm:flex-row-reverse`}>
                         <Button buttonType="submit" styleType="primary" customStyles="p-4 md:p-5 rounded-lg"
-                                onClick={handleSubmitAdminData} disabled={loading}>
+                                onClick={handleSubmitAdminData} disabled={loading || hasError}>
                             {!loading && <span>
                                 {formData?.externalId && formData.externalId !== '' ? 'Update Admin' : 'Add Admin'}
                             </span>}

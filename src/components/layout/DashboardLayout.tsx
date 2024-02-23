@@ -44,11 +44,7 @@ const DashboardLayout: React.FC<IDashboardLayout> = ({children}) => {
         setBottomMenuItemsList
     } = useDashboardStore()
 
-    const {isAuthenticated, setIsAuthenticated} = useAdminStore();
-    useAuthHelper({
-        isAuthenticated,
-        setIsAuthenticated
-    })
+
 
     useEffect(() => {
         setDashboard()

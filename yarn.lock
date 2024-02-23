@@ -1201,7 +1201,7 @@ supports-preserve-symlinks-flag@^1.0.0:
 
 tailwind-datepicker-react@^1.4.3:
   version "1.4.3"
-  resolved "https://registry.npmjs.org/tailwind-datepicker-react/-/tailwind-datepicker-react-1.4.3.tgz"
+  resolved "https://registry.yarnpkg.com/tailwind-datepicker-react/-/tailwind-datepicker-react-1.4.3.tgz#137e8d0a3a0d48a38ce666df6d2365acf37bbb00"
   integrity sha512-K/mX7GjsO8fvaN1/jZcEbCMb14VdBe0HGxBy36WK4zxfYOPB2tGMSAUo06so+BmsaVPU4dwmfDElK/6Uxaashw==
   dependencies:
     tailwind-merge "^1.6.1"
