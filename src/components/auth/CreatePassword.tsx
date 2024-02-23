@@ -66,7 +66,7 @@ const CreatePassword: React.FC<ICreatePassword> = ({
                 />
             </div>
 
-            <Button buttonType="submit" styleType="primary" disabled={hasError || loading ?? false}
+            <Button buttonType="submit" styleType="primary" disabled={hasError || loading}
                     customStyles={`shadow-sm justify-center mt-8 p-4 md:p-5 rounded-lg ${hasError ? 'bg-purple-900 cursor-pointer' : 'bg-purple-200 cursor-not-allowed'}`}>
                 {buttonText}
             </Button>

@@ -22,7 +22,7 @@ const VerifyAdminContent: React.FC = () => {
 
     const handleEmailLinkVerification = (password: string) => {
         if (setLoading) setLoading(true);
-        resetPassword(token, password)
+        resetPassword(password, token)
             .then(async (response) => {
                 const feedback = await response.json()
                 if (setLoading) setLoading(false);
