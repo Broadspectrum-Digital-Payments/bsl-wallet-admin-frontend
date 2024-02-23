@@ -11,31 +11,13 @@ const Pagination: React.FC<IPagination> = ({
                                                setPageOption,
                                                perPageOptions
                                            }) => {
-    const getInitialOffset = () => {
-        if (pagination) {
-            const {pageSize, currentPage, firstPage} = pagination
-            if (pageSize && currentPage) return firstPage ? 1 : pageSize * currentPage
-        } else
-            return 1;
-    }
-
-    const getFinalOffset = () => {
-        if (pagination) {
-            const {pageSize, totalElements, currentPage} = pagination
-            if (pageSize && currentPage) {
-                const finalOffset = (pageSize * currentPage) + pageSize
-                return finalOffset > totalElements ? totalElements : finalOffset
-            }
-        } else
-            return 10;
-    }
 
     return (
         <div className="flex items-center justify-between bg-white mt-3">
             <div className="flex flex-1 justify-between items-center sm:hidden">
                 <div className="text-xs">
-                    <span className="font-medium">{getInitialOffset()}</span> to <span
-                    className="font-medium">{getFinalOffset()}</span> of{' '}
+                    <span className="font-medium">{pagination?.from}</span> to
+                    <span className="font-medium">{pagination?.to}</span> of {' '}
                     <span className="font-medium">{pagination?.totalElements}</span>
                 </div>
 
@@ -61,8 +43,8 @@ const Pagination: React.FC<IPagination> = ({
                 </div>
                 <div className="flex items-center">
                     <div className="text-xs mr-5">
-                        <span className="font-medium">{getInitialOffset()}</span> to <span
-                        className="font-medium">{getFinalOffset()}</span> of{' '}
+                        <span className="font-medium">{pagination?.from}</span> to <span
+                        className="font-medium">{pagination?.to}</span> of{' '}
                         <span className="font-medium">{pagination?.totalElements}</span>
                     </div>
 

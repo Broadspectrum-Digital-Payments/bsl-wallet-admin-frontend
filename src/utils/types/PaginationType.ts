@@ -1,12 +1,14 @@
 export type PaginationType = {
     from: null | number
     to: null | number
-    totalElements: number
-    pageSize: null | number
-    numberOfRecords: null | number
-    previousPage: null | string
-    nextPage: null | string
-    currentPage: null | number
+    totalElements: null | number
+
     firstPage: null | boolean
+    nextPage: null | string
+    previousPage: null | string
+    currentPage: null | number
     lastPage: null | boolean
+
+    pageSize: null | number
+    rows: null | number
 }

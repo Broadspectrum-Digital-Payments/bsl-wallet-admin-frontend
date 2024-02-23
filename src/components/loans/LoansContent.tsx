@@ -113,7 +113,8 @@ const LoansContent: React.FC = () => {
             <Pagination
                 perPageOptions={perPageOptions}
                 setPageOption={setPageOption}
-                pageOption={pageOption}/>
+                pageOption={pageOption}
+            />
         </div>
     )
 }

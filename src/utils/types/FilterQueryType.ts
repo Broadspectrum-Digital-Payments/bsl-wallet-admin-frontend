@@ -3,6 +3,6 @@ export type FilterQueryType = {
     startDate?: string
     endDate?: string
     status?: string
-    rows?: string
+    pageSize?: string
     pageNumber?: number
 }

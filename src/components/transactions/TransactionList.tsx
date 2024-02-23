@@ -38,7 +38,7 @@ const TransactionList: React.FC = () => {
     const {authenticatedAdmin} = useAdminStore()
 
     useEffect(() => {
-        fetchTransactions()
+        fetchTransactions(filterQueryString)
     }, [])
 
     const fetchTransactions = (params: string = '') => {
@@ -48,7 +48,7 @@ const TransactionList: React.FC = () => {
                 if (response.ok && feedback.success) {
                     const {data, meta} = feedback
                     const pagination = extractPaginationData(meta)
-                    if (setTransactions) setTransactions({pagination, data});
+                    if (setTransactions) setTransactions({pagination, data})
                 }
             })
             .catch((error) => {
@@ -61,7 +61,7 @@ const TransactionList: React.FC = () => {
             const {pagination} = transactions
             if (pagination.currentPage) {
                 const previousPageNumber = pagination.currentPage - 1
-                return pagination.firstPage ? null : fetchTransactions(`perPage=${pageOption.value}&page=${previousPageNumber}`)
+                return pagination.firstPage ? null : fetchTransactions(`pageSize=${pageOption.value}&page=${previousPageNumber}`)
             }
         }
     }
@@ -70,7 +70,7 @@ const TransactionList: React.FC = () => {
             const {pagination} = transactions
             if (pagination.currentPage) {
                 const nextPageNumber = pagination.currentPage + 1
-                return pagination.lastPage ? null : fetchTransactions(`perPage=${pageOption.value}&page=${nextPageNumber}`)
+                return pagination.lastPage ? null : fetchTransactions(`pageSize=${pageOption.value}&page=${nextPageNumber}`)
             }
         }
     }
@@ -112,12 +112,13 @@ const TransactionList: React.FC = () => {
             .join('&');
     };
 
-    const [filterQueryString, setFilterQueryString] = useState<string>('');
+    const [filterQueryString, setFilterQueryString] = useState<string>('pageSize=10');
     const [hasError, setHasError] = useState<boolean>(true);
 
     const handleFilterSubmitButtonClicked = (submit: boolean) => {
         setSubmitFilter(submit)
         const queryString = prepareFilterQueryString(formData)
+        setFilterQueryString(queryString)
         fetchTransactions(queryString)
     }
 
@@ -127,7 +128,6 @@ const TransactionList: React.FC = () => {
     }
 
     const handleFilterChange = (data: FilterFormDataType) => {
-        console.log(data)
         if (Object.values(data).every(value => value.trim() === '')) {
             return setHasError(true)
         } else {
@@ -138,6 +138,13 @@ const TransactionList: React.FC = () => {
 
     const handleFilterError = (error: boolean) => {
         setHasError(error)
+    }
+
+    const handleSetPageOption = (pageOption: IListBoxItem) => {
+        const queryString = prepareFilterQueryString({pageSize: pageOption.value})
+        setFilterQueryString(queryString);
+        fetchTransactions(queryString)
+        setPageOption(pageOption)
     }
 
     return (
@@ -189,7 +196,7 @@ const TransactionList: React.FC = () => {
                 </Table>
                 <Pagination
                     perPageOptions={perPageOptions}
-                    setPageOption={setPageOption}
+                    setPageOption={handleSetPageOption}
                     pageOption={pageOption}
                     handlePrevious={handlePrevious}
                     handleNext={handleNext}
