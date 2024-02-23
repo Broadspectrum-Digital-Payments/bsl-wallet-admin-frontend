@@ -3,6 +3,7 @@ import TextInput from "@/components/forms/TextInput";
 import {useParams} from "next/navigation";
 import Button from "@/components/forms/Button";
 import Loader from "@/components/Loader";
+import KycApprovalDecision from "@/components/kyc/KycApprovalDecision";
 
 const AgentShow: React.FC = () => {
     const [activeSection, setActiveSection] = useState('Account');
@@ -78,6 +79,13 @@ const AgentShow: React.FC = () => {
         },
     ]
 
+    const handleApproveKyc = () => {
+
+    }
+
+    const handleRejectKyc = () => {
+
+    }
     return (
         <>
             <div className="">
@@ -256,6 +264,9 @@ const AgentShow: React.FC = () => {
                                             ))}
                                         </ul>
                                     </div>
+
+                                    <KycApprovalDecision onApprove={handleApproveKyc} onReject={handleRejectKyc}></KycApprovalDecision>
+
                                 </div>
                             </div>
                         </div>

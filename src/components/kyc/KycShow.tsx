@@ -3,6 +3,7 @@ import TextInput from "@/components/forms/TextInput";
 import {useParams} from "next/navigation";
 import Loader from "@/components/Loader";
 import Button from "@/components/forms/Button";
+import KycApprovalDecision from "@/components/kyc/KycApprovalDecision";
 
 
 const secondaryNavigation = [
@@ -139,21 +140,8 @@ const KycShow: React.FC = () => {
                         </ul>
                       </div>
 
-                      <div className="flex justify-between mt-20 lg:gap-x-80">
-                        <Button customStyles="bg-green-500 rounded border justify-center p-4 md:p-5 rounded-lg text-white"
-                                buttonType="button" styleType=""
-                                onClick={handleApproveKyc}
-                        >
-                          <span className="flex self-center">Approve</span>
-                        </Button>
 
-                        <Button customStyles="bg-red-500 rounded border justify-center p-4 md:p-5 rounded-lg"
-                                buttonType="button" styleType=""
-                                onClick={handleRejectKyc}
-                        >
-                          <span className="flex self-center">Reject</span>
-                        </Button>
-                      </div>
+                      <KycApprovalDecision onApprove={handleApproveKyc} onReject={handleRejectKyc}></KycApprovalDecision>
 
                     </div>
                   </div>
