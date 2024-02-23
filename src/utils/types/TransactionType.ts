@@ -18,7 +18,8 @@ export type TransactionType = {
     initiatorName?: string,
     callbackUrl?: string | null,
     batchExternalId?: string | null
-    emailPaymentLink?: string | null
+    emailPaymentLink?: string | null,
+    fee?: number,
 
     id?: string,
     date?: string,
