@@ -17,12 +17,13 @@ const DashboardLayout: React.FC<IDashboardLayout> = ({children}) => {
 
     const mainMenuItems = [
         {name: 'overview', label: 'Overview', href: '/overview', icon: true, category: 'Dashboard'},
-        {name: 'admins', label: 'Admins', href: '/admins', icon: true, category: ''},
-        {name: 'merchants', label: 'Merchants', href: '/merchants', icon: true, category: ''},
+        {name: 'admins', label: 'Admins', href: '/admins', icon: true, category: 'Management'},
+        {name: 'lenders', label: 'Lenders', href: '/lenders', icon: true, category: ''},
+        {name: 'agents', label: 'Agents', href: '/agents', icon: true, category: ''},
         {name: 'customers', label: 'Customers', href: '/customers', icon: true, category: ''},
-
-        {name: 'transactions', label: 'Transactions', href: '/transactions', icon: true, category: 'Core'},
-        {name: 'loans', label: 'Loans', href: '/loans', icon: true, category: ''},
+        {name: 'kyc', label: 'KYC', href: '/kyc', icon: true, category: ''},
+        {name: 'loans', label: 'Loans', href: '/loans', icon: true, category: 'Core'},
+        {name: 'transactions', label: 'Transactions', href: '/transactions', icon: true, category: ''},
         {name: 'reports', label: 'Reports & Analytics', href: 'reports', icon: true, category: 'Other'},
     ]
 
@@ -99,8 +100,8 @@ const DashboardLayout: React.FC<IDashboardLayout> = ({children}) => {
                                     className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4 ring-1 ring-white/10">
                                     <div className="flex h-16 shrink-0 items-center">
                                         <Image
-                                            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                                            alt="opta" className="h-8 w-auto" height={20} width={20}
+                                            src="/assets/images/logo.svg"
+                                            alt="wallet" className="h-8 w-auto" height={20} width={20}
                                             style={{width: "auto"}}/>
                                     </div>
                                     <MainMenuItemsList/>
@@ -114,11 +115,10 @@ const DashboardLayout: React.FC<IDashboardLayout> = ({children}) => {
             <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
                 <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4">
                     <div className="flex h-16 shrink-0 items-center">
-                        <img
-                            className="h-8 w-auto"
-                            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                            alt="Your Company"
-                        />
+                        <Image
+                            src="/assets/images/logo.svg"
+                            alt="wallet" className="h-8 w-auto" height={20} width={20}
+                            style={{width: "auto"}}/>
                     </div>
                     <MainMenuItemsList/>
                 </div>

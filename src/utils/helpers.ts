@@ -1,3 +1,9 @@
+import {DateTime, DateTimeUnit} from "luxon";
+import {MonthlyTransactionSummaryType} from "@/utils/types/MonthlyTransactionSummaryType";
+import {ApiMetaType} from "@/utils/types/ApiMetaType";
+import {PaginationType} from "@/utils/types/PaginationType";
+import {ErrorType} from "@/utils/types/ErrorType";
+
 export const camelCaseToWords = (text: string = '') => {
     return text.replace(/([A-Z])/g, ' $1').toLowerCase();
 }
@@ -34,6 +40,13 @@ export const getGreeting = () => {
     return "Good " + (hour < 12 && "morning" || hour < 18 && "afternoon" || "evening")
 };
 
+export const splitName = (name: string) => {
+    return name.split(' ')
+};
+
+export const getError = (error: ErrorType): string => {
+    return error.message ?? ''
+};
 
 export const downloadFile = async (response: Response | Blob, fileName: string = 'sample.txt') => {
     try {
@@ -55,3 +68,115 @@ export const isValidEmail = (email: string): boolean => {
     const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
     return emailRegex.test(email);
 };
+
+export const formatAmount = (amount: number | string = 0, currency: string = 'GHS') => {
+    return `${currency}  ${(new Intl.NumberFormat('en-GH', {
+        style: 'decimal',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    }).format(Number(amount)))}`
+}
+
+export const calculateDateRange = (range: number = 5, customStart: boolean = false, whereStart: DateTimeUnit = 'month') => {
+    const endDate = DateTime.local();
+    const dateDifference = endDate.minus({months: range})
+    const startDate = customStart ? dateDifference.startOf(whereStart) : dateDifference
+    return {
+        startDate: startDate.toISODate(),
+        endDate: endDate.toISODate(),
+    };
+}
+
+export const getGraphTemplate = () => {
+    const {startDate, endDate} = calculateDateRange()
+
+    const template: MonthlyTransactionSummaryType = {};
+
+    let currentDate = DateTime.fromFormat(startDate ?? '', 'yyyy-MM-dd').toJSDate();
+    let endPeriod = DateTime.fromFormat(endDate ?? '', 'yyyy-MM-dd').toJSDate();
+    while (currentDate <= endPeriod) {
+        const monthName = new Intl.DateTimeFormat('en-US', {month: 'long'}).format(currentDate);
+
+        template[monthName.toLowerCase()] = {
+            disbursementCount: 0,
+            collectionCount: 0,
+            collectionValue: 0,
+            disbursementValue: 0,
+        };
+
+        currentDate.setMonth(currentDate.getMonth() + 1);
+    }
+    return template;
+};
+
+export const plotGraphData = (data: MonthlyTransactionSummaryType = {}) => {
+    const graphTemplate = getGraphTemplate();
+
+    return Object.entries(graphTemplate).reduce(
+        (accumulator, [month, values]) => {
+            const {collectionCount, collectionValue, disbursementCount, disbursementValue} = values;
+            const period = capitalizeFirstLetter(month.slice(0, 3));
+
+            const volumeEntry = {
+                name: period,
+                collections: data[month]?.collectionCount || collectionCount,
+                disbursements: data[month]?.disbursementCount || disbursementCount,
+            };
+
+            const valueEntry = {
+                name: period,
+                collections: data[month]?.collectionValue
+                    ? Number(formatAmount(String(data[month].collectionValue), ''))
+                    : Number(collectionValue),
+                disbursements: data[month]?.disbursementValue
+                    ? Number(formatAmount(String(data[month].disbursementValue), ''))
+                    : Number(disbursementValue),
+            };
+
+            accumulator.volume.push(volumeEntry);
+            accumulator.value.push(valueEntry);
+            return accumulator;
+        },
+        {volume: [], value: []} as { volume: any[]; value: any[] }
+    );
+};
+
+export const getJSONHeaders = (bearerToken: string = '') => {
+    return {
+        // Authorization: `Bearer ${bearerToken}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-Admin-Header': 'bsl-wallet-admin',
+    }
+}
+
+export const extractPaginationData = (meta: ApiMetaType): PaginationType => {
+    return {
+        firstPage: meta.onFirstPage,
+        lastPage: meta.onLastPage,
+        from: 1,
+        to: meta.pageSize ?? 0,
+        totalElements: meta.total ?? 0,
+        pageSize: meta.pageSize,
+        previousPage: meta.previousPage,
+        nextPage: meta.nextPage,
+        currentPage: meta.currentPage,
+        numberOfRecords: meta.numberOfRecords
+    }
+};
+
+export const getEmptyPaginationData = (): PaginationType => {
+    return {
+        from: 0,
+        to: 0,
+        pageSize: 0,
+        lastPage: false,
+        firstPage: false,
+        previousPage: null,
+        nextPage: null,
+        currentPage: null,
+        totalElements: 0,
+        numberOfRecords: 0
+    }
+};
+

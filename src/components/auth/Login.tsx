@@ -8,27 +8,35 @@ import Button from "@/components/forms/Button";
 import Link from "next/link";
 import CheckboxInput from "@/components/forms/CheckboxInput";
 import TextInput from "@/components/forms/TextInput";
+import Alert from "@/components/Alert";
+import Loader from "@/components/Loader";
+import AuthLayout from "@/components/layout/AuthLayout";
+import {useAdminStore} from "@/store/AdminStore";
+import {useDashboardStore} from "@/store/DashboardStore";
 
 export default function Login() {
-    const router = useRouter();
-    const [formData, setFormData] = useState({email: '', password: ''});
-    const [hasError, setHasError] = useState<boolean | undefined>(false);
-    const [error, setError] = useState<string | null>(null);
+    const router = useRouter()
+    const [formData, setFormData] = useState({email: '', password: ''})
+    const [hasError, setHasError] = useState<boolean | undefined>(false)
+    const [error, setError] = useState<string | null>(null)
+    const [loading, setLoading] = useState<boolean>(false)
     const {
-        user,
-        setUser,
+        authenticatedAdmin,
+        setAuthenticatedAdmin,
         setIsAuthenticated,
-    } = useUserStore();
-    const {resetTransactionStore} = useTransactionStore();
+        resetAdminStore,
+    } = useAdminStore()
+    const {resetTransactionStore} = useTransactionStore()
+    const {mainMenuItemsList, setActiveSidebarMenu} = useDashboardStore();
 
     useEffect(() => {
         handleUserLogout()
     }, [])
 
     const handleUserLogout = () => {
-        if (user?.authToken) {
+        if (authenticatedAdmin?.bearerToken) {
             if (resetTransactionStore) resetTransactionStore()
-            // if (resetUserStore) resetUserStore()
+            if (resetAdminStore) resetAdminStore()
         }
     }
 
@@ -42,89 +50,84 @@ export default function Login() {
 
         if (hasError) return;
         setError('')
+        setLoading(true)
 
-        return router.push('/overview')
-        // login(formData.email, formData.password)
-        //     .then(async (response) => {
-        //         const feedback = (await response.json())
-        //         if (response.ok) {
-        //             const {data} = feedback;
-        //             if (setUser) setUser({
-        //                 externalId: data.id,
-        //                 email: data.email,
-        //                 firstName: data.firstName,
-        //                 lastName: data.lastName,
-        //                 authToken: data.token,
-        //                 roles: data.roles
-        //             })
-        //             if (setIsAuthenticated) setIsAuthenticated(true)
-        //             if (setMerchant) setMerchant(data.merchant)
-        //             return router.push('/overview')
-        //         }
-        //
-        //         return setError(feedback)
-        //     })
-        //     .catch((error) => {
-        //         setError(error.message)
-        //     })
+        login(formData.email, formData.password)
+            .then(async (response) => {
+                const feedback = (await response.json())
+                setLoading(false)
+                if (response.ok && feedback.success) {
+                    const {data} = feedback;
+                    if (setAuthenticatedAdmin) setAuthenticatedAdmin({
+                        externalId: data.externalId,
+                        email: data.email,
+                        name: data.name,
+                        status: data.status,
+                        userType: data.userType,
+                        bearerToken: data.bearerToken,
+                        createdAt: data.createdAt
+                    })
+
+                    if (setIsAuthenticated) setIsAuthenticated(true)
+                    if (setActiveSidebarMenu) setActiveSidebarMenu(mainMenuItemsList[0]);
+                    return router.push('/overview')
+                }
+                return setError(feedback.message)
+            })
+            .catch((error) => {
+                setLoading(false)
+                setError(error.message)
+            })
     };
 
     return (
-        <>
-            <div className="bg-slate-900 flex h-screen flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
-                <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
+        <AuthLayout title="Sign in to your account">
+            <form className="space-y-5 mb-5" action="#" method="POST" onSubmit={handleSubmit}>
+                {error && <Alert alertType="error" description={error}/>}
+                <TextInput
+                    label="email"
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="email"
+                    required={true}
+                    value={formData.email}
+                    onInputChange={handleInputChange}
+                    hasError={setHasError} autoComplete="false"/>
+                <TextInput
+                    label="password"
+                    id="password"
+                    name="password"
+                    type="password"
+                    placeholder="password"
+                    required={true}
+                    value={formData.password}
+                    onInputChange={handleInputChange}
+                    hasError={setHasError} autoComplete="false"/>
 
-                    <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-                        <form className="space-y-6" action="#" method="POST" onSubmit={handleSubmit}>
-                            <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                                <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                                    Sign in to your account
-                                </h2>
-                            </div>
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                        <CheckboxInput label="Remember me"/>
+                    </div>
 
-                            <TextInput
-                                label="email"
-                                id="email"
-                                name="email"
-                                type="email"
-                                placeholder="email"
-                                required={true}
-                                onInputChange={handleInputChange}
-                                hasError={setHasError} autoComplete="false"/>
-                            <TextInput
-                                label="password"
-                                id="password"
-                                name="password"
-                                type="password"
-                                placeholder="password"
-                                required={true}
-                                onInputChange={handleInputChange}
-                                hasError={setHasError} autoComplete="false"/>
-
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center">
-                                    <CheckboxInput label="Remember me"/>
-                                </div>
-
-                                <div className="text-sm leading-6">
-                                    <Link href="auth/forgot-password"
-                                          className="font-semibold text-md">
-                                        Forgot password?
-                                    </Link>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col gap-y-2">
-                                <Button styleType="primary" customStyles="justify-center p-4 md:p-5 rounded-lg"
-                                        buttonType="submit"
-                                        disabled={hasError}>
-                                    <span className="flex self-center">Sign in</span>
-                                </Button>
-                            </div>
-                        </form>
+                    <div className="text-sm leading-6">
+                        <Link href="/auth/forgot-password"
+                              className="font-semibold text-md">
+                            Forgot password?
+                        </Link>
                     </div>
                 </div>
-            </div>
-        </>
+
+                <div className="flex flex-col gap-y-2">
+                    <Button styleType="primary" customStyles="justify-center p-4 md:p-5 rounded-lg mt-3"
+                            buttonType="submit"
+                            disabled={loading}>
+                        {loading && <Loader type="default" customClasses="relative"
+                                            customAnimationClasses="w-10 h-10 text-white dark:text-gray-600 fill-slate-800"/>}
+                        {!loading && <span className="flex self-center">Sign in</span>}
+                    </Button>
+                </div>
+            </form>
+        </AuthLayout>
     )
 }
