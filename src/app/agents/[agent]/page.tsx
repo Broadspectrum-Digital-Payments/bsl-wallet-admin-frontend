@@ -1,13 +1,12 @@
 "use client"
 import React from 'react'
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import {useParams} from "next/navigation";
-import CustomerShow from "@/components/customers/CustomerShow";
+import AgentShow from "@/components/agents/AgentShow";
 
 const CustomersPage: React.FC = () => {
     return (
         <DashboardLayout>
-           <CustomerShow/>
+           <AgentShow/>
         </DashboardLayout>
     )
 }
