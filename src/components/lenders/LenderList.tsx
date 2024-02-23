@@ -1,10 +1,15 @@
 import Table from "@/components/table/Table";
 import TData from "@/components/table/TData";
 import Pagination from "@/components/table/Pagination";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
+import Badge from "@/components/Badge";
+import {useAdminStore} from "@/store/AdminStore";
+import {extractPaginationData} from "@/utils/helpers";
+import {useLenderStore} from "@/store/LenderStore";
+import {listLenders} from "@/api/lenders";
 
 const LenderList: React.FC = () => {
     const router = useRouter();
@@ -16,24 +21,47 @@ const LenderList: React.FC = () => {
         {label: 'Status', classes: 'px-3 py-3.5 text-left'},
         {label: 'Action', classes: 'relative py-3.5 pl-3 pr-4 sm:pr-0'},
     ]
-    const lenders = [
-        {externalId: 'bhjsdhvsg', name: 'Lindsay Walton', phone: '0244554456', status: 'Active'},
-        {externalId: 'ajhvskdaj', name: 'Joana Mensah', phone: '0244538475', status: 'Inactive'}
-    ]
+    const {lenders, setLenders} = useLenderStore()
+    const {authenticatedAdmin} = useAdminStore()
+
+    useEffect(() => {
+        fetchLenders()
+    }, [])
+
+    const fetchLenders = (params: string = '') => {
+        listLenders(authenticatedAdmin?.bearerToken, params)
+            .then(async response => {
+                const feedback = await response.json();
+                if (response.ok && feedback.success) {
+                    const {users, meta} = feedback.data
+                    const data = users
+
+                    const pagination = extractPaginationData(meta)
+                    if (setLenders) setLenders({pagination, data});
+                }
+            })
+            .catch((error) => {
+                console.log('error: ', error)
+            })
+    }
 
     const handlePrevious = () => {
-        // if (collections) {
-        //     const {pagination} = collections
-        //     const previousPageNumber = pagination.pageNumber - 1
-        //     return pagination.firstPage ? null : getCollectionTransactions(`rows=${pageOption.value}&pageNumber=${previousPageNumber}`)
-        // }
+        if (lenders) {
+            const {pagination} = lenders
+            if (pagination.currentPage) {
+                const previousPageNumber = pagination.currentPage - 1
+                return pagination.firstPage ? null : fetchLenders(`perPage=${pageOption.value}&page=${previousPageNumber}`)
+            }
+        }
     }
     const handleNext = () => {
-        // if (collections) {
-        //     const {pagination} = collections
-        //     const nextPageNumber = pagination.pageNumber + 1
-        //     return pagination.lastPage ? null : getCollectionTransactions(`rows=${pageOption.value}&pageNumber=${nextPageNumber}`)
-        // }
+        if (lenders) {
+            const {pagination} = lenders
+            if (pagination.currentPage) {
+                const nextPageNumber = pagination.currentPage + 1
+                return pagination.lastPage ? null : fetchLenders(`perPage=${pageOption.value}&page=${nextPageNumber}`)
+            }
+        }
     }
 
     const [pageOption, setPageOption] = useState<IListBoxItem>({
@@ -59,16 +87,18 @@ const LenderList: React.FC = () => {
                         headers: tableHeaders,
                         body:
                             <>
-                                {lenders.map((lender) => (
+                                {lenders && lenders.data.map((lender) => (
                                     <tr key={lender.externalId}>
                                         <TData label={lender.externalId}
                                                customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
                                         <TData label={lender.name}
                                                customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                        <TData label={lender.phone}
+                                        <TData label={lender.phoneNumber}
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                        <TData label={lender.status}
-                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                        <TData label=""
+                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
+                                            <Badge text={lender.status ?? ''}></Badge>
+                                        </TData>
 
                                         <TData label=""
                                                customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
@@ -86,7 +116,11 @@ const LenderList: React.FC = () => {
                 <Pagination
                     perPageOptions={perPageOptions}
                     setPageOption={setPageOption}
-                    pageOption={pageOption}/>
+                    pageOption={pageOption}
+                    handlePrevious={handlePrevious}
+                    handleNext={handleNext}
+                    pagination={lenders?.pagination}
+                />
             </div>
         </>
     )
