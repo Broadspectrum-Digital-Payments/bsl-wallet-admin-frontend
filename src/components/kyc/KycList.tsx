@@ -109,6 +109,7 @@ const KycList: React.FC = () => {
                 </Table>
                 <Pagination
                     perPageOptions={perPageOptions}
+                    pagination={users.pagination}
                     setPageOption={setPageOption}
                     pageOption={pageOption}/>
             </div>

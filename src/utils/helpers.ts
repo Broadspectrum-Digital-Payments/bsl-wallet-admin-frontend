@@ -74,7 +74,7 @@ export const formatAmount = (amount: number | string = 0, currency: string = 'GH
         style: 'decimal',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
-    }).format(Number(amount)/100))}`
+    }).format(Number(amount) / 100))}`
 }
 
 export const calculateDateRange = (range: number = 5, customStart: boolean = false, whereStart: DateTimeUnit = 'month') => {
@@ -152,16 +152,16 @@ export const getJSONHeaders = (bearerToken: string = '') => {
 
 export const extractPaginationData = (meta: ApiMetaType): PaginationType => {
     return {
+        from: meta.from,
+        to: meta.to,
+        totalElements: meta.total,
         firstPage: meta.onFirstPage,
-        lastPage: meta.onLastPage,
-        from: 1,
-        to: meta.pageSize ?? 0,
-        totalElements: meta.total ?? 0,
-        pageSize: meta.pageSize,
-        previousPage: meta.previousPage,
         nextPage: meta.nextPage,
+        previousPage: meta.previousPage,
         currentPage: meta.currentPage,
-        numberOfRecords: meta.numberOfRecords
+        lastPage: meta.onLastPage,
+        pageSize: meta.numberOfRecords,
+        rows: meta.pageSize
     }
 };
 
@@ -169,14 +169,14 @@ export const getEmptyPaginationData = (): PaginationType => {
     return {
         from: 0,
         to: 0,
-        pageSize: 0,
-        lastPage: false,
-        firstPage: false,
-        previousPage: null,
-        nextPage: null,
-        currentPage: null,
         totalElements: 0,
-        numberOfRecords: 0
+        firstPage: false,
+        nextPage: null,
+        previousPage: null,
+        currentPage: null,
+        lastPage: false,
+        pageSize: 0,
+        rows: 0
     }
 };
 

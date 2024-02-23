@@ -17,18 +17,27 @@ import {DropdownInput} from "@/components/forms/DropdownInput";
 import {AdminType} from "@/utils/types/AdminType";
 import Badge from "@/components/Badge";
 import Link from "next/link";
+import {FilterQueryType} from "@/utils/types/FilterQueryType";
+import Toast from "@/components/Toast";
 
 const AdminList: React.FC = () => {
     const [formData, setFormData] = useState<AdminType>({externalId: '', name: '', email: '', status: ''});
     const [hasError, setHasError] = useState<boolean | undefined>(false);
     const [error, setError] = useState<string | null>(null);
+    const [toastInfo, setToastInfo] = useState<{
+        type: string,
+        description: string,
+    }>({
+        type: '',
+        description: '',
+    });
     const [selectedAdmin, setSelectedAdmin] = useState<AdminType | null>({
         externalId: '',
         name: '',
         email: '',
         status: ''
     });
-
+    const [filterQueryString, setFilterQueryString] = useState<string>('pageSize=10');
     const tableHeaders = [
         {label: 'Id', classes: 'py-3.5 pl-4 pr-3 text-left  sm:pl-0'},
         {label: 'Name', classes: 'hidden px-3 py-3.5 text-left lg:table-cell'},
@@ -39,7 +48,7 @@ const AdminList: React.FC = () => {
 
     const {admins, setAdmins, authenticatedAdmin} = useAdminStore()
     useEffect(() => {
-        fetchAdmins()
+        fetchAdmins(filterQueryString)
     }, [])
 
     const fetchAdmins = (params: string = '') => {
@@ -62,7 +71,7 @@ const AdminList: React.FC = () => {
             const {pagination} = admins
             if (pagination.currentPage) {
                 const previousPageNumber = pagination.currentPage - 1
-                return pagination.firstPage ? null : fetchAdmins(`perPage=${pageOption.value}&page=${previousPageNumber}`)
+                return pagination.firstPage ? null : fetchAdmins(`pageSize=${pageOption.value}&page=${previousPageNumber}`)
             }
         }
     }
@@ -71,7 +80,7 @@ const AdminList: React.FC = () => {
             const {pagination} = admins
             if (pagination.currentPage) {
                 const nextPageNumber = pagination.currentPage + 1
-                return pagination.lastPage ? null : fetchAdmins(`perPage=${pageOption.value}&page=${nextPageNumber}`)
+                return pagination.lastPage ? null : fetchAdmins(`pageSize=${pageOption.value}&page=${nextPageNumber}`)
             }
         }
     }
@@ -85,6 +94,8 @@ const AdminList: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
 
     const perPageOptions: IListBoxItem [] = [
+        {label: '2', value: '2'},
+        {label: '5', value: '5'},
         {label: '10', value: '10'},
         {label: '20', value: '20'},
     ]
@@ -108,9 +119,10 @@ const AdminList: React.FC = () => {
                 const feedback = await response.json()
                 setLoading(false)
                 if (response.ok && feedback.success) {
-                    const {data} = feedback
+                    const {data, message} = feedback
                     if (setAdmins) setAdmins({pagination: admins.pagination, data: [data, ...admins.data]})
-                    return setModalOpen(false)
+                    setModalOpen(false)
+                    return setToastInfo({type: 'success', description: message})
                 }
                 setError(getError(feedback))
             }).catch((error) => console.log('error: ', error))
@@ -120,7 +132,6 @@ const AdminList: React.FC = () => {
         updateAdmin(authenticatedAdmin?.bearerToken, authenticatedAdmin?.externalId, {...formData})
             .then(async response => {
                 const feedback = await response.json();
-                console.log(feedback)
                 setLoading(false)
 
                 if (response.ok && feedback.success) {
@@ -132,6 +143,8 @@ const AdminList: React.FC = () => {
                         if (setAdmins) setAdmins({pagination: admins.pagination, data: updatedAdminsData});
                     }
                     setModalOpen(false)
+                    console.log(feedback)
+                    return setToastInfo({type: 'success', description: feedback.message})
                 }
                 setError(getError(feedback))
             }).catch((error) => {
@@ -152,6 +165,41 @@ const AdminList: React.FC = () => {
 
     const statuses: DropdownInputItemType[] = [{name: 'Active', id: 'Active'}, {name: 'Inactive', id: 'Inactive'}]
     const [selectedStatus, setSelectedStatus] = useState(statuses[0])
+
+    const handleSetPageOption = (pageOption: IListBoxItem) => {
+        const queryString = prepareFilterQueryString({pageSize: pageOption.value})
+        setFilterQueryString(queryString);
+        fetchAdmins(queryString)
+        setPageOption(pageOption)
+    }
+
+    const prepareFilterQueryString = (queryObject: FilterQueryType) => {
+        const queryParams = filterQueryString.split('&')
+            .map(param => param.split('='))
+            .reduce((obj: Record<string, string>, [key, value]) => {
+                if (key !== '' && value != undefined)
+                    return {...obj, [key]: value};
+
+                return obj;
+            }, {});
+
+        const {startDate, endDate, ...remainingParams} = queryParams;
+
+        const mergedParams = {
+            ...remainingParams,
+            ...queryObject,
+        };
+
+        const filteredParams = Object.fromEntries(
+            Object.entries(mergedParams).filter(([key, value]) => {
+                return ![undefined, ''].includes(String(value));
+            })
+        );
+
+        return Object.entries(filteredParams)
+            .map(([key, value]) => `${key}=${value}`)
+            .join('&');
+    };
 
     return (
         <>
@@ -190,7 +238,7 @@ const AdminList: React.FC = () => {
                 </Table>
                 <Pagination
                     perPageOptions={perPageOptions}
-                    setPageOption={setPageOption}
+                    setPageOption={handleSetPageOption}
                     pageOption={pageOption}
                     handlePrevious={handlePrevious}
                     handleNext={handleNext}
@@ -257,6 +305,8 @@ const AdminList: React.FC = () => {
                     </div>
                 </div>
             </Modal>
+
+            {toastInfo.type && <Toast toastType={toastInfo.type} toastDescription={toastInfo.description}/>}
         </>
     )
 }
