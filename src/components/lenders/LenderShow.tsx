@@ -378,7 +378,7 @@ const LenderShow: React.FC = () => {
                 </main>
             </div>
 
-            {/*{toastInfo.type && <Toast toastType={toastInfo.type} toastDescription={toastInfo.description}/>}*/}
+            {toastInfo.type && <Toast toastType={toastInfo.type} toastDescription={toastInfo.description}/>}
 
         </>
     )
