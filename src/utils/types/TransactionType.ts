@@ -21,7 +21,6 @@ export type TransactionType = {
     batchExternalId?: string | null
     emailPaymentLink?: string | null,
     fee?: number,
-    stan?: string,
     currency?: string
 
     id?: string,
