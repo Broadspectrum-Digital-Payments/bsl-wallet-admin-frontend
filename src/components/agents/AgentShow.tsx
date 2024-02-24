@@ -4,10 +4,12 @@ import {useParams} from "next/navigation";
 import Button from "@/components/forms/Button";
 import Loader from "@/components/Loader";
 import KycApprovalDecision from "@/components/kyc/KycApprovalDecision";
+import {useAgentStore} from "@/store/AgentStore";
+import {formatAmount, stringToTitleCase} from "@/utils/helpers";
 
 const AgentShow: React.FC = () => {
     const [activeSection, setActiveSection] = useState('Account');
-    const [customer, setCustomer] = useState({
+    const [formData, setFormData] = useState({
         externalId: '',
         name: '',
         ghanaCardNumber: '',
@@ -16,8 +18,10 @@ const AgentShow: React.FC = () => {
         status: '',
         kycStatus: '',
         actualBalance: 0,
-        availableBalance: 0
+        availableBalance: 0,
+        createdAt: ''
     });
+    const {agent} = useAgentStore()
     const [hasError, setHasError] = useState<boolean | undefined>(false);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -27,35 +31,17 @@ const AgentShow: React.FC = () => {
         {name: 'Loans', href: '#', current: false},
     ]
 
-    const agentId = useParams()?.agent
-
     const handleNavigationClick = (sectionName: string) => {
         setActiveSection(sectionName);
     };
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = event.target;
-        setCustomer({...customer, [name]: value});
+        setFormData({...formData, [name]: value});
     };
 
-    const handleUpdateCustomer = () => {
-
-    }
-
-    const resolveDocumentName = (name: string) => {
-        let resolvedName = name
-        switch (name) {
-            case 'ghana-card-back':
-                resolvedName = 'Ghana Card Back'
-                break
-            case 'ghana-card-front':
-                resolvedName = 'Ghana Card Front'
-                break
-            default:
-                resolvedName = 'Selfie'
-        }
-
-        return resolvedName
+    const handleUpdateCustomer: React.FormEventHandler = (event) => {
+        event.preventDefault()
     }
 
     const documents = [
@@ -91,7 +77,6 @@ const AgentShow: React.FC = () => {
             <div className="">
                 <main>
                     <header className="border-b border-white/5">
-                        {/* Secondary navigation */}
                         <nav className="flex overflow-x-auto py-4">
                             <ul
                                 role="list"
@@ -128,7 +113,7 @@ const AgentShow: React.FC = () => {
                                                 name="name"
                                                 type="text"
                                                 placeholder="Name"
-                                                value={customer.name}
+                                                value={agent.name}
                                                 required={true}
                                                 onInputChange={handleInputChange}
                                                 hasError={setHasError}
@@ -143,7 +128,7 @@ const AgentShow: React.FC = () => {
                                                 name="phoneNumber"
                                                 type="text"
                                                 placeholder="Phone Number"
-                                                value={customer.phoneNumber}
+                                                value={agent.phoneNumber}
                                                 required={true}
                                                 onInputChange={handleInputChange}
                                                 hasError={setHasError}
@@ -160,7 +145,7 @@ const AgentShow: React.FC = () => {
                                                 name="ghanaCardNumber"
                                                 type="text"
                                                 placeholder="Ghana Card Number"
-                                                value={customer.ghanaCardNumber}
+                                                value={agent.ghanaCardNumber}
                                                 required={true}
                                                 onInputChange={handleInputChange}
                                                 hasError={setHasError}
@@ -176,7 +161,7 @@ const AgentShow: React.FC = () => {
                                                 name="actualBalance"
                                                 type="text"
                                                 placeholder="Actual Balance"
-                                                value={customer.actualBalance.toFixed(2)}
+                                                value={formatAmount(agent.actualBalance, '')}
                                                 required={true}
                                                 onInputChange={handleInputChange}
                                                 hasError={setHasError}
@@ -194,7 +179,7 @@ const AgentShow: React.FC = () => {
                                                 name="availableBalance"
                                                 type="text"
                                                 placeholder="Actual Balance"
-                                                value={customer.actualBalance.toFixed(2)}
+                                                value={formatAmount(agent.actualBalance, '')}
                                                 required={true}
                                                 onInputChange={handleInputChange}
                                                 hasError={setHasError}
@@ -210,7 +195,7 @@ const AgentShow: React.FC = () => {
                                                 name="kycStatus"
                                                 type="text"
                                                 placeholder="KYC Status"
-                                                value={customer.kycStatus}
+                                                value={agent.kycStatus}
                                                 required={true}
                                                 onInputChange={handleInputChange}
                                                 hasError={setHasError}
@@ -228,7 +213,7 @@ const AgentShow: React.FC = () => {
                                             {'Save'}
                                             {loading && <Loader type="default"
                                                                 customClasses="relative"
-                                                                customAnimationClasses="w-10 h-10 text-white dark:text-gray-600 fill-purple-900"
+                                                                customAnimationClasses="w-10 h-5 text-white dark:text-gray-600 fill-purple-900"
                                             />}
                                         </Button>
                                     </div>
@@ -257,7 +242,7 @@ const AgentShow: React.FC = () => {
                                                     <img className="aspect-[3/2] w-full rounded-2xl object-cover"
                                                          src={document.url}
                                                          alt=""/>
-                                                    <h3 className="mt-6 text-lg font-semibold leading-8 tracking-tight text-gray-900">{resolveDocumentName(document.name)}</h3>
+                                                    <h3 className="mt-6 text-lg font-semibold leading-8 tracking-tight text-gray-900">{stringToTitleCase(document.name)}</h3>
                                                     <p className="text-base leading-7 text-gray-600"> Uploaded
                                                         Date: {document.createdAt}</p>
                                                 </li>
@@ -265,7 +250,8 @@ const AgentShow: React.FC = () => {
                                         </ul>
                                     </div>
 
-                                    <KycApprovalDecision onApprove={handleApproveKyc} onReject={handleRejectKyc}></KycApprovalDecision>
+                                    <KycApprovalDecision onApprove={handleApproveKyc}
+                                                         onReject={handleRejectKyc}/>
 
                                 </div>
                             </div>
