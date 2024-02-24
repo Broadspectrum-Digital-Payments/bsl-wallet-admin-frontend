@@ -146,7 +146,7 @@ const LenderShow: React.FC = () => {
     const handleStatusChange = (e: ChangeEvent<HTMLSelectElement>) => {
         const newStatus = e.target.value;
         setSelectedStatus(newStatus);
-        setSPreviousStatus(lender.status)
+        setSPreviousStatus(lender?.status ?? '')
 
         lender.status = newStatus
     }
@@ -154,7 +154,7 @@ const LenderShow: React.FC = () => {
     const handleKycStatusChange = (e: ChangeEvent<HTMLSelectElement>) => {
         const newKycStatus = e.target.value;
         setSelectedKycStatus(newKycStatus);
-        setPreviousKycStatus(lender.kycStatus)
+        setPreviousKycStatus(lender?.kycStatus ?? '')
 
         lender.kycStatus = newKycStatus
     }
@@ -302,12 +302,12 @@ const LenderShow: React.FC = () => {
 
                                         <div className="flex-1 mr-4">
 
-                                            {lender &&  <CustomSelectInput options={statuses} onChange={handleStatusChange} value={lender.status}  label="Status"/>}
+                                            {lender &&  <CustomSelectInput options={statuses} onChange={handleStatusChange} value={lender.status ?? ''}  label="Status"/>}
 
                                         </div>
 
                                         <div className="flex-1">
-                                            {lender &&  <CustomSelectInput options={kycStatuses} onChange={handleKycStatusChange} value={lender.kycStatus}  label="Kyc Status"/>}
+                                            {lender &&  <CustomSelectInput options={kycStatuses} onChange={handleKycStatusChange} value={lender.kycStatus ?? ''}  label="Kyc Status"/>}
                                         </div>
                                     </div>
 
