@@ -13,6 +13,7 @@ import Loader from "@/components/Loader";
 import AuthLayout from "@/components/layout/AuthLayout";
 import {useAdminStore} from "@/store/AdminStore";
 import {useDashboardStore} from "@/store/DashboardStore";
+import {capitalizeFirstLetter} from "@/utils/helpers";
 
 export default function Login() {
     const router = useRouter()
@@ -20,6 +21,7 @@ export default function Login() {
     const [hasError, setHasError] = useState<boolean | undefined>(false)
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState<boolean>(false)
+    const [activeUser, setActiveUser] = useState<string>('admin')
     const {
         authenticatedAdmin,
         setAuthenticatedAdmin,
@@ -45,6 +47,8 @@ export default function Login() {
         setFormData({...formData, [name]: value});
     };
 
+    const resolveUserType = () => activeUser === 'admin' ? 'lender' : 'admin'
+
     const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
         event.preventDefault();
 
@@ -52,21 +56,32 @@ export default function Login() {
         setError('')
         setLoading(true)
 
-        login(formData.email, formData.password)
+        login(formData.email, formData.password, activeUser)
             .then(async (response) => {
                 const feedback = (await response.json())
                 if (response.ok && feedback.success) {
                     const {data} = feedback;
-                    if (setAuthenticatedAdmin) setAuthenticatedAdmin({
+
+                    const authData = {
                         externalId: data.externalId,
                         email: data.email,
                         name: data.name,
                         status: data.status,
-                        userType: data.userType,
                         bearerToken: data.bearerToken,
-                        createdAt: data.createdAt
-                    })
+                        createdAt: data.createdAt,
+                        userType: activeUser === 'lender' ? data.type : data.userType,
+                    };
 
+                    if (activeUser === 'lender') {
+                        Object.assign(authData, {
+                            ghanaCardNumber: data.ghanaCardNumber,
+                            phoneNumber: data.phoneNumber,
+                            actualBalance: data.actualBalance,
+                            availableBalance: data.availableBalance,
+                        });
+                    }
+
+                    if (setAuthenticatedAdmin) setAuthenticatedAdmin(authData)
                     if (setIsAuthenticated) setIsAuthenticated(true)
                     if (setActiveSidebarMenu) setActiveSidebarMenu(mainMenuItemsList[0]);
                     return router.push('/overview')
@@ -80,8 +95,14 @@ export default function Login() {
             })
     };
 
+    const handleSwitchLogin = () => {
+        console.log('in hreer')
+        console.log(resolveUserType())
+        resolveUserType() === 'lender' ? setActiveUser('lender') : setActiveUser('admin')
+    }
+
     return (
-        <AuthLayout title="Sign in to your account">
+        <AuthLayout title={`${capitalizeFirstLetter(activeUser)} Login`}>
             <form className="space-y-5 mb-5" action="#" method="POST" onSubmit={handleSubmit}>
                 {error && <Alert alertType="error" description={error}/>}
                 <TextInput
@@ -128,6 +149,14 @@ export default function Login() {
                     </Button>
                 </div>
             </form>
+
+            <p className="mt-10 text-center text-sm text-gray-500">
+                Not an {activeUser}?{' '}
+                <Link onClick={handleSwitchLogin} href=""
+                      className="font-semibold leading-6 text-slate-900 hover:text-slate-500">
+                    Login as <span className="capitalize">{resolveUserType()}</span>
+                </Link>
+            </p>
         </AuthLayout>
     )
 }
