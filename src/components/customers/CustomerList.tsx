@@ -4,12 +4,13 @@ import Pagination from "@/components/table/Pagination";
 import React, {useEffect, useState} from "react";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
 import Link from "next/link";
-import {extractPaginationData, getError, prepareFilterQueryString} from "@/utils/helpers";
+import {extractPaginationData, prepareFilterQueryString} from "@/utils/helpers";
 import {listUsers} from "@/api/user";
 import {useCustomerStore} from "@/store/CustomerStore";
 import Badge from "@/components/Badge";
 import TextInput from "@/components/forms/TextInput";
 import Svg from "@/components/Svg";
+import ListBox from "@/components/forms/ListBox";
 
 const CustomerList: React.FC = () => {
     const tableHeaders = [
@@ -30,7 +31,6 @@ const CustomerList: React.FC = () => {
 
     const [searchNameTerm, setSearchNameTerm] = useState('');
     const [searchPhoneTerm, setSearchPhoneTerm] = useState('');
-
 
 
     const fetchCustomers = (params: string = 'type=user') => {
@@ -71,7 +71,6 @@ const CustomerList: React.FC = () => {
     const [filterQueryString, setFilterQueryString] = useState<string>('type=user&pageSize=10');
 
 
-
     const handleSetPageOption = (pageOption: IListBoxItem) => {
         const queryString = prepareFilterQueryString({pageSize: pageOption.value}, filterQueryString)
         setFilterQueryString(queryString);
@@ -103,27 +102,70 @@ const CustomerList: React.FC = () => {
         fetchCustomers(`type=user&phoneNumber=${search}`)
     }
 
+
+    const dropdownData: IListBoxItem[] = [
+        {label: 'select status', value: 'select status'},
+        {label: 'created', value: 'created'},
+        {label: 'activated', value: 'activated'},
+        {label: 'deactivated', value: 'deactivated'},
+        {label: 'All Status', value: ''},
+    ]
+
+    const [statusFilter, setStatusFilter] = useState<IListBoxItem>(dropdownData[0]);
+    const [disableStatusInput, setDisableStatusIdInput] = useState<boolean>(false);
+
+
+    const handleSetStatusFilter = (option: IListBoxItem) => {
+        setStatusFilter(option)
+
+        setDisableStatusIdInput(false)
+
+        if (option.value === 'All Status') {
+            fetchCustomers(`type=user`)
+            return
+        }
+
+        fetchCustomers(`type=user&status=${option.value}`)
+    };
+
     return (
         <div>
-            <div className="w-full ml-auto mb-0 flex">
-            <div className="mr-4">
-                <TextInput label="" id="search" name="search" type="search" placeholder="Search Name" autoComplete=""
-                           value={searchNameTerm}
-                           onInputChange={(e) => handleSearchName(e.target.value)}
-                           customInputClasses="grid ml-auto mr-4">
-                    {{
-                        left: <Svg name="search.svg" customClasses="ml-2"/>
-                    }}
-                </TextInput>
-            </div>
-                <TextInput label="" id="search" name="search" type="search" placeholder="Search Phone" autoComplete=""
-                           value={searchPhoneTerm}
-                           onInputChange={(e) => handleSearchPhoneNumber(e.target.value)}
-                           customInputClasses="grid ml-auto ml-4">
-                    {{
-                        left: <Svg name="search.svg" customClasses="ml-2"/>
-                    }}
-                </TextInput>
+            <div className="grid min-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-12 sm:col-span-full">
+                <div className="sm:col-span-3 mr-4">
+                    <TextInput label="" id="search" name="search" type="search" placeholder="Search Name"
+                               autoComplete=""
+                               value={searchNameTerm}
+                               onInputChange={(e) => handleSearchName(e.target.value)}
+                               customInputClasses="grid ml-auto mr-4">
+                        {{
+                            left: <Svg name="search.svg" customClasses="ml-2"/>
+                        }}
+                    </TextInput>
+                </div>
+
+                <div className="sm:col-span-3">
+                    <TextInput label="" id="search" name="search" type="search" placeholder="Search Phone"
+                               autoComplete=""
+                               value={searchPhoneTerm}
+                               onInputChange={(e) => handleSearchPhoneNumber(e.target.value)}
+                               customInputClasses="grid ml-auto ml-4">
+                        {{
+                            left: <Svg name="search.svg" customClasses="ml-2"/>
+                        }}
+                    </TextInput>
+                </div>
+
+                <div className="sm:col-span-3">
+                    <ListBox
+                        data={dropdownData}
+                        customButtonClasses="p-2 px-3 capitalize truncate"
+                        customClasses="mt-2"
+                        optionSelected={statusFilter}
+                        setOptionSelected={handleSetStatusFilter}
+                        disableFirstKey={true}
+                        disableButton={disableStatusInput}
+                    />
+                </div>
             </div>
 
 
@@ -135,7 +177,7 @@ const CustomerList: React.FC = () => {
                         <>
                             {customers && customers.data.map((customer) => (
                                 <tr key={customer.externalId}>
-                                    <TData label={customer.ghanaCardNumber}
+                                    <TData label={customer.externalId}
                                            customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
                                     <TData label={customer.name}
                                            customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
