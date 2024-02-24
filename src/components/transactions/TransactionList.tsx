@@ -139,8 +139,8 @@ const TransactionList: React.FC = () => {
                         body:
                             <>
                                 {transactions && transactions.data.map((transaction) => (
-                                    <tr key={transaction.externalId}>
-                                        <TData label={transaction.externalId}
+                                    <tr key={transaction.stan}>
+                                        <TData label={transaction.stan}
                                                customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
                                         <TData label={transaction.accountNumber}
                                                customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
