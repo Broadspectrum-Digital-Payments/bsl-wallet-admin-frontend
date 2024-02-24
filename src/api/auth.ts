@@ -12,12 +12,17 @@ export async function createPassword(password: string, confirmPassword: string, 
     });
 }
 
-export async function login(email: string | undefined, password: string | undefined) {
-    return await adminFetcher('v1/login', {
-        method: 'POST',
-        headers: getJSONHeaders(),
-        body: JSON.stringify({email, password})
-    });
+export async function login(email: string | undefined, password: string | undefined, authType: string | undefined) {
+    return authType === 'admin' ? await adminFetcher('v1/login', {
+            method: 'POST',
+            headers: getJSONHeaders(),
+            body: JSON.stringify({email, password})
+        })
+        : await walletFetcher('v1/users/login', {
+            method: 'POST',
+            headers: getJSONHeaders(),
+            body: JSON.stringify({email, password})
+        });
 }
 
 export async function logout(jwtToken: string | undefined) {

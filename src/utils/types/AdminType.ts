@@ -4,7 +4,10 @@ export type AdminType = {
     email?: string,
     status?: string,
     userType?: string,
-    verificationToken?: string,
+    ghanaCardNumber?: string,
+    phoneNumber?: string,
+    actualBalance?: number,
+    availableBalance?: number,
     bearerToken?: string,
     createdAt?: string,
 }
