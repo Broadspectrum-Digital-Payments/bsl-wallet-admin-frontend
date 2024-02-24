@@ -25,11 +25,11 @@ const FilterWrapper: React.FC<IFilterWrapper> = ({onSubmit, onReset, hasError, c
                         <Button buttonType="reset" styleType="tertiary" customStyles="rounded">
                             <span className="font-semibold">Reset</span>
                         </Button>
-                        <Button buttonType="submit" styleType="primary"
-                                customStyles="ml-2 px-5 py-2 rounded truncate"
+                        <Button buttonType="submit" styleType="tertiary"
+                                customStyles="ml-2 px-5 py-2 rounded truncate border border-slate-900"
                                 disabled={hasError}
                         >
-                            <span className="text-sm">Apply Filter</span>
+                            <span className="text-sm font-semibold">Apply Filter</span>
                         </Button>
                     </div>
                 </div>

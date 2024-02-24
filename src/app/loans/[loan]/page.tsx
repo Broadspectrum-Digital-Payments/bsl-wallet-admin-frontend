@@ -1,14 +1,14 @@
 "use client"
 import React from 'react'
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import LoanList from "@/components/loans/LoanList";
+import LoanShow from "@/components/loans/LoanShow";
 
-const LoansPage: React.FC = () => {
+const CustomersPage: React.FC = () => {
     return (
         <DashboardLayout>
-            <LoanList/>
+           <LoanShow/>
         </DashboardLayout>
     )
 }
 
-export default LoansPage
+export default CustomersPage

@@ -162,8 +162,8 @@ export const getJSONHeaders = (bearerToken: string = '') => {
 
 export const extractPaginationData = (meta: ApiMetaType): PaginationType => {
     return {
-        from: meta.from,
-        to: meta.to,
+        from: meta.from ?? 0,
+        to: meta.to ?? 0,
         totalElements: meta.total,
         firstPage: meta.onFirstPage,
         nextPage: meta.nextPage,
