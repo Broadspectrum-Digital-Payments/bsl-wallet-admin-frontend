@@ -3,6 +3,7 @@ import {MonthlyTransactionSummaryType} from "@/utils/types/MonthlyTransactionSum
 import {ApiMetaType} from "@/utils/types/ApiMetaType";
 import {PaginationType} from "@/utils/types/PaginationType";
 import {ErrorType} from "@/utils/types/ErrorType";
+import {FilterQueryType} from "@/utils/types/FilterQueryType";
 
 export const camelCaseToWords = (text: string = '') => {
     return text.replace(/([A-Z])/g, ' $1').toLowerCase();
@@ -79,6 +80,11 @@ export const formatAmount = (amount: number | string = 0, currency: string = 'GH
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
     }).format(Number(amount) / 100))}`
+}
+
+export const formatDate = (dateString: string = '') => {
+    const parsedDate = DateTime.fromISO(dateString, {zone: 'utc'});
+    return parsedDate.toFormat('yyyy-MM-dd HH:mm:ss');
 }
 
 export const calculateDateRange = (range: number = 5, customStart: boolean = false, whereStart: DateTimeUnit = 'month') => {
@@ -187,3 +193,31 @@ export const getEmptyPaginationData = (): PaginationType => {
 export const isObjectEmpty = (obj: Record<string, any>): boolean => {
     return Object.keys(obj).length === 0;
 }
+
+
+export const prepareFilterQueryString = (queryObject: FilterQueryType, filterQueryString: string) => {
+    const queryParams = filterQueryString.split('&')
+        .map(param => param.split('='))
+        .reduce((obj: Record<string, string>, [key, value]) => {
+            if (key !== '' && value != undefined)
+                return {...obj, [key]: value};
+
+            return obj;
+        }, {});
+
+    const {startDate, endDate, ...remainingParams} = queryParams;
+    const mergedParams = {
+        ...remainingParams,
+        ...queryObject,
+    };
+
+    const filteredParams = Object.fromEntries(
+        Object.entries(mergedParams).filter(([key, value]) => {
+            return ![undefined, ''].includes(String(value));
+        })
+    );
+
+    return Object.entries(filteredParams)
+        .map(([key, value]) => `${key}=${value}`)
+        .join('&');
+};
