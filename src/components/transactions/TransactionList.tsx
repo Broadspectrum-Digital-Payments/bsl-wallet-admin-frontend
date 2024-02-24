@@ -12,6 +12,8 @@ import {FilterQueryType} from "@/utils/types/FilterQueryType";
 import FilterWrapper from "@/components/FilterWrapper";
 import TransactionFilter from "@/components/transactions/TransactionFilter";
 import {FilterFormDataType} from "@/utils/types/FilterFormDataType";
+import Link from "next/link";
+import {TransactionType} from "@/utils/types/TransactionType";
 
 const TransactionList: React.FC = () => {
     const tableHeaders = [
@@ -24,6 +26,7 @@ const TransactionList: React.FC = () => {
         {label: 'Created  At', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
         {label: 'Description', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
         {label: 'Status', classes: 'px-3 py-3.5 text-left'},
+        {label: 'Action', classes: 'relative py-3.5 pl-3 pr-4 sm:pr-0'},
     ]
     const [pageOption, setPageOption] = useState<IListBoxItem>({
         label: '10',
@@ -86,6 +89,8 @@ const TransactionList: React.FC = () => {
     const [filterQueryString, setFilterQueryString] = useState<string>('pageSize=10');
     const [hasError, setHasError] = useState<boolean>(true);
 
+    const {setTransaction} = useTransactionStore()
+
     const handleFilterSubmitButtonClicked = (submit: boolean) => {
         setSubmitFilter(submit)
         const queryString = prepareFilterQueryString(formData, filterQueryString)
@@ -116,6 +121,11 @@ const TransactionList: React.FC = () => {
         setFilterQueryString(queryString);
         fetchTransactions(queryString)
         setPageOption(pageOption)
+    }
+
+    const handleShowDetails = (transaction: TransactionType) => {
+        console.log('showing details')
+        console.log(transaction)
     }
 
     return (
@@ -150,7 +160,7 @@ const TransactionList: React.FC = () => {
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
                                         <TData label={`${formatAmount(transaction.balanceAfter)}`}
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                        <TData label={`${transaction.fee}`}
+                                        <TData label={`${formatAmount(transaction.fee)}`}
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
                                         <TData label={transaction.createdAt}
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
@@ -159,6 +169,16 @@ const TransactionList: React.FC = () => {
                                         <TData label=""
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
                                             <Badge text={transaction.status ?? ''} customClasses="capitalize"/>
+                                        </TData>
+                                        <TData label=""
+                                               customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
+
+                                            <Link
+                                                className="text-indigo-600 hover:text-indigo-900"
+                                                onClick={() => setTransaction(transaction)}
+                                                href={`/transactions/${transaction.externalId}`}>
+                                                View <span className="sr-only">, {transaction.amount}</span>
+                                            </Link>
                                         </TData>
                                     </tr>
                                 ))}
