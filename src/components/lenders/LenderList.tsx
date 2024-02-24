@@ -14,7 +14,7 @@ import {FilterFormDataType} from "@/utils/types/FilterFormDataType";
 import FilterWrapper from "@/components/FilterWrapper";
 import LenderFilter from "@/components/lenders/LenderFilter";
 
-const aLenderList: React.FC = () => {
+const LenderList: React.FC = () => {
     const router = useRouter();
 
     const tableHeaders = [
