@@ -96,8 +96,7 @@ export default function Login() {
     };
 
     const handleSwitchLogin = () => {
-        console.log('in hreer')
-        console.log(resolveUserType())
+        setError('')
         resolveUserType() === 'lender' ? setActiveUser('lender') : setActiveUser('admin')
     }
 
