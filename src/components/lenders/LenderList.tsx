@@ -14,7 +14,7 @@ import {FilterFormDataType} from "@/utils/types/FilterFormDataType";
 import FilterWrapper from "@/components/FilterWrapper";
 import LenderFilter from "@/components/lenders/LenderFilter";
 
-const LenderList: React.FC = () => {
+const aLenderList: React.FC = () => {
     const router = useRouter();
 
     const tableHeaders = [
@@ -140,7 +140,7 @@ const LenderList: React.FC = () => {
                         body:
                             <>
                                 {lenders && lenders.data.map((lender) => (
-                                    <tr key={lender.externalId}>
+                                    <tr key={lender.ghanaCardNumber}>
                                         <TData label={lender.ghanaCardNumber}
                                                customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
                                         <TData label={lender.name}
