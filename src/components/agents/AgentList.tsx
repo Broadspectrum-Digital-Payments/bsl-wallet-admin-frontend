@@ -89,7 +89,7 @@ const AgentList: React.FC = () => {
                                            customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
                                     <TData label=""
                                            customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
-                                        <Badge text={agent.status} customClasses="capitalize"/>
+                                        <Badge text={agent.status ?? ''} customClasses="capitalize"/>
                                     </TData>
                                     <TData label={agent.createdAt}
                                            customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>

@@ -40,8 +40,7 @@ const AgentShow: React.FC = () => {
         setFormData({...formData, [name]: value});
     };
 
-    const handleUpdateCustomer: React.FormEventHandler = (event) => {
-        event.preventDefault()
+    const handleUpdateCustomer = () => {
     }
 
     const documents = [
@@ -250,9 +249,7 @@ const AgentShow: React.FC = () => {
                                         </ul>
                                     </div>
 
-                                    <KycApprovalDecision onApprove={handleApproveKyc}
-                                                         onReject={handleRejectKyc}/>
-
+                                    <KycApprovalDecision onApprove={handleApproveKyc} onReject={handleRejectKyc}/>
                                 </div>
                             </div>
                         </div>
