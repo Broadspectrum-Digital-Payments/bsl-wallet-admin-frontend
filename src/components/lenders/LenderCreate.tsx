@@ -12,8 +12,6 @@ const LenderCreate: React.FC = () => {
         phoneNumber: '',
         email: '',
         address: '',
-        businessRegistrationNumber: '',
-        businessCertificate: '',
     });
 
     const [hasError, setHasError] = useState<boolean | undefined>(false);

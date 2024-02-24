@@ -42,7 +42,7 @@ const LenderShow: React.FC = () => {
     const kycStatuses: IListBoxItem[] = [
         {label: 'Queued', value: 'queued'},
         {label: 'Approved', value: 'approved'},
-        {label: 'Rejected', value: 'rejected'},
+        {label: 'Declined', value: 'declined'},
         {label: 'Submitted', value: 'submitted'},
     ]
 
@@ -70,6 +70,9 @@ const LenderShow: React.FC = () => {
                 const feedback = await response.json();
                 if (response.ok && feedback.success) {
                     const {data} = feedback
+
+                    console.log('data: ', data)
+
                     if (setLender) setLender(data);
                 }
             })
@@ -78,25 +81,6 @@ const LenderShow: React.FC = () => {
             })
     }
 
-    const statuses: DropdownInputItemType[] = [
-        {name: 'created', id: 'created'},
-        {name: 'activated', id: 'activated'},
-        {name: 'deactivated', id: 'deactivated'}
-    ]
-
-    const lenderStatus = lender?.status === 'created' ? statuses[0] : statuses[1]
-    const [selectedStatus, setSelectedStatus] = useState(lenderStatus)
-
-    const kycStatuses: DropdownInputItemType[] = [
-        {name: 'queued', id: 'queued'},
-        {name: 'approved', id: 'approved'},
-        {name: 'rejected', id: 'rejected'},
-        {name: 'submitted', id: 'submitted'},
-    ]
-
-    const lenderKycStatus = kycStatuses.filter((status) => status.name === lender?.kycStatus)
-
-    const [selectedKycStatus, setSelectedKycStatus] = useState(lenderKycStatus[0])
 
 
     const [error, setError] = useState<string | null>(null);
@@ -118,8 +102,9 @@ const LenderShow: React.FC = () => {
     };
 
 
-    const isLenderStatusUpdated = (selectedStatus?.name !== lender?.status)
-    const isLenderKycStatusUpdated = (selectedKycStatus?.name !== lender?.kycStatus)
+    const isLenderStatusUpdated = previousStatus !== selectedStatus
+
+    const isLenderKycStatusUpdated = previousKycStatus !== selectedKycStatus
 
     const handleUpdateLender = () => {
 
@@ -128,11 +113,11 @@ const LenderShow: React.FC = () => {
         const updatedData: UpdatedData = {status: '', kycStatus: ''}
 
         if (isLenderStatusUpdated) {
-            updatedData.status = selectedStatus.name
+            updatedData.status = selectedStatus
         }
 
         if (isLenderKycStatusUpdated) {
-            updatedData.kycStatus = selectedKycStatus.name
+            updatedData.kycStatus = selectedKycStatus
         }
 
         Object.keys(updatedData).forEach(key => updatedData[key] === '' && delete updatedData[key]);
@@ -143,14 +128,6 @@ const LenderShow: React.FC = () => {
 
                 setLoading(false)
                 if (response.status == 204) {
-
-                    if (isLenderStatusUpdated) {
-                        lenderStatusUpdate()
-                    }
-
-                    if (isLenderKycStatusUpdated) {
-                        lenderKycStatusUpdate()
-                    }
 
                     if (setLender) setLender(lender)
                     return setToastInfo({type: 'success', description: 'Updated Successfully'})
@@ -169,7 +146,7 @@ const LenderShow: React.FC = () => {
     const handleStatusChange = (e: ChangeEvent<HTMLSelectElement>) => {
         const newStatus = e.target.value;
         setSelectedStatus(newStatus);
-        setSPreviousStatus(lender.status)
+        setSPreviousStatus(lender?.status ?? '')
 
         lender.status = newStatus
     }
@@ -177,7 +154,7 @@ const LenderShow: React.FC = () => {
     const handleKycStatusChange = (e: ChangeEvent<HTMLSelectElement>) => {
         const newKycStatus = e.target.value;
         setSelectedKycStatus(newKycStatus);
-        setPreviousKycStatus(lender.kycStatus)
+        setPreviousKycStatus(lender?.kycStatus ?? '')
 
         lender.kycStatus = newKycStatus
     }
@@ -198,26 +175,6 @@ const LenderShow: React.FC = () => {
         return resolvedName
     }
 
-    const documents = [
-        {
-            name: 'ghana-card-back',
-            url:
-                'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80',
-            createdAt: "2024-02-20 22:09:20",
-        },
-        {
-            name: 'ghana-card-front',
-            url:
-                'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80',
-            createdAt: "2024-02-20 22:09:20",
-        },
-        {
-            name: 'selfie',
-            url:
-                'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80',
-            createdAt: "2024-02-20 22:09:20",
-        },
-    ]
 
     return (
         <>
@@ -345,12 +302,12 @@ const LenderShow: React.FC = () => {
 
                                         <div className="flex-1 mr-4">
 
-                                            {lender &&  <CustomSelectInput options={statuses} onChange={handleStatusChange} value={lender.status}  label="Status"/>}
+                                            {lender &&  <CustomSelectInput options={statuses} onChange={handleStatusChange} value={lender.status ?? ''}  label="Status"/>}
 
                                         </div>
 
                                         <div className="flex-1">
-                                            {lender &&  <CustomSelectInput options={kycStatuses} onChange={handleKycStatusChange} value={lender.kycStatus}  label="Kyc Status"/>}
+                                            {lender &&  <CustomSelectInput options={kycStatuses} onChange={handleKycStatusChange} value={lender.kycStatus ?? ''}  label="Kyc Status"/>}
                                         </div>
                                     </div>
 
@@ -358,6 +315,7 @@ const LenderShow: React.FC = () => {
                                     <div
                                         className={`sm:mt-4 flex lg:px-8 pt-4`}>
                                         <Button buttonType="button" styleType="primary"
+                                                disabled={!isLenderKycStatusUpdated && !isLenderStatusUpdated}
                                                 customStyles="p-4 md:p-5 rounded-lg"
                                                 onClick={handleUpdateLender}>
                                             {'Save'}
@@ -387,7 +345,8 @@ const LenderShow: React.FC = () => {
                                             role="list"
                                             className="mx-auto mt-8 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3"
                                         >
-                                            {documents.map((document) => (
+
+                                            {lender.files && lender.files.length > 0 ? lender.files.map((document) => (
                                                 <li key={document.name}>
                                                     <img className="aspect-[3/2] w-full rounded-2xl object-cover"
                                                          src={document.url}
@@ -396,7 +355,8 @@ const LenderShow: React.FC = () => {
                                                     <p className="text-base leading-7 text-gray-600"> Uploaded
                                                         Date: {document.createdAt}</p>
                                                 </li>
-                                            ))}
+                                            )) : (<p>No documents uploaded yet</p>)}
+
                                         </ul>
                                     </div>
                                 </div>

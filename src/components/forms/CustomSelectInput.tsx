@@ -18,7 +18,7 @@ const CustomSelectInput: React.FC<SelectInputProps> = ({ label, options, onChang
         <div className="">
             <label className="block text-sm font-medium text-gray-700 pb-3">{label}</label>
         <select
-            className={`block w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300 ${customClasses}`}
+            className={`bg-white block w-full p-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-300 ${customClasses}`}
             onChange={onChange}
             value={value}
         >
