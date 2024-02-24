@@ -11,6 +11,9 @@ import {listUsers} from "@/api/user";
 import FilterWrapper from "@/components/FilterWrapper";
 import {FilterFormDataType} from "@/utils/types/FilterFormDataType";
 import KycFilter from "@/components/kyc/KycFilter";
+import TextInput from "@/components/forms/TextInput";
+import Svg from "@/components/Svg";
+import ListBox from "@/components/forms/ListBox";
 
 const KycList: React.FC = () => {
     const tableHeaders = [
@@ -23,6 +26,23 @@ const KycList: React.FC = () => {
         {label: 'Date Created', classes: 'px-3 py-3.5 text-left'},
         {label: 'Action', classes: 'relative py-3.5 pl-3 pr-4 sm:pr-0'},
     ]
+
+    const [searchNameTerm, setSearchNameTerm] = useState('');
+    const [searchPhoneTerm, setSearchPhoneTerm] = useState('');
+
+    const handleSearchName = (search: string) => {
+
+        setSearchNameTerm(search)
+
+        fetchUsers(`kycStatus=submitted&name=${search}`)
+    }
+
+    const handleSearchPhoneNumber = (search: string) => {
+
+        setSearchPhoneTerm(search)
+
+        fetchUsers(`kycStatus=submitted&phoneNumber=${search}`)
+    }
 
     const handlePrevious = () => {
         if (users) {
@@ -112,16 +132,43 @@ const KycList: React.FC = () => {
 
     return (
         <div>
-            <FilterWrapper onSubmit={handleFilterSubmitButtonClicked} onReset={handleResetFilter}
-                           hasError={hasError}>
-                <KycFilter
-                    submit={submitFilter}
-                    reset={resetFilter}
-                    onChange={handleFilterChange}
-                    hasError={hasError}
-                    setHasError={handleFilterError}
-                />
-            </FilterWrapper>
+            {/*<FilterWrapper onSubmit={handleFilterSubmitButtonClicked} onReset={handleResetFilter}*/}
+            {/*               hasError={hasError}>*/}
+            {/*    <KycFilter*/}
+            {/*        submit={submitFilter}*/}
+            {/*        reset={resetFilter}*/}
+            {/*        onChange={handleFilterChange}*/}
+            {/*        hasError={hasError}*/}
+            {/*        setHasError={handleFilterError}*/}
+            {/*    />*/}
+            {/*</FilterWrapper>*/}
+
+            <div className="grid min-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-12 sm:col-span-full">
+                <div className="sm:col-span-3 mr-4">
+                    <TextInput label="" id="search" name="search" type="search" placeholder="Search Name"
+                               autoComplete=""
+                               value={searchNameTerm}
+                               onInputChange={(e) => handleSearchName(e.target.value)}
+                               customInputClasses="grid ml-auto mr-4">
+                        {{
+                            left: <Svg name="search.svg" customClasses="ml-2"/>
+                        }}
+                    </TextInput>
+                </div>
+
+                <div className="sm:col-span-3 mr-4">
+                    <TextInput label="" id="search" name="search" type="search" placeholder="Search Phone"
+                               autoComplete=""
+                               value={searchPhoneTerm}
+                               onInputChange={(e) => handleSearchPhoneNumber(e.target.value)}
+                               customInputClasses="grid ml-auto ml-4">
+                        {{
+                            left: <Svg name="search.svg" customClasses="ml-2"/>
+                        }}
+                    </TextInput>
+                </div>
+            </div>
+
 
             <Table onButtonClick={() => {
             }}>
