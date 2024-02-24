@@ -15,7 +15,7 @@ export async function listUsers(params: string = '') {
     });
 }
 
-export async function showUser(bearerToken?: string, externalId?: object) {
+export async function showUser(bearerToken?: string, externalId?: string) {
     return await walletFetcher(`${USER_ENDPOINT}/${externalId}`, {
         headers: getJSONHeaders(bearerToken)
     });
