@@ -143,7 +143,7 @@ const CustomerList: React.FC = () => {
                     </TextInput>
                 </div>
 
-                <div className="sm:col-span-3">
+                <div className="sm:col-span-3 mr-4">
                     <TextInput label="" id="search" name="search" type="search" placeholder="Search Phone"
                                autoComplete=""
                                value={searchPhoneTerm}
