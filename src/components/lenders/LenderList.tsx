@@ -7,7 +7,7 @@ import Link from "next/link";
 import {useRouter} from "next/navigation";
 import Badge from "@/components/Badge";
 import {useAdminStore} from "@/store/AdminStore";
-import {extractPaginationData} from "@/utils/helpers";
+import {extractPaginationData, formatDate} from "@/utils/helpers";
 import {useLenderStore} from "@/store/LenderStore";
 import {listLenders} from "@/api/lenders";
 
@@ -19,6 +19,7 @@ const LenderList: React.FC = () => {
         {label: 'Name', classes: 'hidden px-3 py-3.5 text-left lg:table-cell'},
         {label: 'Phone', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
         {label: 'Status', classes: 'px-3 py-3.5 text-left'},
+        {label: 'Date Created', classes: 'px-3 py-3.5 text-left'},
         {label: 'Action', classes: 'relative py-3.5 pl-3 pr-4 sm:pr-0'},
     ]
     const {lenders, setLenders} = useLenderStore()
@@ -99,6 +100,8 @@ const LenderList: React.FC = () => {
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
                                             <Badge text={lender.status ?? ''} customClasses="capitalize"/>
                                         </TData>
+                                        <TData label={formatDate(lender.createdAt)}
+                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
 
                                         <TData label=""
                                                customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">

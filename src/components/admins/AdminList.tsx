@@ -143,7 +143,6 @@ const AdminList: React.FC = () => {
                         if (setAdmins) setAdmins({pagination: admins.pagination, data: updatedAdminsData});
                     }
                     setModalOpen(false)
-                    console.log(feedback)
                     return setToastInfo({type: 'success', description: feedback.message})
                 }
                 setError(getError(feedback))

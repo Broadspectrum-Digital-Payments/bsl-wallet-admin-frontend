@@ -4,9 +4,8 @@ import Pagination from "@/components/table/Pagination";
 import React, {useEffect, useState} from "react";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
 import Link from "next/link";
-import {useUserStore} from "@/store/UserStore";
 import {listUsers} from "@/api/user";
-import {extractPaginationData, getError} from "@/utils/helpers";
+import {extractPaginationData, formatAmount, formatDate, getError} from "@/utils/helpers";
 import {useAgentStore} from "@/store/AgentStore";
 import Badge from "@/components/Badge";
 import {UserType} from "@/utils/types/UserType";
@@ -16,13 +15,14 @@ const AgentList: React.FC = () => {
         {label: 'Id', classes: 'py-3.5 pl-4 pr-3 text-left  sm:pl-0'},
         {label: 'Name', classes: 'hidden px-3 py-3.5 text-left lg:table-cell'},
         {label: 'Phone', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
+        {label: 'Available Balance', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
         {label: 'Status', classes: 'px-3 py-3.5 text-left'},
         {label: 'Date Created', classes: 'px-3 py-3.5 text-left'},
         {label: 'Action', classes: 'relative py-3.5 pl-3 pr-4 sm:pr-0'},
     ]
 
     useEffect(() => {
-        fetchAgents()
+        fetchAgents(filterQueryString)
     }, [])
 
     const [error, setError] = useState<string | null>(null);
@@ -35,6 +35,7 @@ const AgentList: React.FC = () => {
         {label: '10', value: '10'},
         {label: '20', value: '20'},
     ]
+    const [filterQueryString, setFilterQueryString] = useState<string>('pageSize=10');
 
     const fetchAgents = (params: string = 'type=agent') => {
         listUsers(params)
@@ -87,16 +88,18 @@ const AgentList: React.FC = () => {
                                            customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
                                     <TData label={agent.phoneNumber}
                                            customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                    <TData label={formatAmount(agent.availableBalance)}
+                                           customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
                                     <TData label=""
                                            customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
                                         <Badge text={agent.status ?? ''} customClasses="capitalize"/>
                                     </TData>
-                                    <TData label={agent.createdAt}
+                                    <TData label={formatDate(agent.createdAt)}
                                            customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
                                     <TData label=""
                                            customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
                                         <Link
-                                            onClick={() => handleSetSelectedAgent(agent)}
+                                            onClick={() => setAgent(agent)}
                                             className="text-indigo-600 hover:text-indigo-900"
                                             href={`/agents/${agent.externalId}`}>
                                             View <span className="sr-only">, {agent.name}</span>

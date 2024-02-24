@@ -5,7 +5,6 @@ const USER_ENDPOINT = 'v1/admin/users'
 
 export async function listUsers(params: string = '') {
     return await walletFetcher(`${USER_ENDPOINT}?${params}`, {
-        method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -22,8 +21,8 @@ export async function showUser(bearerToken?: string, externalId?: object) {
     });
 }
 
-export async function updateUser(data?: object) {
-    return await walletFetcher(`${USER_ENDPOINT}`, {
+export async function updateUser(externalId: string = '', data?: object) {
+    return await walletFetcher(`${USER_ENDPOINT}/${externalId}`, {
         method: 'PUT',
         headers: getJSONHeaders(),
         body: JSON.stringify(data)
