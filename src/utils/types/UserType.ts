@@ -1,3 +1,5 @@
+import {FileType} from "@/utils/types/FileType";
+
 export type UserType = {
     externalId?: string,
     name?: string,
@@ -10,4 +12,5 @@ export type UserType = {
     availableBalance?: string,
     verificationToken?: string,
     createdAt?: string,
+    files?: [FileType]
 }

@@ -8,7 +8,6 @@ import {showLender, updateLender} from "@/api/lenders";
 import {useAdminStore} from "@/store/AdminStore";
 import {isObjectEmpty} from "@/utils/helpers";
 import Toast from "@/components/Toast";
-import ListBox from "@/components/forms/ListBox";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
 import CustomSelectInput from "@/components/forms/CustomSelectInput";
 

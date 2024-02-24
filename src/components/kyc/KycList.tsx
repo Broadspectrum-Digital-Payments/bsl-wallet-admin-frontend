@@ -16,6 +16,7 @@ const KycList: React.FC = () => {
     const tableHeaders = [
         {label: 'Id', classes: 'py-3.5 pl-4 pr-3 text-left  sm:pl-0'},
         {label: 'Name', classes: 'hidden px-3 py-3.5 text-left lg:table-cell'},
+        {label: 'Phone', classes: 'hidden px-3 py-3.5 text-left lg:table-cell'},
         {label: 'Type', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
         {label: 'Ghana Card Number', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
         {label: 'Status', classes: 'px-3 py-3.5 text-left'},
@@ -28,7 +29,7 @@ const KycList: React.FC = () => {
             const {pagination} = users
             if (pagination.currentPage) {
                 const previousPageNumber = pagination.currentPage - 1
-                return pagination.firstPage ? null : fetchUsers(`pageSize=${pageOption.value}&page=${previousPageNumber}`)
+                return pagination.firstPage ? null : fetchUsers(`kycStatus=submitted&pageSize=${pageOption.value}&page=${previousPageNumber}`)
             }
         }
     }
@@ -37,7 +38,7 @@ const KycList: React.FC = () => {
             const {pagination} = users
             if (pagination.currentPage) {
                 const nextPageNumber = pagination.currentPage + 1
-                return pagination.lastPage ? null : fetchUsers(`pageSize=${pageOption.value}&page=${nextPageNumber}`)
+                return pagination.lastPage ? null : fetchUsers(`kycStatus=submitted&pageSize=${pageOption.value}&page=${nextPageNumber}`)
             }
         }
     }
@@ -48,7 +49,7 @@ const KycList: React.FC = () => {
 
     const [error, setError] = useState<string | null>(null);
     const [hasError, setHasError] = useState<boolean>(false);
-    const [filterQueryString, setFilterQueryString] = useState<string>('pageSize=10');
+    const [filterQueryString, setFilterQueryString] = useState<string>('kycStatus=submitted&pageSize=10');
     const [formData, setFormData] = useState<FilterFormDataType>({
         externalId: '',
         startDate: '',
@@ -69,7 +70,7 @@ const KycList: React.FC = () => {
 
     const handleResetFilter = (reset: boolean) => {
         setResetFilter(reset)
-        return fetchUsers('pageSize=10&kycStatus=queued')
+        return fetchUsers('pageSize=10&kycStatus=submitted')
     }
 
     const handleFilterChange = (data: FilterFormDataType) => {
@@ -85,7 +86,7 @@ const KycList: React.FC = () => {
         setHasError(error)
     }
 
-    const fetchUsers = (params: string = 'kycStatus=queued') => {
+    const fetchUsers = (params: string = 'kycStatus=submitted') => {
         listUsers(params)
             .then(async response => {
                 const feedback = await response.json();
@@ -133,6 +134,8 @@ const KycList: React.FC = () => {
                                     <TData label={user.externalId ?? ''}
                                            customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
                                     <TData label={user.name ?? ''}
+                                           customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
+                                    <TData label={user.phoneNumber ?? ''}
                                            customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
                                     <TData label={user.type ?? ''}
                                            customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell capitalize"/>
