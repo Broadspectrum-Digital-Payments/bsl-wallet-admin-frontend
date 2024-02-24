@@ -8,9 +8,8 @@ import {extractPaginationData, getError, prepareFilterQueryString} from "@/utils
 import {listUsers} from "@/api/user";
 import {useCustomerStore} from "@/store/CustomerStore";
 import Badge from "@/components/Badge";
-import {FilterFormDataType} from "@/utils/types/FilterFormDataType";
-import FilterWrapper from "@/components/FilterWrapper";
-import TransactionFilter from "@/components/transactions/TransactionFilter";
+import TextInput from "@/components/forms/TextInput";
+import Svg from "@/components/Svg";
 
 const CustomerList: React.FC = () => {
     const tableHeaders = [
@@ -26,8 +25,12 @@ const CustomerList: React.FC = () => {
         fetchCustomers(filterQueryString)
     }, [])
 
-    const [error, setError] = useState<string | null>(null);
+
     const {customers, setCustomers, setCustomer} = useCustomerStore()
+
+    const [searchNameTerm, setSearchNameTerm] = useState('');
+    const [searchPhoneTerm, setSearchPhoneTerm] = useState('');
+
 
 
     const fetchCustomers = (params: string = 'type=user') => {
@@ -42,7 +45,7 @@ const CustomerList: React.FC = () => {
                 }
             })
             .catch((error) => {
-                setError(getError(error))
+                console.log('error: ', error)
             })
     }
     const handlePrevious = () => {
@@ -64,41 +67,10 @@ const CustomerList: React.FC = () => {
         }
     }
 
-    const [resetFilter, setResetFilter] = useState<boolean>(false);
-    const [submitFilter, setSubmitFilter] = useState<boolean>(false);
-    const [formData, setFormData] = useState<FilterFormDataType>({
-        externalId: '',
-        startDate: '',
-        endDate: '',
-        status: ''
-    });
+
     const [filterQueryString, setFilterQueryString] = useState<string>('type=user&pageSize=10');
-    const [hasError, setHasError] = useState<boolean>(true);
 
-    const handleFilterSubmitButtonClicked = (submit: boolean) => {
-        setSubmitFilter(submit)
-        const queryString = prepareFilterQueryString(formData, filterQueryString)
-        setFilterQueryString(queryString)
-        fetchCustomers(queryString)
-    }
 
-    const handleResetFilter = (reset: boolean) => {
-        setResetFilter(reset)
-        return fetchCustomers()
-    }
-
-    const handleFilterChange = (data: FilterFormDataType) => {
-        if (Object.values(data).every(value => value.trim() === '')) {
-            return setHasError(true)
-        } else {
-            setFormData({...data})
-            return setHasError(false)
-        }
-    }
-
-    const handleFilterError = (error: boolean) => {
-        setHasError(error)
-    }
 
     const handleSetPageOption = (pageOption: IListBoxItem) => {
         const queryString = prepareFilterQueryString({pageSize: pageOption.value}, filterQueryString)
@@ -117,18 +89,43 @@ const CustomerList: React.FC = () => {
         {label: '20', value: '20'},
     ]
 
+    const handleSearchName = (search: string) => {
+
+        setSearchNameTerm(search)
+
+        fetchCustomers(`type=user&name=${search}`)
+    }
+
+    const handleSearchPhoneNumber = (search: string) => {
+
+        setSearchPhoneTerm(search)
+
+        fetchCustomers(`type=user&phoneNumber=${search}`)
+    }
+
     return (
         <div>
-            {/*<FilterWrapper onSubmit={handleFilterSubmitButtonClicked} onReset={handleResetFilter}*/}
-            {/*               hasError={hasError}>*/}
-            {/*    <TransactionFilter*/}
-            {/*        submit={submitFilter}*/}
-            {/*        reset={resetFilter}*/}
-            {/*        onChange={handleFilterChange}*/}
-            {/*        hasError={hasError}*/}
-            {/*        setHasError={handleFilterError}*/}
-            {/*    />*/}
-            {/*</FilterWrapper>*/}
+            <div className="w-full ml-auto mb-0 flex">
+            <div className="mr-4">
+                <TextInput label="" id="search" name="search" type="search" placeholder="Search Name" autoComplete=""
+                           value={searchNameTerm}
+                           onInputChange={(e) => handleSearchName(e.target.value)}
+                           customInputClasses="grid ml-auto mr-4">
+                    {{
+                        left: <Svg name="search.svg" customClasses="ml-2"/>
+                    }}
+                </TextInput>
+            </div>
+                <TextInput label="" id="search" name="search" type="search" placeholder="Search Phone" autoComplete=""
+                           value={searchPhoneTerm}
+                           onInputChange={(e) => handleSearchPhoneNumber(e.target.value)}
+                           customInputClasses="grid ml-auto ml-4">
+                    {{
+                        left: <Svg name="search.svg" customClasses="ml-2"/>
+                    }}
+                </TextInput>
+            </div>
+
 
             <Table onButtonClick={() => {
             }}>
