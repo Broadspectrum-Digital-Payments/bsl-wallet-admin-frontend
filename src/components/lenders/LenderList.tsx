@@ -82,7 +82,7 @@ const LenderList: React.FC = () => {
     return (
         <>
             <div>
-                <Table buttonText="Add Lender"  onButtonClick={handleAddLender}>
+                <Table buttonText="Add Lender" onButtonClick={handleAddLender}>
                     {{
                         headers: tableHeaders,
                         body:
@@ -97,14 +97,14 @@ const LenderList: React.FC = () => {
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
                                         <TData label=""
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
-                                            <Badge text={lender.status ?? ''}></Badge>
+                                            <Badge text={lender.status ?? ''} customClasses="capitalize"/>
                                         </TData>
 
                                         <TData label=""
                                                customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
                                             <Link
                                                 className="text-indigo-600 hover:text-indigo-900"
-                                             href={`/lenders/${lender.externalId}`}>
+                                                href={`/lenders/${lender.externalId}`}>
                                                 View <span className="sr-only">, {lender.name}</span>
                                             </Link>
                                         </TData>

@@ -88,9 +88,7 @@ const KycList: React.FC = () => {
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
                                         <TData label=""
                                                customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
-
                                             <Badge text={user.status ?? ''} customClasses="capitalize"/>
-
                                         </TData>
 
                                         <TData label=""

@@ -8,6 +8,10 @@ export const camelCaseToWords = (text: string = '') => {
     return text.replace(/([A-Z])/g, ' $1').toLowerCase();
 }
 
+export const stringToTitleCase = (text: string = '') => {
+    return text.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+}
+
 export const getInitials = (name: string = ''): string => {
     const words = name.split(' ');
 
