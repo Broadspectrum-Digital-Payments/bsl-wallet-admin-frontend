@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {ChangeEvent, useEffect, useState} from 'react'
 import TextInput from "@/components/forms/TextInput";
 import {useParams} from "next/navigation";
 import Button from "@/components/forms/Button";
@@ -6,10 +6,11 @@ import Loader from "@/components/Loader";
 import {useLenderStore} from "@/store/LenderStore";
 import {showLender, updateLender} from "@/api/lenders";
 import {useAdminStore} from "@/store/AdminStore";
-import {DropdownInput} from "@/components/forms/DropdownInput";
-import {DropdownInputItemType} from "@/utils/types/DropdownInputItemType";
-import {getError, isObjectEmpty} from "@/utils/helpers";
+import {isObjectEmpty} from "@/utils/helpers";
 import Toast from "@/components/Toast";
+import ListBox from "@/components/forms/ListBox";
+import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
+import CustomSelectInput from "@/components/forms/CustomSelectInput";
 
 type UpdatedData = {
     status: string;
@@ -32,14 +33,39 @@ const LenderShow: React.FC = () => {
         {name: 'Loans', href: '#', current: false},
     ]
 
+    const statuses: IListBoxItem[] = [
+        {label: 'Created', value: 'created'},
+        {label: 'Activated', value: 'activated'},
+        {label: 'Deactivated', value: 'deactivated'},
+    ]
+
+
+    const kycStatuses: IListBoxItem[] = [
+        {label: 'Queued', value: 'queued'},
+        {label: 'Approved', value: 'approved'},
+        {label: 'Rejected', value: 'rejected'},
+        {label: 'Submitted', value: 'submitted'},
+    ]
+
     const lenderId = useParams()?.lender.toString();
 
+    statuses.filter((status) => status.value == lender?.status);
+    kycStatuses.filter((status) => status.value == lender?.kycStatus);
+
+    const [selectedStatus, setSelectedStatus] = useState<string >('');
+    const [selectedKycStatus, setSelectedKycStatus] = useState<string >( '');
+
+    const [previousStatus, setSPreviousStatus] = useState<string >('');
+    const [previousKycStatus, setPreviousKycStatus] = useState<string >( '');
+
+
     useEffect(() => {
-        fetchLender(lenderId)
-    }, [lenderId])
+        fetchLender()
+
+    }, [])
 
 
-    const fetchLender = (lenderId: string) => {
+    const fetchLender = () => {
         showLender(authenticatedAdmin?.bearerToken, lenderId)
             .then(async response => {
                 const feedback = await response.json();
@@ -56,26 +82,6 @@ const LenderShow: React.FC = () => {
             })
     }
 
-    const statuses: DropdownInputItemType[] = [
-        {name: 'created', id: 'created'},
-        {name: 'activated', id: 'activated'},
-        {name: 'deactivated', id: 'deactivated'}
-    ]
-
-    const lenderStatus = lender.status == 'created' ? statuses[0] : statuses[1]
-    const [selectedStatus, setSelectedStatus] = useState(lenderStatus)
-
-
-    const kycStatuses: DropdownInputItemType[] = [
-        {name: 'queued', id: 'queued'},
-        {name: 'approved', id: 'approved'},
-        {name: 'rejected', id: 'rejected'},
-        {name: 'submitted', id: 'submitted'},
-    ]
-
-    const lenderKycStatus = kycStatuses.filter((status) => status.name === lender.kycStatus)
-
-    const [selectedKycStatus, setSelectedKycStatus] = useState(lenderKycStatus[0])
 
     const [error, setError] = useState<string | null>(null);
     const [toastInfo, setToastInfo] = useState<{
@@ -95,17 +101,10 @@ const LenderShow: React.FC = () => {
         setLender({...lender, [name]: value});
     };
 
-    const lenderStatusUpdate = () => {
-        lender.status = selectedStatus.name;
-    }
 
-    const lenderKycStatusUpdate = () => {
-        lender.kycStatus = selectedKycStatus.name;
-    }
+    const isLenderStatusUpdated = previousStatus !== lender.status
 
-    const isLenderStatusUpdated = (selectedStatus?.name !== lender.status)
-
-    const isLenderKycStatusUpdated = (selectedKycStatus?.name !== lender.kycStatus)
+    const isLenderKycStatusUpdated = previousKycStatus !== lender.kycStatus
 
     const handleUpdateLender = () => {
 
@@ -113,14 +112,13 @@ const LenderShow: React.FC = () => {
 
         const updatedData: UpdatedData = {status: '', kycStatus: ''}
 
-        if (isLenderStatusUpdated){
-            updatedData.status = selectedStatus.name
+        if (isLenderStatusUpdated) {
+            updatedData.status = selectedStatus
         }
 
-        if (isLenderKycStatusUpdated){
-            updatedData.kycStatus = selectedKycStatus.name
+        if (isLenderKycStatusUpdated) {
+            updatedData.kycStatus = selectedKycStatus
         }
-
 
         Object.keys(updatedData).forEach(key => updatedData[key] === '' && delete updatedData[key]);
 
@@ -131,14 +129,6 @@ const LenderShow: React.FC = () => {
                 setLoading(false)
                 if (response.status == 204) {
 
-                    if (isLenderStatusUpdated){
-                        lenderStatusUpdate()
-                    }
-
-                    if (isLenderKycStatusUpdated){
-                        lenderKycStatusUpdate()
-                    }
-
                     if (setLender) setLender(lender)
                     return setToastInfo({type: 'success', description: 'Updated Successfully'})
                 }
@@ -148,6 +138,22 @@ const LenderShow: React.FC = () => {
             }).catch((error) => {setToastInfo({type: 'error', description: 'Something went wrong'}); console.log('error: ', error)})
 
         setLoading(false)
+    }
+
+    const handleStatusChange = (e: ChangeEvent<HTMLSelectElement>) => {
+        const newStatus = e.target.value;
+        setSelectedStatus(newStatus);
+        setSPreviousStatus(lender.status)
+
+        lender.status = newStatus
+    }
+
+    const handleKycStatusChange = (e: ChangeEvent<HTMLSelectElement>) => {
+        const newKycStatus = e.target.value;
+        setSelectedKycStatus(newKycStatus);
+        setPreviousKycStatus(lender.kycStatus)
+
+        lender.kycStatus = newKycStatus
     }
 
     const resolveDocumentName = (name: string) => {
@@ -312,17 +318,13 @@ const LenderShow: React.FC = () => {
                                     <div className="flex lg:px-8 px-4">
 
                                         <div className="flex-1 mr-4">
-                                            <DropdownInput label="Status" data={statuses}
-                                                           selected={selectedStatus}
-                                                           setSelected={setSelectedStatus}
-                                            />
+
+                                            {lender &&  <CustomSelectInput options={statuses} onChange={handleStatusChange} value={lender.status}  label="Status"/>}
+
                                         </div>
 
                                         <div className="flex-1">
-                                            <DropdownInput label="KYC Status" data={kycStatuses}
-                                                           selected={selectedKycStatus}
-                                                           setSelected={setSelectedKycStatus}
-                                            />
+                                            {lender &&  <CustomSelectInput options={kycStatuses} onChange={handleKycStatusChange} value={lender.kycStatus}  label="Kyc Status"/>}
                                         </div>
                                     </div>
 

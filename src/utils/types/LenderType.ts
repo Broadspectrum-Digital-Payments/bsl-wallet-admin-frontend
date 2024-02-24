@@ -2,17 +2,18 @@ export type LenderType = {
     externalId?: string,
     name?: string,
     email?: string,
-    status?: string,
+    status: string,
     verificationToken?: string,
     bearerToken?: string,
     createdAt?: string,
     ghanaCardNumber?: string,
     phoneNumber?: string,
     type?: string,
-    kycStatus?: string
+    kycStatus: string
     actualBalance?: string
     availableBalance?: string,
     address?: string,
     businessRegistrationNumber?: string
     businessCertificate?: string
+    files?: [object]
 }
