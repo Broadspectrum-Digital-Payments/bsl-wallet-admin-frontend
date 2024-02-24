@@ -1,3 +1,5 @@
+import {FileType} from "@/utils/types/FileType";
+
 export type LenderType = {
     externalId?: string,
     name?: string,
@@ -15,5 +17,5 @@ export type LenderType = {
     address?: string,
     businessRegistrationNumber?: string
     businessCertificate?: string
-    files?: [object]
+    files?: [FileType]
 }

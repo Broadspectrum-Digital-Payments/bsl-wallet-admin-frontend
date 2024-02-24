@@ -43,7 +43,7 @@ const LenderShow: React.FC = () => {
     const kycStatuses: IListBoxItem[] = [
         {label: 'Queued', value: 'queued'},
         {label: 'Approved', value: 'approved'},
-        {label: 'Rejected', value: 'rejected'},
+        {label: 'Declined', value: 'declined'},
         {label: 'Submitted', value: 'submitted'},
     ]
 
@@ -172,26 +172,6 @@ const LenderShow: React.FC = () => {
         return resolvedName
     }
 
-    const documents = [
-        {
-            name: 'ghana-card-back',
-            url:
-                'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80',
-            createdAt: "2024-02-20 22:09:20",
-        },
-        {
-            name: 'ghana-card-front',
-            url:
-                'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80',
-            createdAt: "2024-02-20 22:09:20",
-        },
-        {
-            name: 'selfie',
-            url:
-                'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80',
-            createdAt: "2024-02-20 22:09:20",
-        },
-    ]
 
     return (
         <>
@@ -361,7 +341,8 @@ const LenderShow: React.FC = () => {
                                             role="list"
                                             className="mx-auto mt-8 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3"
                                         >
-                                            {documents.map((document) => (
+
+                                            {lender.files && lender.files.length > 0 ? lender.files.map((document) => (
                                                 <li key={document.name}>
                                                     <img className="aspect-[3/2] w-full rounded-2xl object-cover"
                                                          src={document.url}
@@ -370,7 +351,8 @@ const LenderShow: React.FC = () => {
                                                     <p className="text-base leading-7 text-gray-600"> Uploaded
                                                         Date: {document.createdAt}</p>
                                                 </li>
-                                            ))}
+                                            )) : (<p>No documents uploaded yet</p>)}
+
                                         </ul>
                                     </div>
                                 </div>
