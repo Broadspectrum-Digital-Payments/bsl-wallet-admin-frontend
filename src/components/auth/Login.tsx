@@ -2,7 +2,6 @@
 import {login} from "@/api/auth";
 import {useRouter} from "next/navigation";
 import React, {useEffect, useState} from "react";
-import {useUserStore} from "@/store/UserStore";
 import {useTransactionStore} from "@/store/TransactionStore";
 import Button from "@/components/forms/Button";
 import Link from "next/link";
@@ -143,7 +142,7 @@ export default function Login() {
                             buttonType="submit"
                             disabled={loading}>
                         {loading && <Loader type="default" customClasses="relative"
-                                            customAnimationClasses="w-10 h-10 text-white dark:text-gray-600 fill-slate-800"/>}
+                                            customAnimationClasses="w-5 h-5 text-white dark:text-gray-600 fill-slate-800"/>}
                         {!loading && <span className="flex self-center">Sign in</span>}
                     </Button>
                 </div>
