@@ -1,7 +1,6 @@
 import React, {useState} from 'react'
 import TextInput from "@/components/forms/TextInput";
 import Button from "@/components/forms/Button";
-import {PhotoIcon} from "@heroicons/react/24/solid";
 import {LenderType} from "@/utils/types/LenderType";
 import DragAndDrop from "@/components/forms/DragAndDrop";
 
@@ -144,7 +143,8 @@ const LenderCreate: React.FC = () => {
                                 </label>
 
                                 <div className="flex flex-col mt-4">
-                                    <DragAndDrop filesUploaded={handleFileUploaded} maximumFileSize={10} types={['image/jpg', 'image/jpeg', 'image/png']}/>
+                                    <DragAndDrop filesUploaded={handleFileUploaded} maximumFileSize={10}
+                                                 types={['image/jpg', 'image/jpeg', 'image/png']}/>
                                 </div>
                             </div>
                         </div>
