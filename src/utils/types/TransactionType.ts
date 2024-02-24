@@ -1,5 +1,5 @@
 export type TransactionType = {
-    stan: string
+    stan?: string
     externalId?: string,
     internalId?: string,
     accountIssuer?: string,
