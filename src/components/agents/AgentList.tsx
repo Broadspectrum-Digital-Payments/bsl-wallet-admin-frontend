@@ -128,7 +128,7 @@ const AgentList: React.FC = () => {
                     body:
                         <>
                             {agents && agents.data.map((agent) => (
-                                <tr key={agent.externalId}>
+                                <tr key={agent.ghanaCardNumber}>
                                     <TData label={agent.externalId}
                                            customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
                                     <TData label={agent.name}

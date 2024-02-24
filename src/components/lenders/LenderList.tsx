@@ -141,7 +141,7 @@ const LenderList: React.FC = () => {
                             <>
                                 {lenders && lenders.data.map((lender) => (
                                     <tr key={lender.externalId}>
-                                        <TData label={lender.externalId}
+                                        <TData label={lender.ghanaCardNumber}
                                                customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
                                         <TData label={lender.name}
                                                customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>

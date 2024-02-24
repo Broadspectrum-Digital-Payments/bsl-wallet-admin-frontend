@@ -138,7 +138,7 @@ const CustomerList: React.FC = () => {
                         <>
                             {customers && customers.data.map((customer) => (
                                 <tr key={customer.externalId}>
-                                    <TData label={customer.externalId}
+                                    <TData label={customer.ghanaCardNumber}
                                            customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
                                     <TData label={customer.name}
                                            customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
