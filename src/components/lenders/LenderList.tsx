@@ -7,9 +7,12 @@ import Link from "next/link";
 import {useRouter} from "next/navigation";
 import Badge from "@/components/Badge";
 import {useAdminStore} from "@/store/AdminStore";
-import {extractPaginationData, formatDate} from "@/utils/helpers";
+import {extractPaginationData, formatDate, prepareFilterQueryString} from "@/utils/helpers";
 import {useLenderStore} from "@/store/LenderStore";
 import {listLenders} from "@/api/lenders";
+import {FilterFormDataType} from "@/utils/types/FilterFormDataType";
+import FilterWrapper from "@/components/FilterWrapper";
+import LenderFilter from "@/components/lenders/LenderFilter";
 
 const LenderList: React.FC = () => {
     const router = useRouter();
@@ -24,13 +27,16 @@ const LenderList: React.FC = () => {
     ]
     const {lenders, setLenders} = useLenderStore()
     const {authenticatedAdmin} = useAdminStore()
+    const [filterQueryString, setFilterQueryString] = useState<string>('pageSize=10');
+    const [hasError, setHasError] = useState<boolean>(false);
+
 
     useEffect(() => {
         fetchLenders()
     }, [])
 
-    const fetchLenders = (params: string = '') => {
-        listLenders(authenticatedAdmin?.bearerToken, params)
+    const fetchLenders = (params: string = filterQueryString) => {
+        listLenders(authenticatedAdmin?.bearerToken, `type=lender&${params}`)
             .then(async response => {
                 const feedback = await response.json();
                 if (response.ok && feedback.success) {
@@ -44,6 +50,40 @@ const LenderList: React.FC = () => {
             .catch((error) => {
                 console.log('error: ', error)
             })
+    }
+
+    const [resetFilter, setResetFilter] = useState<boolean>(false);
+    const [submitFilter, setSubmitFilter] = useState<boolean>(false);
+    const [formData, setFormData] = useState<FilterFormDataType>({
+        externalId: '',
+        startDate: '',
+        endDate: '',
+        status: ''
+    });
+
+    const handleFilterSubmitButtonClicked = (submit: boolean) => {
+        setSubmitFilter(submit)
+        const queryString = prepareFilterQueryString(formData, filterQueryString)
+        setFilterQueryString(queryString)
+        fetchLenders(queryString)
+    }
+
+    const handleResetFilter = (reset: boolean) => {
+        setResetFilter(reset)
+        return fetchLenders('pageSize=10')
+    }
+
+    const handleFilterChange = (data: FilterFormDataType) => {
+        if (Object.values(data).every(value => value.trim() === '')) {
+            return setHasError(true)
+        } else {
+            setFormData({...data})
+            return setHasError(false)
+        }
+    }
+
+    const handleFilterError = (error: boolean) => {
+        setHasError(error)
     }
 
     const handlePrevious = () => {
@@ -82,7 +122,18 @@ const LenderList: React.FC = () => {
 
     return (
         <>
-            <div>
+            <FilterWrapper onSubmit={handleFilterSubmitButtonClicked} onReset={handleResetFilter}
+                           hasError={hasError}>
+                <LenderFilter
+                    submit={submitFilter}
+                    reset={resetFilter}
+                    onChange={handleFilterChange}
+                    hasError={hasError}
+                    setHasError={handleFilterError}
+                />
+            </FilterWrapper>
+
+            <div className="mt-4">
                 <Table buttonText="Add Lender" onButtonClick={handleAddLender}>
                     {{
                         headers: tableHeaders,

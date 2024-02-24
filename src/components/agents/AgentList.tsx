@@ -5,10 +5,12 @@ import React, {useEffect, useState} from "react";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
 import Link from "next/link";
 import {listUsers} from "@/api/user";
-import {extractPaginationData, formatAmount, formatDate, getError} from "@/utils/helpers";
+import {extractPaginationData, formatAmount, formatDate, getError, prepareFilterQueryString} from "@/utils/helpers";
 import {useAgentStore} from "@/store/AgentStore";
 import Badge from "@/components/Badge";
-import {UserType} from "@/utils/types/UserType";
+import FilterWrapper from "@/components/FilterWrapper";
+import {FilterFormDataType} from "@/utils/types/FilterFormDataType";
+import AgentFilter from "@/components/agents/AgentFilter";
 
 const AgentList: React.FC = () => {
     const tableHeaders = [
@@ -26,6 +28,7 @@ const AgentList: React.FC = () => {
     }, [])
 
     const [error, setError] = useState<string | null>(null);
+    const [hasError, setHasError] = useState<boolean>(false);
     const {agents, setAgents, setAgent} = useAgentStore()
     const [pageOption, setPageOption] = useState<IListBoxItem>({
         label: '10',
@@ -36,9 +39,17 @@ const AgentList: React.FC = () => {
         {label: '20', value: '20'},
     ]
     const [filterQueryString, setFilterQueryString] = useState<string>('pageSize=10');
+    const [resetFilter, setResetFilter] = useState<boolean>(false);
+    const [submitFilter, setSubmitFilter] = useState<boolean>(false);
+    const [formData, setFormData] = useState<FilterFormDataType>({
+        externalId: '',
+        startDate: '',
+        endDate: '',
+        status: ''
+    });
 
-    const fetchAgents = (params: string = 'type=agent') => {
-        listUsers(params)
+    const fetchAgents = (params: string = '') => {
+        listUsers(`type=agent&${params}`)
             .then(async response => {
                 const feedback = await response.json();
                 if (response.ok && feedback.success) {
@@ -53,27 +64,63 @@ const AgentList: React.FC = () => {
             })
     }
 
-    const handleSetSelectedAgent = (agent: UserType) => {
-        setAgent(agent)
+    const handleFilterSubmitButtonClicked = (submit: boolean) => {
+        setSubmitFilter(submit)
+        const queryString = prepareFilterQueryString(formData, filterQueryString)
+        setFilterQueryString(queryString)
+        fetchAgents(queryString)
+    }
+
+    const handleResetFilter = (reset: boolean) => {
+        setResetFilter(reset)
+        return fetchAgents('pageSize=10')
+    }
+
+    const handleFilterChange = (data: FilterFormDataType) => {
+        if (Object.values(data).every(value => value.trim() === '')) {
+            return setHasError(true)
+        } else {
+            setFormData({...data})
+            return setHasError(false)
+        }
+    }
+
+    const handleFilterError = (error: boolean) => {
+        setHasError(error)
     }
 
     const handlePrevious = () => {
-        // if (collections) {
-        //     const {pagination} = collections
-        //     const previousPageNumber = pagination.pageNumber - 1
-        //     return pagination.firstPage ? null : getCollectionTransactions(`rows=${pageOption.value}&pageNumber=${previousPageNumber}`)
-        // }
+        if (agents) {
+            const {pagination} = agents
+            if (pagination.currentPage) {
+                const previousPageNumber = pagination.currentPage - 1
+                return pagination.firstPage ? null : fetchAgents(`pageSize=${pageOption.value}&page=${previousPageNumber}`)
+            }
+        }
     }
     const handleNext = () => {
-        // if (collections) {
-        //     const {pagination} = collections
-        //     const nextPageNumber = pagination.pageNumber + 1
-        //     return pagination.lastPage ? null : getCollectionTransactions(`rows=${pageOption.value}&pageNumber=${nextPageNumber}`)
-        // }
+        if (agents) {
+            const {pagination} = agents
+            if (pagination.currentPage) {
+                const nextPageNumber = pagination.currentPage + 1
+                return pagination.lastPage ? null : fetchAgents(`pageSize=${pageOption.value}&page=${nextPageNumber}`)
+            }
+        }
     }
 
     return (
         <div>
+            <FilterWrapper onSubmit={handleFilterSubmitButtonClicked} onReset={handleResetFilter}
+                           hasError={hasError}>
+                <AgentFilter
+                    submit={submitFilter}
+                    reset={resetFilter}
+                    onChange={handleFilterChange}
+                    hasError={hasError}
+                    setHasError={handleFilterError}
+                />
+            </FilterWrapper>
+
             <Table onButtonClick={() => {
             }}>
                 {{
@@ -115,6 +162,8 @@ const AgentList: React.FC = () => {
                 setPageOption={setPageOption}
                 pageOption={pageOption}
                 pagination={agents?.pagination}
+                handlePrevious={handlePrevious}
+                handleNext={handleNext}
             />
         </div>
     )
