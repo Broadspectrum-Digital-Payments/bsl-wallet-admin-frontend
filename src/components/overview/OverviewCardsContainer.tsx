@@ -6,21 +6,21 @@ const OverviewCardsContainer = () => {
     const pages = [
         {
             id: 1,
-            name: 'Merchants',
+            name: 'Lenders',
             color: 'sky',
             background: 'bg-sky-100',
             description: 'We would like to ensure that your account is in safe hands. Verify your email today to enjoy the full features on the platform.',
             image: 'assets.gif',
-            href: '/merchants',
+            href: '/lenders',
         },
         {
             id: 2,
-            name: 'Customers',
+            name: 'Loans',
             color: 'gray',
             background: 'bg-gray-100',
             description: 'We would like to ensure that your account is in safe hands. Verify your email today to enjoy the full features on the platform.',
             image: 'maintenance.gif',
-            href: '/customers',
+            href: '/loans',
         },
         {
             id: 3,
@@ -33,12 +33,12 @@ const OverviewCardsContainer = () => {
         },
         {
             id: 4,
-            name: 'Loans',
+            name: 'Customers',
             color: 'fuchsia',
             background: 'bg-fuchsia-100',
             description: 'We would like to ensure that your account is in safe hands. Verify your email today to enjoy the full features on the platform.',
             image: 'reports.gif',
-            href: '/loans'
+            href: '/customers'
         },
     ]
 

@@ -11,6 +11,10 @@ import AgentFilter from "@/components/agents/AgentFilter";
 import FilterWrapper from "@/components/FilterWrapper";
 import {FilterFormDataType} from "@/utils/types/FilterFormDataType";
 import Badge from "@/components/Badge";
+import SlideOverWrapper from "@/components/SlideOver";
+import LoanSummary from "@/components/loans/LoanSummary";
+import {LoanType} from "@/utils/types/LoanType";
+import LoanRepaymentHistory from "@/components/loans/RepaymentHistory";
 
 const LoanList: React.FC = () => {
     const tableHeaders = [
@@ -35,6 +39,8 @@ const LoanList: React.FC = () => {
         status: ''
     });
     const [hasError, setHasError] = useState<boolean>(false);
+    const [slideOverOpen, setSlideOverOpen] = useState<boolean>(false);
+    const [detailsActiveTab, setDetailsActiveTab] = useState<string>('summary');
 
     useEffect(() => {
         fetchLoans(filterQueryString)
@@ -108,6 +114,20 @@ const LoanList: React.FC = () => {
         {label: '20', value: '20'},
     ]
 
+    const handleViewLoanDetails = (loan: LoanType) => {
+        setLoan(loan)
+        setSlideOverOpen(true)
+    }
+
+    const handleSlideOverOpen = () => {
+        setSlideOverOpen(!slideOverOpen)
+        if (!slideOverOpen) setDetailsActiveTab('summary')
+    }
+    const loanDetailsTabs = [
+        {name: 'summary', label: 'Loan Summary'},
+        {name: 'history', label: 'Repayment History'}
+    ]
+
     return (
         <div>
             <FilterWrapper onSubmit={handleFilterSubmitButtonClicked} onReset={handleResetFilter}
@@ -147,9 +167,9 @@ const LoanList: React.FC = () => {
                                     <TData label=""
                                            customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
                                         <Link
-                                            onClick={() => setLoan(loan)}
+                                            onClick={() => handleViewLoanDetails(loan)}
                                             className="text-indigo-600 hover:text-indigo-900"
-                                            href={`/loans/${loan.externalId}`}>
+                                            href="">
                                             Details <span className="sr-only">, {loan.externalId}</span>
                                         </Link>
                                     </TData>
@@ -167,6 +187,31 @@ const LoanList: React.FC = () => {
                 handleNext={handleNext}
                 pagination={loans?.pagination}
             />
+
+            <SlideOverWrapper open={slideOverOpen} setOpen={handleSlideOverOpen}>
+                <div className="border-b border-gray-200 bg-slate-800">
+                    <div className="px-6">
+                        <nav className="-mb-px flex space-x-6" x-descriptions="Tab component">
+                            {loanDetailsTabs.map((tab) => (
+                                <Link
+                                    onClick={() => setDetailsActiveTab(tab.name)}
+                                    key={tab.name}
+                                    href=""
+                                    className={`${detailsActiveTab === tab.name
+                                        ? 'border-white text-white'
+                                        : 'border-transparent text-gray-500 hover:border-gray-100 hover:text-gray-700'}
+                                                                whitespace-nowrap border-b-2 px-1 pb-4 text-sm font-medium`
+                                    }
+                                >
+                                    {tab.label}
+                                </Link>
+                            ))}
+                        </nav>
+                    </div>
+                </div>
+                {detailsActiveTab === 'summary' && <LoanSummary/>}
+                {detailsActiveTab === 'history' && <LoanRepaymentHistory/>}
+            </SlideOverWrapper>
         </div>
     )
 }
