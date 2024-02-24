@@ -5,7 +5,7 @@ import React, {useEffect, useState} from "react";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
 import Badge from "@/components/Badge";
 import {useTransactionStore} from "@/store/TransactionStore";
-import {extractPaginationData, formatAmount} from "@/utils/helpers";
+import {extractPaginationData, formatAmount, prepareFilterQueryString} from "@/utils/helpers";
 import {useAdminStore} from "@/store/AdminStore";
 import {listTransactions} from "@/api/transaction";
 import {FilterQueryType} from "@/utils/types/FilterQueryType";
@@ -83,41 +83,12 @@ const TransactionList: React.FC = () => {
         endDate: '',
         status: ''
     });
-
-    const prepareFilterQueryString = (queryObject: FilterQueryType) => {
-        const queryParams = filterQueryString.split('&')
-            .map(param => param.split('='))
-            .reduce((obj: Record<string, string>, [key, value]) => {
-                if (key !== '' && value != undefined)
-                    return {...obj, [key]: value};
-
-                return obj;
-            }, {});
-
-        const {startDate, endDate, ...remainingParams} = queryParams;
-
-        const mergedParams = {
-            ...remainingParams,
-            ...queryObject,
-        };
-
-        const filteredParams = Object.fromEntries(
-            Object.entries(mergedParams).filter(([key, value]) => {
-                return ![undefined, ''].includes(String(value));
-            })
-        );
-
-        return Object.entries(filteredParams)
-            .map(([key, value]) => `${key}=${value}`)
-            .join('&');
-    };
-
     const [filterQueryString, setFilterQueryString] = useState<string>('pageSize=10');
     const [hasError, setHasError] = useState<boolean>(true);
 
     const handleFilterSubmitButtonClicked = (submit: boolean) => {
         setSubmitFilter(submit)
-        const queryString = prepareFilterQueryString(formData)
+        const queryString = prepareFilterQueryString(formData, filterQueryString)
         setFilterQueryString(queryString)
         fetchTransactions(queryString)
     }
@@ -141,7 +112,7 @@ const TransactionList: React.FC = () => {
     }
 
     const handleSetPageOption = (pageOption: IListBoxItem) => {
-        const queryString = prepareFilterQueryString({pageSize: pageOption.value})
+        const queryString = prepareFilterQueryString({pageSize: pageOption.value}, filterQueryString)
         setFilterQueryString(queryString);
         fetchTransactions(queryString)
         setPageOption(pageOption)

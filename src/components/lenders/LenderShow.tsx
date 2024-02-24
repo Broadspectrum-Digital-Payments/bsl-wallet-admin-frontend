@@ -22,7 +22,6 @@ const LenderShow: React.FC = () => {
     const {lender, setLender} = useLenderStore()
     const {authenticatedAdmin} = useAdminStore()
 
-
     const [hasError, setHasError] = useState<boolean | undefined>(false);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -45,9 +44,6 @@ const LenderShow: React.FC = () => {
                 const feedback = await response.json();
                 if (response.ok && feedback.success) {
                     const {data} = feedback
-
-                    console.log('data: ', data)
-
                     if (setLender) setLender(data);
                 }
             })
@@ -62,9 +58,8 @@ const LenderShow: React.FC = () => {
         {name: 'deactivated', id: 'deactivated'}
     ]
 
-    const lenderStatus = lender.status == 'created' ? statuses[0] : statuses[1]
+    const lenderStatus = lender?.status === 'created' ? statuses[0] : statuses[1]
     const [selectedStatus, setSelectedStatus] = useState(lenderStatus)
-
 
     const kycStatuses: DropdownInputItemType[] = [
         {name: 'queued', id: 'queued'},
@@ -73,7 +68,7 @@ const LenderShow: React.FC = () => {
         {name: 'submitted', id: 'submitted'},
     ]
 
-    const lenderKycStatus = kycStatuses.filter((status) => status.name === lender.kycStatus)
+    const lenderKycStatus = kycStatuses.filter((status) => status.name === lender?.kycStatus)
 
     const [selectedKycStatus, setSelectedKycStatus] = useState(lenderKycStatus[0])
 
@@ -103,9 +98,9 @@ const LenderShow: React.FC = () => {
         lender.kycStatus = selectedKycStatus.name;
     }
 
-    const isLenderStatusUpdated = (selectedStatus?.name !== lender.status)
+    const isLenderStatusUpdated = (selectedStatus?.name !== lender?.status)
 
-    const isLenderKycStatusUpdated = (selectedKycStatus?.name !== lender.kycStatus)
+    const isLenderKycStatusUpdated = (selectedKycStatus?.name !== lender?.kycStatus)
 
     const handleUpdateLender = () => {
 
@@ -113,11 +108,11 @@ const LenderShow: React.FC = () => {
 
         const updatedData: UpdatedData = {status: '', kycStatus: ''}
 
-        if (isLenderStatusUpdated){
+        if (isLenderStatusUpdated) {
             updatedData.status = selectedStatus.name
         }
 
-        if (isLenderKycStatusUpdated){
+        if (isLenderKycStatusUpdated) {
             updatedData.kycStatus = selectedKycStatus.name
         }
 
@@ -131,11 +126,11 @@ const LenderShow: React.FC = () => {
                 setLoading(false)
                 if (response.status == 204) {
 
-                    if (isLenderStatusUpdated){
+                    if (isLenderStatusUpdated) {
                         lenderStatusUpdate()
                     }
 
-                    if (isLenderKycStatusUpdated){
+                    if (isLenderKycStatusUpdated) {
                         lenderKycStatusUpdate()
                     }
 
@@ -145,7 +140,10 @@ const LenderShow: React.FC = () => {
 
                 return setToastInfo({type: 'error', description: 'Something went wrong'})
 
-            }).catch((error) => {setToastInfo({type: 'error', description: 'Something went wrong'}); console.log('error: ', error)})
+            }).catch((error) => {
+                setToastInfo({type: 'error', description: 'Something went wrong'});
+                console.log('error: ', error)
+            })
 
         setLoading(false)
     }
