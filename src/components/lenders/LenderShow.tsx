@@ -70,6 +70,9 @@ const LenderShow: React.FC = () => {
                 const feedback = await response.json();
                 if (response.ok && feedback.success) {
                     const {data} = feedback
+
+                    console.log('data: ', data)
+
                     if (setLender) setLender(data);
                 }
             })
@@ -78,25 +81,6 @@ const LenderShow: React.FC = () => {
             })
     }
 
-    const statuses: DropdownInputItemType[] = [
-        {name: 'created', id: 'created'},
-        {name: 'activated', id: 'activated'},
-        {name: 'deactivated', id: 'deactivated'}
-    ]
-
-    const lenderStatus = lender?.status === 'created' ? statuses[0] : statuses[1]
-    const [selectedStatus, setSelectedStatus] = useState(lenderStatus)
-
-    const kycStatuses: DropdownInputItemType[] = [
-        {name: 'queued', id: 'queued'},
-        {name: 'approved', id: 'approved'},
-        {name: 'rejected', id: 'rejected'},
-        {name: 'submitted', id: 'submitted'},
-    ]
-
-    const lenderKycStatus = kycStatuses.filter((status) => status.name === lender?.kycStatus)
-
-    const [selectedKycStatus, setSelectedKycStatus] = useState(lenderKycStatus[0])
 
 
     const [error, setError] = useState<string | null>(null);
@@ -118,8 +102,9 @@ const LenderShow: React.FC = () => {
     };
 
 
-    const isLenderStatusUpdated = (selectedStatus?.name !== lender?.status)
-    const isLenderKycStatusUpdated = (selectedKycStatus?.name !== lender?.kycStatus)
+    const isLenderStatusUpdated = previousStatus !== selectedStatus
+
+    const isLenderKycStatusUpdated = previousKycStatus !== selectedKycStatus
 
     const handleUpdateLender = () => {
 
@@ -128,11 +113,11 @@ const LenderShow: React.FC = () => {
         const updatedData: UpdatedData = {status: '', kycStatus: ''}
 
         if (isLenderStatusUpdated) {
-            updatedData.status = selectedStatus.name
+            updatedData.status = selectedStatus
         }
 
         if (isLenderKycStatusUpdated) {
-            updatedData.kycStatus = selectedKycStatus.name
+            updatedData.kycStatus = selectedKycStatus
         }
 
         Object.keys(updatedData).forEach(key => updatedData[key] === '' && delete updatedData[key]);
@@ -143,14 +128,6 @@ const LenderShow: React.FC = () => {
 
                 setLoading(false)
                 if (response.status == 204) {
-
-                    if (isLenderStatusUpdated) {
-                        lenderStatusUpdate()
-                    }
-
-                    if (isLenderKycStatusUpdated) {
-                        lenderKycStatusUpdate()
-                    }
 
                     if (setLender) setLender(lender)
                     return setToastInfo({type: 'success', description: 'Updated Successfully'})
@@ -338,6 +315,7 @@ const LenderShow: React.FC = () => {
                                     <div
                                         className={`sm:mt-4 flex lg:px-8 pt-4`}>
                                         <Button buttonType="button" styleType="primary"
+                                                disabled={!isLenderKycStatusUpdated && !isLenderStatusUpdated}
                                                 customStyles="p-4 md:p-5 rounded-lg"
                                                 onClick={handleUpdateLender}>
                                             {'Save'}
