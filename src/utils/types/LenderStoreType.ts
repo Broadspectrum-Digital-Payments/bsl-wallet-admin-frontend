@@ -13,11 +13,8 @@ export type LenderStoreType = {
 
     setAuthenticatedLender: (authenticatedLender: LenderType) => void
     authenticatedLender: LenderType
-    setIsAuthenticated?: (isAuthenticated: boolean) => void
-    isAuthenticated?: boolean
-
-    setFirstTimeLogin?: (firstTimeLogin: boolean) => void
-    firstTimeLogin?: boolean
+    setIsLenderAuthenticated?: (isLenderAuthenticated: boolean) => void
+    isLenderAuthenticated?: boolean
 
     resetLenderStore?: () => void,
 }
