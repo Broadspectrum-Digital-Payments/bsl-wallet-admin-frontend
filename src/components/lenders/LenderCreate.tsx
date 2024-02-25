@@ -5,6 +5,7 @@ import DragAndDrop from "@/components/forms/DragAndDrop";
 import {storeLender} from "@/api/lenders";
 import {useLenderStore} from "@/store/LenderStore";
 import Toast from "@/components/Toast";
+import {useRouter} from "next/navigation";
 
 const LenderCreate: React.FC = () => {
     const [formData, setFormData] = useState<{
@@ -31,7 +32,7 @@ const LenderCreate: React.FC = () => {
         {type: '', description: ''}
     );
     const {setLenders, lenders} = useLenderStore()
-
+    const router = useRouter()
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = event.target;
@@ -55,6 +56,7 @@ const LenderCreate: React.FC = () => {
                     const {pagination, data} = lenders
 
                     if (setLenders) setLenders({pagination, data: [lender, ...data]});
+                    return router.push('/lenders')
                 }
 
                 setToastData({type: 'error', description: feedback.message})
