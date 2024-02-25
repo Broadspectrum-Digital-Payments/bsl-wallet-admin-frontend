@@ -10,24 +10,10 @@ import {
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import ProfileDropdown from "@/components/layout/ProfileDropdown";
-import {useAdminStore} from "@/store/AdminStore";
-import {useRouter} from "next/navigation";
 
 const DashboardLayout: React.FC<IDashboardLayout> = ({children}) => {
     const [sidebarOpen, setSidebarOpen] = useState(false)
-    const {activeSidebarMenu} = useDashboardStore();
-
-    const mainMenuItems = [
-        {name: 'overview', label: 'Overview', href: '/overview', icon: true, category: 'Dashboard'},
-        {name: 'admins', label: 'Admins', href: '/admins', icon: true, category: 'Management'},
-        {name: 'lenders', label: 'Lenders', href: '/lenders', icon: true, category: ''},
-        {name: 'agents', label: 'Agents', href: '/agents', icon: true, category: ''},
-        {name: 'customers', label: 'Customers', href: '/customers', icon: true, category: ''},
-        {name: 'kyc', label: 'KYC', href: '/kyc', icon: true, category: ''},
-        {name: 'loans', label: 'Loans', href: '/loans', icon: true, category: 'Core'},
-        {name: 'transactions', label: 'Transactions', href: '/transactions', icon: true, category: ''},
-        {name: 'reports', label: 'Reports & Analytics', href: 'reports', icon: true, category: 'Other'},
-    ]
+    const {activeSidebarMenu, mainMenuItemsList} = useDashboardStore();
 
     const userProfileMenuItems = [
         {name: 'account', label: 'Account', href: '/settings', icon: true, category: ''},
@@ -49,7 +35,7 @@ const DashboardLayout: React.FC<IDashboardLayout> = ({children}) => {
     }, []);
 
     const setDashboard = () => {
-        if (setMainMenuItemsList) setMainMenuItemsList(mainMenuItems)
+        if (setMainMenuItemsList) setMainMenuItemsList(mainMenuItemsList)
         if (setProfileDropdownItems) setProfileDropdownItems(userProfileMenuItems)
         if (setBottomMenuItemsList) setBottomMenuItemsList(bottomMenuItems)
     }

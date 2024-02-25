@@ -13,6 +13,7 @@ import AuthLayout from "@/components/layout/AuthLayout";
 import {useAdminStore} from "@/store/AdminStore";
 import {useDashboardStore} from "@/store/DashboardStore";
 import {capitalizeFirstLetter} from "@/utils/helpers";
+import {useLenderStore} from "@/store/LenderStore";
 
 export default function Login() {
     const router = useRouter()
@@ -28,7 +29,8 @@ export default function Login() {
         resetAdminStore,
     } = useAdminStore()
     const {resetTransactionStore} = useTransactionStore()
-    const {mainMenuItemsList, setActiveSidebarMenu} = useDashboardStore();
+    const {mainMenuItemsList, setMainMenuItemsList, setActiveSidebarMenu} = useDashboardStore();
+    const {setAuthenticatedLender, resetLenderStore} = useLenderStore();
 
     useEffect(() => {
         handleUserLogout()
@@ -38,6 +40,7 @@ export default function Login() {
         if (authenticatedAdmin?.bearerToken) {
             if (resetTransactionStore) resetTransactionStore()
             if (resetAdminStore) resetAdminStore()
+            if (resetLenderStore) resetLenderStore()
         }
     }
 
@@ -61,6 +64,9 @@ export default function Login() {
                 if (response.ok && feedback.success) {
                     const {data} = feedback;
 
+                    if (setIsAuthenticated) setIsAuthenticated(true)
+                    if (setActiveSidebarMenu) setActiveSidebarMenu(mainMenuItemsList[0]);
+
                     const authData = {
                         externalId: data.externalId,
                         email: data.email,
@@ -77,12 +83,41 @@ export default function Login() {
                             phoneNumber: data.phoneNumber,
                             actualBalance: data.actualBalance,
                             availableBalance: data.availableBalance,
+                            files: data.files,
                         });
+                        if (setAuthenticatedLender) setAuthenticatedLender(authData)
+                        if (setMainMenuItemsList) setMainMenuItemsList([
+                            {name: 'overview', label: 'Overview', href: '/overview', icon: true, category: 'Dashboard'},
+                            {name: 'loans', label: 'Loans', href: '/loans', icon: true, category: 'Core'},
+                        ])
+                    } else {
+                        if (setMainMenuItemsList) setMainMenuItemsList([
+                            {name: 'overview', label: 'Overview', href: '/overview', icon: true, category: 'Dashboard'},
+                            {name: 'admins', label: 'Admins', href: '/admins', icon: true, category: 'Management'},
+                            {name: 'lenders', label: 'Lenders', href: '/lenders', icon: true, category: ''},
+                            {name: 'agents', label: 'Agents', href: '/agents', icon: true, category: ''},
+                            {name: 'customers', label: 'Customers', href: '/customers', icon: true, category: ''},
+                            {name: 'kyc', label: 'KYC', href: '/kyc', icon: true, category: ''},
+                            {name: 'loans', label: 'Loans', href: '/loans', icon: true, category: 'Core'},
+                            {
+                                name: 'transactions',
+                                label: 'Transactions',
+                                href: '/transactions',
+                                icon: true,
+                                category: ''
+                            },
+                            {
+                                name: 'reports',
+                                label: 'Reports & Analytics',
+                                href: 'reports',
+                                icon: true,
+                                category: 'Other'
+                            },
+                        ])
                     }
 
+
                     if (setAuthenticatedAdmin) setAuthenticatedAdmin(authData)
-                    if (setIsAuthenticated) setIsAuthenticated(true)
-                    if (setActiveSidebarMenu) setActiveSidebarMenu(mainMenuItemsList[0]);
                     return router.push('/overview')
                 }
                 setLoading(false)

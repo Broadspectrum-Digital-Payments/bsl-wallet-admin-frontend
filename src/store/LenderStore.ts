@@ -13,15 +13,12 @@ export const useLenderStore = create<LenderStoreType>()(
 
                 setLender: (data) => set({lender: data}),
                 lender: {},
-                
+
                 setAuthenticatedLender: (authenticatedLender?: LenderType) => set({authenticatedLender}),
                 authenticatedLender: {},
 
-                setIsAuthenticated: (isAuthenticated?: boolean) => set({isAuthenticated}),
-                isAuthenticated: false,
-
-                setFirstTimeLogin: (firstTimeLogin?: boolean) => set({firstTimeLogin}),
-                firstTimeLogin: false,
+                setIsLenderAuthenticated: (isLenderAuthenticated?: boolean) => set({isLenderAuthenticated}),
+                isLenderAuthenticated: false,
 
                 setLoading: (loading) => set({loading}),
                 loading: false,
@@ -32,8 +29,7 @@ export const useLenderStore = create<LenderStoreType>()(
                         pagination: getEmptyPaginationData(),
                         data: []
                     },
-                    isAuthenticated: false,
-                    firstTimeLogin: false,
+                    isLenderAuthenticated: false,
                     loading: false
                 }),
             }),
