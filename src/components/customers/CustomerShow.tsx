@@ -22,6 +22,12 @@ import EmptyState from "@/components/EmptyState";
 import SlideOverWrapper from "@/components/SlideOver";
 import {TransactionType} from "@/utils/types/TransactionType";
 import TransactionDetails from "@/components/transactions/TransactionDetails";
+import LoanSummary from "@/components/loans/LoanSummary";
+import LoanRepaymentHistory from "@/components/loans/RepaymentHistory";
+import {useLoanStore} from "@/store/LoanStore";
+import {FilterFormDataType} from "@/utils/types/FilterFormDataType";
+import {downloadLoans, listLoans} from "@/api/loan";
+import {LoanType} from "@/utils/types/LoanType";
 
 type UpdatedData = {
     status: string;
@@ -271,6 +277,83 @@ const CustomerShow: React.FC = () => {
         setSlideOverOpen(!slideOverOpen)
     }
 
+
+    // Loans
+    const loanTableHeaders = [
+        {label: 'Id', classes: 'py-3.5 pl-4 pr-3 text-left  sm:pl-0'},
+        {label: 'Amount', classes: 'hidden px-3 py-3.5 text-left lg:table-cell'},
+        {label: 'Repayment Duration', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
+        {label: 'Repayment Amount', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
+        {label: 'Amount Paid', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
+        {label: 'Status', classes: 'px-3 py-3.5 text-left'},
+        {label: 'Date Created', classes: 'px-3 py-3.5 text-left'},
+        {label: 'Action', classes: 'relative py-3.5 pl-3 pr-4 sm:pr-0'},
+    ]
+    const {loans, setLoans, setLoan} = useLoanStore()
+
+    const [loanFilterQueryString, setLoanFilterQueryString] = useState<string>('pageSize=10');
+
+
+    const [loanSlideOverOpen, setLoanSlideOverOpen] = useState<boolean>(false);
+    const [loanDetailsActiveTab, setLoanDetailsActiveTab] = useState<string>('summary');
+
+
+    const fetchLoans = (params: string = '') => {
+        listLoans(params)
+            .then(async response => {
+                const feedback = await response.json();
+                if (response.ok && feedback.success) {
+                    const {data, meta} = feedback
+                    const pagination = extractPaginationData(meta)
+                    if (setLoans) setLoans({pagination, data})
+                }
+            })
+            .catch((error) => {
+                console.log('error: ', error)
+            })
+    }
+
+
+
+    const handleLoanPrevious = () => {
+        if (loans) {
+            const {pagination} = loans
+            if (pagination.currentPage) {
+                const previousPageNumber = pagination.currentPage - 1
+                return pagination.firstPage ? null : fetchLoans(`pageSize=${pageOption.value}&page=${previousPageNumber}`)
+            }
+        }
+    }
+    const handleLoanNext = () => {
+        if (loans) {
+            const {pagination} = loans
+            if (pagination.currentPage) {
+                const nextPageNumber = pagination.currentPage + 1
+                return pagination.lastPage ? null : fetchLoans(`pageSize=${pageOption.value}&page=${nextPageNumber}`)
+            }
+        }
+    }
+
+
+    const handleViewLoanDetails = (loan: LoanType) => {
+        setLoan(loan)
+        setSlideOverOpen(true)
+    }
+
+    const handleLoanSlideOverOpen = () => {
+        setSlideOverOpen(!slideOverOpen)
+        if (!slideOverOpen) setLoanDetailsActiveTab('summary')
+    }
+
+    const loanDetailsTabs = [
+        {name: 'summary', label: 'Loan Summary'},
+        {name: 'history', label: 'Repayment History'}
+    ]
+
+    const handleTableButtonClicked = () => {
+        return downloadLoans(filterQueryString)
+    }
+
     return (
         <>
             <div className="">
@@ -305,7 +388,7 @@ const CustomerShow: React.FC = () => {
 
                                 <form className="">
 
-                                    <div className="flex lg:px-8 px-4 py-4">
+                                    <div className="flex lg:px-8 px-4 pt-4">
                                         <div className="flex-1 mr-4">
                                             <TextInput
                                                 label="Name"
@@ -415,9 +498,20 @@ const CustomerShow: React.FC = () => {
 
                                         <div className="flex-1 mr-4">
 
-                                            {customer &&
-                                                <CustomSelectInput options={statuses} onChange={handleStatusChange}
-                                                                   value={customer.status ?? ''} label="Status"/>}
+                                            <TextInput
+                                                label="Ghana Post GPS"
+                                                id="ghanaPostGPS"
+                                                name="ghanaPostGPS"
+                                                type="text"
+                                                placeholder="GA-6778-789"
+                                                value={customer.ghanaCardNumber}
+                                                required={true}
+                                                onInputChange={handleInputChange}
+                                                hasError={setHasError}
+                                                autoComplete="false"
+                                                disabled={true}
+                                                customInputClasses="capitalize"
+                                            />
 
                                         </div>
 
@@ -426,6 +520,9 @@ const CustomerShow: React.FC = () => {
                                             {/*                              onChange={handleKycStatusChange}*/}
                                             {/*                              value={customer.kycStatus ?? ''}*/}
                                             {/*                              label="Kyc Status"/>}*/}
+                                            {customer &&
+                                                <CustomSelectInput options={statuses} onChange={handleStatusChange}
+                                                                   value={customer.status ?? ''} label="Status"/>}
                                         </div>
                                     </div>
 
@@ -542,6 +639,83 @@ const CustomerShow: React.FC = () => {
                                     </div>
                                         ) : EmptyState()}
                             </div>
+                        </div>
+                    )}
+
+                    {/*Loans*/}
+                    {activeSection == 'Loans' && (
+                        <div>
+                        <Table buttonText='Download' onButtonClick={handleTableButtonClicked}>
+                            {{
+                                headers: loanTableHeaders,
+                                body:
+                                    <>
+                                        {loans.data.map((loan) => (
+                                            <tr key={loan.externalId}>
+                                                <TData label={loan.externalId}
+                                                       customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
+                                                <TData label={formatAmount(loan.amount)}
+                                                       customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
+                                                <TData label={formatAmount(loan.amount)}
+                                                       customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                <TData label={formatAmount(loan.amount)}
+                                                       customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                <TData label={formatAmount(loan.amount)}
+                                                       customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                <TData customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
+                                                    <Badge text={loan.status ?? ''} customClasses="capitalize"/>
+                                                </TData>
+                                                <TData label={loan.createdAt}
+                                                       customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+
+                                                <TData label=""
+                                                       customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
+                                                    <Link
+                                                        onClick={() => handleViewLoanDetails(loan)}
+                                                        className="text-indigo-600 hover:text-indigo-900"
+                                                        href="">
+                                                        Details <span className="sr-only">, {loan.externalId}</span>
+                                                    </Link>
+                                                </TData>
+                                            </tr>
+                                        ))}
+                                    </>
+                            }}
+                        </Table>
+
+                        <Pagination
+                        perPageOptions={perPageOptions}
+                    setPageOption={setPageOption}
+                    pageOption={pageOption}
+                    handlePrevious={handleLoanPrevious}
+                    handleNext={handleLoanNext}
+                    pagination={loans?.pagination}
+                />
+
+                <SlideOverWrapper open={slideOverOpen} setOpen={handleSlideOverOpen}>
+                    <div className="border-b border-gray-200 bg-slate-800">
+                        <div className="px-6">
+                            <nav className="-mb-px flex space-x-6" x-descriptions="Tab component">
+                                {loanDetailsTabs.map((tab) => (
+                                    <Link
+                                        onClick={() => setLoanDetailsActiveTab(tab.name)}
+                                        key={tab.name}
+                                        href=""
+                                        className={`${loanDetailsActiveTab === tab.name
+                                            ? 'border-white text-white'
+                                            : 'border-transparent text-gray-500 hover:border-gray-100 hover:text-gray-700'}
+                                                                whitespace-nowrap border-b-2 px-1 pb-4 text-sm font-medium`
+                                        }
+                                    >
+                                        {tab.label}
+                                    </Link>
+                                ))}
+                            </nav>
+                        </div>
+                    </div>
+                    {loanDetailsActiveTab === 'summary' && <LoanSummary/>}
+                    {loanDetailsActiveTab === 'history' && <LoanRepaymentHistory/>}
+                </SlideOverWrapper>
                         </div>
                     )}
                 </main>
