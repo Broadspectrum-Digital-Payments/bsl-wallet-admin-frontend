@@ -120,7 +120,7 @@ const SettingsContent: React.FC = () => {
                                         name="availableBalance"
                                         type="text"
                                         placeholder="Phone Number"
-                                        value={authenticatedAdmin?.availableBalance}
+                                        value={authenticatedAdmin?.availableBalance?.toString()}
                                         required={true}
                                         autoComplete="false"
                                         disabled={true}
@@ -132,7 +132,7 @@ const SettingsContent: React.FC = () => {
                                         name="actualBalance"
                                         type="text"
                                         placeholder=""
-                                        value={authenticatedAdmin?.actualBalance}
+                                        value={authenticatedAdmin?.actualBalance?.toString()}
                                         required={false}
                                         autoComplete="false"
                                         disabled={true}
