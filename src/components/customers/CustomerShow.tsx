@@ -272,10 +272,6 @@ const CustomerShow: React.FC = () => {
     const handleSlideOverOpen = () => {
         setSlideOverOpen(!slideOverOpen)
     }
-    const transactionDetailsTabs = [
-        {name: 'summary', label: 'Loan Summary'},
-        {name: 'history', label: 'Repayment History'}
-    ]
 
     return (
         <>

@@ -4,10 +4,29 @@ import Button from "@/components/forms/Button";
 import Loader from "@/components/Loader";
 import KycApprovalDecision from "@/components/kyc/KycApprovalDecision";
 import {useAgentStore} from "@/store/AgentStore";
-import {formatAmount, getError, stringToTitleCase} from "@/utils/helpers";
+import {
+    extractPaginationData,
+    formatAmount,
+    getError,
+    prepareFilterQueryString,
+    stringToTitleCase
+} from "@/utils/helpers";
 import {updateUser} from "@/api/user";
 import {UserType} from "@/utils/types/UserType";
 import Toast from "@/components/Toast";
+import Table from "@/components/table/Table";
+import TData from "@/components/table/TData";
+import Badge from "@/components/Badge";
+import Link from "next/link";
+import Pagination from "@/components/table/Pagination";
+import SlideOverWrapper from "@/components/SlideOver";
+import TransactionDetails from "@/components/transactions/TransactionDetails";
+import EmptyState from "@/components/EmptyState";
+import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
+import {useCustomerStore} from "@/store/CustomerStore";
+import {listTransactions} from "@/api/transaction";
+import {TransactionType} from "@/utils/types/TransactionType";
+import {useAdminStore} from "@/store/AdminStore";
 
 const AgentShow: React.FC = () => {
     const [activeSection, setActiveSection] = useState('Account');
@@ -40,6 +59,9 @@ const AgentShow: React.FC = () => {
 
     const handleNavigationClick = (sectionName: string) => {
         setActiveSection(sectionName);
+        if (sectionName === 'Transactions') {
+            fetchTransactions(filterQueryString)
+        }
     };
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,6 +119,93 @@ const AgentShow: React.FC = () => {
     }
 
     const handleRejectKyc = () => {
+    }
+
+    const transactionsTableHeaders = [
+        {label: 'Id', classes: 'py-3.5 pl-4 pr-3 text-left  sm:pl-0'},
+        {label: 'Account Number', classes: 'hidden px-3 py-3.5 text-left lg:table-cell'},
+        {label: 'Amount', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
+        {label: 'Balance Before', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
+        {label: 'Balance After', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
+        {label: 'Fee', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
+        {label: 'Created  At', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
+        {label: 'Description', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
+        {label: 'Status', classes: 'px-3 py-3.5 text-left'},
+        {label: 'Action', classes: 'relative py-3.5 pl-3 pr-4 sm:pr-0'},
+    ]
+
+
+    const [pageOption, setPageOption] = useState<IListBoxItem>({
+        label: '10',
+        value: '10'
+    });
+    const perPageOptions: IListBoxItem [] = [
+        {label: '10', value: '10'},
+        {label: '20', value: '20'},
+    ]
+
+    const {transactions, setTransactions, setTransaction, transaction} = useAgentStore()
+
+    const [filterQueryString, setFilterQueryString] = useState<string>('pageSize=10');
+
+    const {authenticatedAdmin} = useAdminStore()
+
+
+    const fetchTransactions = (params: string = '') => {
+        // listUserTransactions(authenticatedAdmin?.bearerToken, params)
+        listTransactions(authenticatedAdmin?.bearerToken, params)
+            .then(async response => {
+                const feedback = await response.json();
+                if (response.ok && feedback.success) {
+                    const {data, meta} = feedback
+                    const pagination = extractPaginationData(meta)
+                    if (setTransactions) setTransactions({pagination, data})
+                }
+            })
+            .catch((error) => {
+                console.log('error: ', error)
+            })
+    }
+
+    const handlePrevious = () => {
+        if (transactions) {
+            const {pagination} = transactions
+            if (pagination.currentPage) {
+                const previousPageNumber = pagination.currentPage - 1
+                return pagination.firstPage ? null : fetchTransactions(`pageSize=${pageOption.value}&page=${previousPageNumber}`)
+            }
+        }
+    }
+    const handleNext = () => {
+        if (transactions) {
+            const {pagination} = transactions
+            if (pagination.currentPage) {
+                const nextPageNumber = pagination.currentPage + 1
+                return pagination.lastPage ? null : fetchTransactions(`pageSize=${pageOption.value}&page=${nextPageNumber}`)
+            }
+        }
+    }
+
+
+    const handleSetPageOption = (pageOption: IListBoxItem) => {
+        const queryString = prepareFilterQueryString({pageSize: pageOption.value}, filterQueryString)
+        setFilterQueryString(queryString);
+        fetchTransactions(queryString)
+        setPageOption(pageOption)
+    }
+
+
+    const [slideOverOpen, setSlideOverOpen] = useState<boolean>(false);
+
+
+    const handleViewLoanDetails = (transaction: TransactionType) => {
+        console.log(transaction)
+        setTransaction(transaction)
+        setSlideOverOpen(true)
+    }
+
+    const handleSlideOverOpen = () => {
+        setSlideOverOpen(!slideOverOpen)
     }
     return (
         <div className="">
@@ -271,6 +380,75 @@ const AgentShow: React.FC = () => {
 
                                 <KycApprovalDecision onApprove={handleApproveKyc} onReject={handleRejectKyc}/>
                             </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Transactions */}
+                {activeSection == 'Transactions' && (
+                    <div className="divide-y divide-white/5">
+
+                        <div className="lg:px-8">
+
+                            {transactions.data && transactions.data.length ?    (
+                                <div><Table onButtonClick={() => {
+                                }}>
+                                    {{
+                                        headers: transactionsTableHeaders,
+                                        body:
+                                            <>
+                                                {transactions && transactions.data.map((transaction) => (
+                                                    <tr key={transaction.externalId}>
+                                                        <TData label={transaction.stan}
+                                                               customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
+                                                        <TData label={transaction.accountNumber}
+                                                               customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
+                                                        <TData label={`${formatAmount(transaction.amount)}`}
+                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                        <TData label={`${formatAmount(transaction.balanceBefore)}`}
+                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                        <TData label={`${formatAmount(transaction.balanceAfter)}`}
+                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                        <TData label={`${formatAmount(transaction.fee)}`}
+                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                        <TData label={transaction.createdAt}
+                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                        <TData label={transaction.description}
+                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                        <TData label=""
+                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
+                                                            <Badge text={transaction.status ?? ''} customClasses="capitalize"/>
+                                                        </TData>
+                                                        <TData label=""
+                                                               customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
+
+                                                            <Link
+                                                                onClick={() => handleViewLoanDetails(transaction)}
+                                                                className="text-indigo-600 hover:text-indigo-900"
+                                                                href="">
+                                                                Details <span className="sr-only">, {transaction.externalId}</span>
+                                                            </Link>
+                                                        </TData>
+                                                    </tr>
+                                                ))}
+                                            </>
+                                    }}
+                                </Table>
+                                    <Pagination
+                                        perPageOptions={perPageOptions}
+                                        setPageOption={handleSetPageOption}
+                                        pageOption={pageOption}
+                                        handlePrevious={handlePrevious}
+                                        handleNext={handleNext}
+                                        pagination={transactions?.pagination}
+                                    />
+                                    <SlideOverWrapper dialogTitle="Transaction Details" open={slideOverOpen} setOpen={handleSlideOverOpen}>
+                                        <div className="flex lg:px-8 px-4 py-4">
+                                            <TransactionDetails transaction={transaction}></TransactionDetails>
+                                        </div>
+                                    </SlideOverWrapper>
+                                </div>
+                            ) : EmptyState()}
                         </div>
                     </div>
                 )}

@@ -1,8 +1,6 @@
 import React, {useState} from 'react'
 
 import {useTransactionStore} from "@/store/TransactionStore";
-import DetailsKeyValue from "@/components/DetailsKeyValue";
-import {formatAmount} from "@/utils/helpers";
 import TransactionDetails from "@/components/transactions/TransactionDetails";
 
 const CustomerShow: React.FC = () => {
