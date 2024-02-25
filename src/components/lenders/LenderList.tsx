@@ -12,6 +12,7 @@ import {listLenders} from "@/api/lenders";
 import {FilterFormDataType} from "@/utils/types/FilterFormDataType";
 import FilterWrapper from "@/components/FilterWrapper";
 import LenderFilter from "@/components/lenders/LenderFilter";
+import EmptyState from "@/components/EmptyState";
 
 const LenderList: React.FC = () => {
     const router = useRouter();
@@ -119,8 +120,8 @@ const LenderList: React.FC = () => {
 
     return (
         <>
-            <FilterWrapper onSubmit={handleFilterSubmitButtonClicked} onReset={handleResetFilter}
-                           hasError={hasError}>
+            {lenders && lenders?.data.length > 0 ? <div> <FilterWrapper onSubmit={handleFilterSubmitButtonClicked} onReset={handleResetFilter}
+                                                                        hasError={hasError}>
                 <LenderFilter
                     submit={submitFilter}
                     reset={resetFilter}
@@ -130,49 +131,49 @@ const LenderList: React.FC = () => {
                 />
             </FilterWrapper>
 
-            <div className="mt-4">
-                <Table buttonText="Add Lender" onButtonClick={handleAddLender}>
-                    {{
-                        headers: tableHeaders,
-                        body:
-                            <>
-                                {lenders && lenders.data.map((lender) => (
-                                    <tr key={lender.ghanaCardNumber}>
-                                        <TData label={lender.ghanaCardNumber}
-                                               customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                        <TData label={lender.name}
-                                               customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                        <TData label={lender.phoneNumber}
-                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                        <TData label=""
-                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
-                                            <Badge text={lender.status ?? ''} customClasses="capitalize"/>
-                                        </TData>
-                                        <TData label={formatDate(lender.createdAt)}
-                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                <div className="mt-4">
+                    <Table buttonText="Add Lender" onButtonClick={handleAddLender}>
+                        {{
+                            headers: tableHeaders,
+                            body:
+                                <>
+                                    {lenders && lenders.data.map((lender) => (
+                                        <tr key={lender.externalId}>
+                                            <TData label={lender.ghanaCardNumber}
+                                                   customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
+                                            <TData label={lender.name}
+                                                   customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
+                                            <TData label={lender.phoneNumber}
+                                                   customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                            <TData label=""
+                                                   customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
+                                                <Badge text={lender.status ?? ''} customClasses="capitalize"/>
+                                            </TData>
+                                            <TData label={formatDate(lender.createdAt)}
+                                                   customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
 
-                                        <TData label=""
-                                               customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
-                                            <Link
-                                                className="text-indigo-600 hover:text-indigo-900"
-                                                href={`/lenders/${lender.externalId}`}>
-                                                View <span className="sr-only">, {lender.name}</span>
-                                            </Link>
-                                        </TData>
-                                    </tr>
-                                ))}
-                            </>
-                    }}
-                </Table>
-                <Pagination
-                    perPageOptions={perPageOptions}
-                    setPageOption={setPageOption}
-                    pageOption={pageOption}
-                    handlePrevious={handlePrevious}
-                    handleNext={handleNext}
-                    pagination={lenders?.pagination}
-                />
-            </div>
+                                            <TData label=""
+                                                   customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
+                                                <Link
+                                                    className="text-indigo-600 hover:text-indigo-900"
+                                                    href={`/lenders/${lender.externalId}`}>
+                                                    View <span className="sr-only">, {lender.name}</span>
+                                                </Link>
+                                            </TData>
+                                        </tr>
+                                    ))}
+                                </>
+                        }}
+                    </Table>
+                    <Pagination
+                        perPageOptions={perPageOptions}
+                        setPageOption={setPageOption}
+                        pageOption={pageOption}
+                        handlePrevious={handlePrevious}
+                        handleNext={handleNext}
+                        pagination={lenders?.pagination}
+                    />
+                </div></div> : EmptyState()}
         </>
     )
 }

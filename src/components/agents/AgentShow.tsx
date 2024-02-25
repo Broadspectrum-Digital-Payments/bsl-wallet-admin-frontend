@@ -54,7 +54,7 @@ const AgentShow: React.FC = () => {
         {name: 'Account', href: '#', current: true},
         {name: 'Documents', href: '#', current: false},
         {name: 'Transactions', href: '#', current: false},
-        {name: 'Loans', href: '#', current: false},
+        // {name: 'Loans', href: '#', current: false},
     ]
 
     const handleNavigationClick = (sectionName: string) => {
