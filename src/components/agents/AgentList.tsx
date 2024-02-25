@@ -11,6 +11,7 @@ import Badge from "@/components/Badge";
 import FilterWrapper from "@/components/FilterWrapper";
 import {FilterFormDataType} from "@/utils/types/FilterFormDataType";
 import AgentFilter from "@/components/agents/AgentFilter";
+import EmptyState from "@/components/EmptyState";
 
 const AgentList: React.FC = () => {
     const tableHeaders = [
@@ -109,63 +110,66 @@ const AgentList: React.FC = () => {
     }
 
     return (
-        <div>
-            <FilterWrapper onSubmit={handleFilterSubmitButtonClicked} onReset={handleResetFilter}
-                           hasError={hasError}>
-                <AgentFilter
-                    submit={submitFilter}
-                    reset={resetFilter}
-                    onChange={handleFilterChange}
-                    hasError={hasError}
-                    setHasError={handleFilterError}
-                />
-            </FilterWrapper>
+        <>
+            {agents && agents.data.length > 0 && <div>
+                <FilterWrapper onSubmit={handleFilterSubmitButtonClicked} onReset={handleResetFilter}
+                               hasError={hasError}>
+                    <AgentFilter
+                        submit={submitFilter}
+                        reset={resetFilter}
+                        onChange={handleFilterChange}
+                        hasError={hasError}
+                        setHasError={handleFilterError}
+                    />
+                </FilterWrapper>
 
-            <Table onButtonClick={() => {
-            }}>
-                {{
-                    headers: tableHeaders,
-                    body:
-                        <>
-                            {agents && agents.data.map((agent) => (
-                                <tr key={agent.ghanaCardNumber}>
-                                    <TData label={agent.ghanaCardNumber}
-                                           customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                    <TData label={agent.name}
-                                           customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                    <TData label={agent.phoneNumber}
-                                           customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                    <TData label={formatAmount(agent.availableBalance)}
-                                           customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                    <TData label=""
-                                           customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
-                                        <Badge text={agent.status ?? ''} customClasses="capitalize"/>
-                                    </TData>
-                                    <TData label={formatDate(agent.createdAt)}
-                                           customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                    <TData label=""
-                                           customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
-                                        <Link
-                                            onClick={() => setAgent(agent)}
-                                            className="text-indigo-600 hover:text-indigo-900"
-                                            href={`/agents/${agent.externalId}`}>
-                                            View <span className="sr-only">, {agent.name}</span>
-                                        </Link>
-                                    </TData>
-                                </tr>
-                            ))}
-                        </>
-                }}
-            </Table>
-            <Pagination
-                perPageOptions={perPageOptions}
-                setPageOption={setPageOption}
-                pageOption={pageOption}
-                pagination={agents?.pagination}
-                handlePrevious={handlePrevious}
-                handleNext={handleNext}
-            />
-        </div>
+                <Table onButtonClick={() => {
+                }}>
+                    {{
+                        headers: tableHeaders,
+                        body:
+                            <>
+                                {agents && agents.data.map((agent) => (
+                                    <tr key={agent.ghanaCardNumber}>
+                                        <TData label={agent.ghanaCardNumber}
+                                               customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
+                                        <TData label={agent.name}
+                                               customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
+                                        <TData label={agent.phoneNumber}
+                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                        <TData label={formatAmount(agent.availableBalance)}
+                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                        <TData label=""
+                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
+                                            <Badge text={agent.status ?? ''} customClasses="capitalize"/>
+                                        </TData>
+                                        <TData label={formatDate(agent.createdAt)}
+                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                        <TData label=""
+                                               customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
+                                            <Link
+                                                onClick={() => setAgent(agent)}
+                                                className="text-indigo-600 hover:text-indigo-900"
+                                                href={`/agents/${agent.externalId}`}>
+                                                View <span className="sr-only">, {agent.name}</span>
+                                            </Link>
+                                        </TData>
+                                    </tr>
+                                ))}
+                            </>
+                    }}
+                </Table>
+                <Pagination
+                    perPageOptions={perPageOptions}
+                    setPageOption={setPageOption}
+                    pageOption={pageOption}
+                    pagination={agents?.pagination}
+                    handlePrevious={handlePrevious}
+                    handleNext={handleNext}
+                />
+            </div>}
+            {!agents && <EmptyState/>}
+        </>
     )
 }
 

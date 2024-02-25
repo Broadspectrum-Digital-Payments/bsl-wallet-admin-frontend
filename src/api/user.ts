@@ -30,9 +30,9 @@ export async function updateUser(externalId: string = '', data?: object) {
     });
 }
 
-export async function listUserTransactions(bearerToken?: string, externalId?: string, params: string = '') {
+export async function listUserTransactions(externalId?: string, params: string = '') {
     return await walletFetcher(`${USER_ENDPOINT}/${externalId}/transactions?${params}`, {
-        headers: getJSONHeaders(bearerToken)
+        headers: getJSONHeaders()
     });
 }
 

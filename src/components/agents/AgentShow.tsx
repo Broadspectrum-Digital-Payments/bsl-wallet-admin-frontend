@@ -23,8 +23,6 @@ import SlideOverWrapper from "@/components/SlideOver";
 import TransactionDetails from "@/components/transactions/TransactionDetails";
 import EmptyState from "@/components/EmptyState";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
-import {useCustomerStore} from "@/store/CustomerStore";
-import {listTransactions} from "@/api/transaction";
 import {TransactionType} from "@/utils/types/TransactionType";
 import {useAdminStore} from "@/store/AdminStore";
 
@@ -52,8 +50,8 @@ const AgentShow: React.FC = () => {
 
     const secondaryNavigation = [
         {name: 'Account', href: '#', current: true},
-        {name: 'Documents', href: '#', current: false},
         {name: 'Transactions', href: '#', current: false},
+        {name: 'Documents', href: '#', current: false},
         // {name: 'Loans', href: '#', current: false},
     ]
 
@@ -145,14 +143,11 @@ const AgentShow: React.FC = () => {
     ]
 
     const {transactions, setTransactions, setTransaction, transaction} = useAgentStore()
-
     const [filterQueryString, setFilterQueryString] = useState<string>('pageSize=10');
-
     const {authenticatedAdmin} = useAdminStore()
 
-
     const fetchTransactions = (params: string = '') => {
-        listUserTransactions(authenticatedAdmin?.bearerToken, params)
+        listUserTransactions(agent?.externalId, params)
             .then(async response => {
                 const feedback = await response.json();
                 if (response.ok && feedback.success) {
@@ -185,7 +180,6 @@ const AgentShow: React.FC = () => {
         }
     }
 
-
     const handleSetPageOption = (pageOption: IListBoxItem) => {
         const queryString = prepareFilterQueryString({pageSize: pageOption.value}, filterQueryString)
         setFilterQueryString(queryString);
@@ -193,9 +187,7 @@ const AgentShow: React.FC = () => {
         setPageOption(pageOption)
     }
 
-
     const [slideOverOpen, setSlideOverOpen] = useState<boolean>(false);
-
 
     const handleViewTransactionDetails = (transaction: TransactionType) => {
         setTransaction(transaction)
@@ -388,50 +380,51 @@ const AgentShow: React.FC = () => {
 
                         <div className="lg:px-8">
 
-                            {transactions.data && transactions.data.length ?    (
-                                <div><Table onButtonClick={() => {
-                                }}>
-                                    {{
-                                        headers: transactionsTableHeaders,
-                                        body:
-                                            <>
-                                                {transactions && transactions.data.map((transaction) => (
-                                                    <tr key={transaction.externalId}>
-                                                        <TData label={transaction.stan}
-                                                               customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                                        <TData label={transaction.accountNumber}
-                                                               customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                                        <TData label={`${formatAmount(transaction.amount)}`}
-                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                                        <TData label={`${formatAmount(transaction.balanceBefore)}`}
-                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                                        <TData label={`${formatAmount(transaction.balanceAfter)}`}
-                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                                        <TData label={`${formatAmount(transaction.fee)}`}
-                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                                        <TData label={transaction.createdAt}
-                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                                        <TData label={transaction.description}
-                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                                        <TData label=""
-                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
-                                                            <Badge text={transaction.status ?? ''} customClasses="capitalize"/>
-                                                        </TData>
-                                                        <TData label=""
-                                                               customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
+                            {transactions && transactions.data.length ? (<div>
+                                    <Table onButtonClick={() => {}}>
+                                        {{
+                                            headers: transactionsTableHeaders,
+                                            body:
+                                                <>
+                                                    {transactions && transactions.data.map((transaction) => (
+                                                        <tr key={transaction.externalId}>
+                                                            <TData label={transaction.stan}
+                                                                   customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
+                                                            <TData label={transaction.accountNumber}
+                                                                   customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
+                                                            <TData label={`${formatAmount(transaction.amount)}`}
+                                                                   customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                            <TData label={`${formatAmount(transaction.balanceBefore)}`}
+                                                                   customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                            <TData label={`${formatAmount(transaction.balanceAfter)}`}
+                                                                   customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                            <TData label={`${formatAmount(transaction.fee)}`}
+                                                                   customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                            <TData label={transaction.createdAt}
+                                                                   customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                            <TData label={transaction.description}
+                                                                   customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                            <TData label=""
+                                                                   customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
+                                                                <Badge text={transaction.status ?? ''}
+                                                                       customClasses="capitalize"/>
+                                                            </TData>
+                                                            <TData label=""
+                                                                   customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
 
-                                                            <Link
-                                                                onClick={() => handleViewTransactionDetails(transaction)}
-                                                                className="text-indigo-600 hover:text-indigo-900"
-                                                                href="">
-                                                                Details <span className="sr-only">, {transaction.externalId}</span>
-                                                            </Link>
-                                                        </TData>
-                                                    </tr>
-                                                ))}
-                                            </>
-                                    }}
-                                </Table>
+                                                                <Link
+                                                                    onClick={() => handleViewTransactionDetails(transaction)}
+                                                                    className="text-indigo-600 hover:text-indigo-900"
+                                                                    href="">
+                                                                    Details <span
+                                                                    className="sr-only">, {transaction.externalId}</span>
+                                                                </Link>
+                                                            </TData>
+                                                        </tr>
+                                                    ))}
+                                                </>
+                                        }}
+                                    </Table>
                                     <Pagination
                                         perPageOptions={perPageOptions}
                                         setPageOption={handleSetPageOption}
@@ -440,9 +433,10 @@ const AgentShow: React.FC = () => {
                                         handleNext={handleNext}
                                         pagination={transactions?.pagination}
                                     />
-                                    <SlideOverWrapper dialogTitle="Transaction Details" open={slideOverOpen} setOpen={handleSlideOverOpen}>
+                                    <SlideOverWrapper dialogTitle="Transaction Details" open={slideOverOpen}
+                                                      setOpen={handleSlideOverOpen}>
                                         <div className="flex lg:px-8 px-4 py-4">
-                                            <TransactionDetails transaction={transaction}></TransactionDetails>
+                                            <TransactionDetails transaction={transaction}/>
                                         </div>
                                     </SlideOverWrapper>
                                 </div>

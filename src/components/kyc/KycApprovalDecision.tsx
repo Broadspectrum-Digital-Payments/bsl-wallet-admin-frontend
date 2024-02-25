@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React from 'react'
 import Button from "@/components/forms/Button";
 import Loader from "@/components/Loader";
 
@@ -12,7 +12,7 @@ interface KycApprovalDecisionProps {
 const KycApprovalDecision: React.FC<KycApprovalDecisionProps> = ({ onApprove, onReject, approvedLoading = false, declinedLoading = false }) => {
 
     return (
-        <div className="flex justify-between mt-20 lg:gap-x-80">
+        <div className="flex justify-between mt-20 gap-x-6 md:ml-auto lg:max-w-md">
             <Button customStyles="bg-green-500 rounded border justify-center p-4 md:p-5 rounded-lg text-white"
                     buttonType="button" styleType=""
                     onClick={onApprove}
