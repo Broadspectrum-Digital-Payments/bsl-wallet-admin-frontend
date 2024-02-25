@@ -62,13 +62,12 @@ const OverviewCardsContainer = () => {
             href: '/settings',
         },
     ]
-
-    const {isLenderAuthenticated} = useLenderStore()
+    const {authenticatedLender} = useLenderStore()
 
     return (
         <div className="w-full flex">
             <Slider customClasses="gap-5">
-                {isLenderAuthenticated ? lenderPages.map((page) => (
+                {authenticatedLender && authenticatedLender.type === 'lender' ? lenderPages.map((page) => (
                     <SectionCard key={page.id} item={page} customClasses="max-w-sm carousel-item"/>
                 )) : adminPages.map((page) => (
                     <SectionCard key={page.id} item={page} customClasses="max-w-sm carousel-item"/>
