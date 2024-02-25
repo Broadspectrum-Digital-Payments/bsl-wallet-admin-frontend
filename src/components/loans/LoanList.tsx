@@ -21,9 +21,9 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false}) => {
     const tableHeaders = [
         {label: 'Id', classes: 'py-3.5 pl-4 pr-3 text-left  sm:pl-0'},
         {label: 'Amount', classes: 'hidden px-3 py-3.5 text-left lg:table-cell'},
-        {label: 'Repayment Duration', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
+        // {label: 'Repayment Duration', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
         {label: 'Repayment Amount', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
-        {label: 'Amount Paid', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
+        {label: 'Interest', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
         {label: 'Status', classes: 'px-3 py-3.5 text-left'},
         {label: 'Date Created', classes: 'px-3 py-3.5 text-left'},
         {label: 'Action', classes: 'relative py-3.5 pl-3 pr-4 sm:pr-0'},
@@ -52,7 +52,10 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false}) => {
             .then(async response => {
                 const feedback = await response.json();
                 if (response.ok && feedback.success) {
-                    const {data, meta} = feedback
+
+                    const data = feedback.data.loans;
+                    const meta = feedback.data.meta
+
                     const pagination = extractPaginationData(meta)
                     if (setLoans) setLoans({pagination, data})
                 }
@@ -154,15 +157,13 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false}) => {
                         <>
                             {loans.data.map((loan) => (
                                 <tr key={loan.externalId}>
-                                    <TData label={loan.externalId}
+                                    <TData label={loan.stan}
                                            customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                    <TData label={formatAmount(loan.amount)}
+                                    <TData label={loan.principalInGHS}
                                            customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                    <TData label={formatAmount(loan.amount)}
+                                    <TData label={loan.totalRepaymentAmountInGHS}
                                            customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                    <TData label={formatAmount(loan.amount)}
-                                           customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                    <TData label={formatAmount(loan.amount)}
+                                    <TData label={loan.interestInGHS}
                                            customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
                                     <TData customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
                                         <Badge text={loan.status ?? ''} customClasses="capitalize"/>
