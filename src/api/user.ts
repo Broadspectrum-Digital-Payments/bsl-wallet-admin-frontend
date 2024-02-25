@@ -28,3 +28,10 @@ export async function updateUser(externalId: string = '', data?: object) {
         body: JSON.stringify(data)
     });
 }
+
+
+export async function listUserTransactions(bearerToken?: string, externalId?: string) {
+    return await walletFetcher(`${USER_ENDPOINT}/${externalId}/transactions`, {
+        headers: getJSONHeaders(bearerToken)
+    });
+}
