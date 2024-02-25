@@ -14,7 +14,6 @@ export const useReportStore = create<ReportStoreType>()(
 
                 resetReportStore: () => set({
                     reportType: '',
-                    user: {},
                     loading: false
                 }),
             }),

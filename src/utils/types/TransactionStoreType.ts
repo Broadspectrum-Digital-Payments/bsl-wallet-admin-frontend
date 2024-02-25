@@ -9,17 +9,6 @@ export type TransactionStoreType = {
     setTransactions: (data: { pagination: PaginationType, data: TransactionType[] }) => void
     transactions: { pagination: PaginationType, data: TransactionType[] },
 
-    setDisbursements?: (data: { pagination: PaginationType, transactions: TransactionType[] }) => void,
-    setDisbursement?: (disbursement: TransactionType) => void,
-    disbursements: { pagination: PaginationType, transactions: TransactionType[] },
-
-    setCollections?: (data: { pagination: PaginationType, transactions: TransactionType[] }) => void,
-    setCollection?: (collection: TransactionType) => void,
-    collections: { pagination: PaginationType, transactions: TransactionType[] },
-
-    setScheduledPayments?: (data: { pagination: PaginationType, transactions: TransactionType[] }) => void,
-    scheduledPayments?: { pagination: PaginationType, transactions: TransactionType[] },
-
     setTransactionSummary?: (summary: MonthlyTransactionSummaryType) => void,
     transactionSummary?: MonthlyTransactionSummaryType,
     setLoading?: (loading: boolean) => void,
