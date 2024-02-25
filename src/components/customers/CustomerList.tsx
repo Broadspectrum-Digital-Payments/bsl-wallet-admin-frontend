@@ -25,21 +25,19 @@ const CustomerList: React.FC = () => {
         fetchCustomers(filterQueryString)
     }, [])
 
-
     const {customers, setCustomers, setCustomer} = useCustomerStore()
 
     const [searchNameTerm, setSearchNameTerm] = useState('');
     const [searchPhoneTerm, setSearchPhoneTerm] = useState('');
 
 
-    const fetchCustomers = (params: string = 'type=user') => {
-        listUsers(params)
+    const fetchCustomers = (params: string = '') => {
+        listUsers(`type=user&${params}`)
             .then(async response => {
                 const feedback = await response.json();
                 if (response.ok && feedback.success) {
                     const {users, meta} = feedback.data
                     const pagination = extractPaginationData(meta)
-                    console.log(feedback)
                     if (setCustomers) setCustomers({pagination, data: users});
                 }
             })
@@ -52,7 +50,7 @@ const CustomerList: React.FC = () => {
             const {pagination} = customers
             if (pagination.currentPage) {
                 const previousPageNumber = pagination.currentPage - 1
-                return pagination.firstPage ? null : fetchCustomers(`type=user&pageSize=${pageOption.value}&page=${previousPageNumber}`)
+                return pagination.firstPage ? null : fetchCustomers(`type=pageSize=${pageOption.value}&page=${previousPageNumber}`)
             }
         }
     }
@@ -61,14 +59,12 @@ const CustomerList: React.FC = () => {
             const {pagination} = customers
             if (pagination.currentPage) {
                 const nextPageNumber = pagination.currentPage + 1
-                return pagination.lastPage ? null : fetchCustomers(`type=user&pageSize=${pageOption.value}&page=${nextPageNumber}`)
+                return pagination.lastPage ? null : fetchCustomers(`pageSize=${pageOption.value}&page=${nextPageNumber}`)
             }
         }
     }
 
-
-    const [filterQueryString, setFilterQueryString] = useState<string>('type=user&pageSize=10');
-
+    const [filterQueryString, setFilterQueryString] = useState<string>('pageSize=10');
 
     const handleSetPageOption = (pageOption: IListBoxItem) => {
         const queryString = prepareFilterQueryString({pageSize: pageOption.value}, filterQueryString)
@@ -91,14 +87,14 @@ const CustomerList: React.FC = () => {
 
         setSearchNameTerm(search)
 
-        fetchCustomers(`type=user&name=${search}`)
+        fetchCustomers(`name=${search}`)
     }
 
     const handleSearchPhoneNumber = (search: string) => {
 
         setSearchPhoneTerm(search)
 
-        fetchCustomers(`type=user&phoneNumber=${search}`)
+        fetchCustomers(`phoneNumber=${search}`)
     }
 
 
@@ -119,12 +115,9 @@ const CustomerList: React.FC = () => {
 
         setDisableStatusIdInput(false)
 
-        if (option.value === 'All Status') {
-            fetchCustomers(`type=user`)
-            return
-        }
+        if (option.value === 'All Status') return fetchCustomers()
 
-        fetchCustomers(`type=user&status=${option.value}`)
+        fetchCustomers(`status=${option.value}`)
     };
 
     return (
@@ -191,6 +184,7 @@ const CustomerList: React.FC = () => {
                                            customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
 
                                         <Link
+                                            onClick={() => setCustomer(customer)}
                                             className="text-indigo-600 hover:text-indigo-900"
                                             href={`/customers/${customer.externalId}`}>
                                             View <span className="sr-only">, {customer.name}</span>

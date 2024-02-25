@@ -41,6 +41,7 @@ export default function Login() {
             if (resetTransactionStore) resetTransactionStore()
             if (resetAdminStore) resetAdminStore()
             if (resetLenderStore) resetLenderStore()
+            if (setMainMenuItemsList) setMainMenuItemsList([])
         }
     }
 

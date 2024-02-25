@@ -1,7 +1,7 @@
 import SectionCard from "@/components/SectionCard";
 import React from "react";
 import Slider from "@/components/overview/Slider";
-import {useLenderStore} from "@/store/LenderStore";
+import {useAdminStore} from "@/store/AdminStore";
 
 const OverviewCardsContainer = () => {
     const adminPages = [
@@ -62,12 +62,12 @@ const OverviewCardsContainer = () => {
             href: '/settings',
         },
     ]
-    const {authenticatedLender} = useLenderStore()
+    const {authenticatedAdmin} = useAdminStore()
 
     return (
         <div className="w-full flex">
             <Slider customClasses="gap-5">
-                {authenticatedLender && authenticatedLender.type === 'lender' ? lenderPages.map((page) => (
+                {authenticatedAdmin && authenticatedAdmin.userType === 'lender' ? lenderPages.map((page) => (
                     <SectionCard key={page.id} item={page} customClasses="max-w-sm carousel-item"/>
                 )) : adminPages.map((page) => (
                     <SectionCard key={page.id} item={page} customClasses="max-w-sm carousel-item"/>

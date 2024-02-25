@@ -8,7 +8,13 @@ import {useAdminStore} from "@/store/AdminStore";
 import {listUserLoans, listUserTransactions, showUser} from "@/api/user";
 import CustomSelectInput from "@/components/forms/CustomSelectInput";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
-import {extractPaginationData, formatAmount, isObjectEmpty, prepareFilterQueryString} from "@/utils/helpers";
+import {
+    extractPaginationData,
+    formatAmount,
+    formatDate,
+    isObjectEmpty,
+    prepareFilterQueryString
+} from "@/utils/helpers";
 import {updateUser} from "@/api/user";
 import Toast from "@/components/Toast";
 import Table from "@/components/table/Table";
@@ -16,17 +22,14 @@ import TData from "@/components/table/TData";
 import Badge from "@/components/Badge";
 import Link from "next/link";
 import Pagination from "@/components/table/Pagination";
-import {listTransactions} from "@/api/transaction";
 import EmptyState from "@/components/EmptyState";
-
 import SlideOverWrapper from "@/components/SlideOver";
 import {TransactionType} from "@/utils/types/TransactionType";
 import TransactionDetails from "@/components/transactions/TransactionDetails";
 import LoanSummary from "@/components/loans/LoanSummary";
 import LoanRepaymentHistory from "@/components/loans/RepaymentHistory";
 import {useLoanStore} from "@/store/LoanStore";
-import {FilterFormDataType} from "@/utils/types/FilterFormDataType";
-import {downloadLoans, listLoans} from "@/api/loan";
+import {downloadLoans} from "@/api/loan";
 import {LoanType} from "@/utils/types/LoanType";
 
 type UpdatedData = {
@@ -41,16 +44,13 @@ const CustomerShow: React.FC = () => {
     const [hasError, setHasError] = useState<boolean | undefined>(false);
     const [loading, setLoading] = useState<boolean>(false);
 
-    const [selectedStatus, setSelectedStatus] = useState<string >('');
-    const [selectedKycStatus, setSelectedKycStatus] = useState<string >( '');
+    const [selectedStatus, setSelectedStatus] = useState<string>('');
+    const [selectedKycStatus, setSelectedKycStatus] = useState<string>('');
 
-    const [previousStatus, setSPreviousStatus] = useState<string >('');
-    const [previousKycStatus, setPreviousKycStatus] = useState<string >( '');
+    const [previousStatus, setSPreviousStatus] = useState<string>('');
+    const [previousKycStatus, setPreviousKycStatus] = useState<string>('');
 
-    const [toastInfo, setToastInfo] = useState<{
-        type: string,
-        description: string,
-    }>({
+    const [toastInfo, setToastInfo] = useState<{ type: string, description: string, }>({
         type: '',
         description: '',
     });
@@ -60,14 +60,6 @@ const CustomerShow: React.FC = () => {
         {label: 'Created', value: 'created'},
         {label: 'Activated', value: 'activated'},
         {label: 'Deactivated', value: 'deactivated'},
-    ]
-
-
-    const kycStatuses: IListBoxItem[] = [
-        {label: 'Queued', value: 'queued'},
-        {label: 'Approved', value: 'approved'},
-        {label: 'Declined', value: 'declined'},
-        {label: 'Submitted', value: 'submitted'},
     ]
 
     const secondaryNavigation = [
@@ -195,7 +187,6 @@ const CustomerShow: React.FC = () => {
         return resolvedName
     }
 
-
     const transactionsTableHeaders = [
         {label: 'Id', classes: 'py-3.5 pl-4 pr-3 text-left  sm:pl-0'},
         {label: 'Account Number', classes: 'hidden px-3 py-3.5 text-left lg:table-cell'},
@@ -208,7 +199,6 @@ const CustomerShow: React.FC = () => {
         {label: 'Status', classes: 'px-3 py-3.5 text-left'},
         {label: 'Action', classes: 'relative py-3.5 pl-3 pr-4 sm:pr-0'},
     ]
-
 
     const [pageOption, setPageOption] = useState<IListBoxItem>({
         label: '10',
@@ -223,11 +213,8 @@ const CustomerShow: React.FC = () => {
 
     const [filterQueryString, setFilterQueryString] = useState<string>('pageSize=10');
 
-
-
-
     const fetchTransactions = (params: string = '') => {
-        listUserTransactions(authenticatedAdmin?.bearerToken, customerId, params)
+        listUserTransactions(customerId, params)
             .then(async response => {
                 const feedback = await response.json();
                 if (response.ok && feedback.success) {
@@ -268,7 +255,6 @@ const CustomerShow: React.FC = () => {
         setPageOption(pageOption)
     }
 
-
     const [slideOverOpen, setSlideOverOpen] = useState<boolean>(false);
 
 
@@ -280,7 +266,6 @@ const CustomerShow: React.FC = () => {
     const handleSlideOverOpen = () => {
         setSlideOverOpen(!slideOverOpen)
     }
-
 
     // Loans
     const loanTableHeaders = [
@@ -297,14 +282,12 @@ const CustomerShow: React.FC = () => {
 
     const [loanFilterQueryString, setLoanFilterQueryString] = useState<string>('pageSize=10');
 
-
     const [loanSlideOverOpen, setLoanSlideOverOpen] = useState<boolean>(false);
     const [loanDetailsActiveTab, setLoanDetailsActiveTab] = useState<string>('summary');
 
 
-
     const fetchLoans = (params: string = '') => {
-        listUserLoans( authenticatedAdmin?.bearerToken, customerId, params)
+        listUserLoans(customer.externalId, params)
             .then(async response => {
                 const feedback = await response.json();
                 if (response.ok && feedback.success) {
@@ -320,7 +303,6 @@ const CustomerShow: React.FC = () => {
                 console.log('error: ', error)
             })
     }
-
 
 
     const handleLoanPrevious = () => {
@@ -571,7 +553,7 @@ const CustomerShow: React.FC = () => {
                                                          alt=""/>
                                                     <h3 className="mt-6 text-lg font-semibold leading-8 tracking-tight text-gray-900">{resolveDocumentName(document.name)}</h3>
                                                     <p className="text-base leading-7 text-gray-600"> Uploaded
-                                                        Date: {document.createdAt}</p>
+                                                        Date: {formatDate(document.createdAt)}</p>
                                                 </li>
                                             )) : (<p>No documents uploaded yet</p>)}
                                         </ul>
@@ -587,142 +569,145 @@ const CustomerShow: React.FC = () => {
 
                             <div className="lg:px-8">
 
-                                {transactions.data && transactions.data.length ?    (
+                                {transactions.data && transactions.data.length ? (
                                     <div><Table onButtonClick={() => {
-                                }}>
-                                    {{
-                                        headers: transactionsTableHeaders,
-                                        body:
-                                            <>
-                                                {transactions && transactions.data.map((transaction) => (
-                                                    <tr key={transaction.externalId}>
-                                                        <TData label={transaction.stan}
-                                                               customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                                        <TData label={transaction.accountNumber}
-                                                               customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                                        <TData label={`${formatAmount(transaction.amount)}`}
-                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                                        <TData label={`${formatAmount(transaction.balanceBefore)}`}
-                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                                        <TData label={`${formatAmount(transaction.balanceAfter)}`}
-                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                                        <TData label={`${formatAmount(transaction.fee)}`}
-                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                                        <TData label={transaction.createdAt}
-                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                                        <TData label={transaction.description}
-                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                                        <TData label=""
-                                                               customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
-                                                            <Badge text={transaction.status ?? ''} customClasses="capitalize"/>
-                                                        </TData>
-                                                        <TData label=""
-                                                               customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
+                                    }}>
+                                        {{
+                                            headers: transactionsTableHeaders,
+                                            body:
+                                                <>
+                                                    {transactions && transactions.data.map((transaction) => (
+                                                        <tr key={transaction.externalId}>
+                                                            <TData label={transaction.stan}
+                                                                   customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
+                                                            <TData label={transaction.accountNumber}
+                                                                   customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
+                                                            <TData label={`${formatAmount(transaction.amount)}`}
+                                                                   customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                            <TData label={`${formatAmount(transaction.balanceBefore)}`}
+                                                                   customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                            <TData label={`${formatAmount(transaction.balanceAfter)}`}
+                                                                   customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                            <TData label={`${formatAmount(transaction.fee)}`}
+                                                                   customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                            <TData label={transaction.createdAt}
+                                                                   customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                            <TData label={transaction.description}
+                                                                   customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                            <TData label=""
+                                                                   customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
+                                                                <Badge text={transaction.status ?? ''}
+                                                                       customClasses="capitalize"/>
+                                                            </TData>
+                                                            <TData label=""
+                                                                   customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
 
-                                                            <Link
-                                                                onClick={() => handleViewTransactionDetails(transaction)}
-                                                                className="text-indigo-600 hover:text-indigo-900"
-                                                                href="">
-                                                                Details <span className="sr-only">, {transaction.externalId}</span>
-                                                            </Link>
-                                                        </TData>
-                                                    </tr>
-                                                ))}
-                                            </>
-                                    }}
-                                </Table>
-                               <Pagination
-                                    perPageOptions={perPageOptions}
-                                    setPageOption={handleSetPageOption}
-                                    pageOption={pageOption}
-                                    handlePrevious={handlePrevious}
-                                    handleNext={handleNext}
-                                    pagination={transactions?.pagination}
-                                />
-                                        <SlideOverWrapper dialogTitle="Transaction Details" open={slideOverOpen} setOpen={handleSlideOverOpen}>
+                                                                <Link
+                                                                    onClick={() => handleViewTransactionDetails(transaction)}
+                                                                    className="text-indigo-600 hover:text-indigo-900"
+                                                                    href="">
+                                                                    Details <span
+                                                                    className="sr-only">, {transaction.externalId}</span>
+                                                                </Link>
+                                                            </TData>
+                                                        </tr>
+                                                    ))}
+                                                </>
+                                        }}
+                                    </Table>
+                                        <Pagination
+                                            perPageOptions={perPageOptions}
+                                            setPageOption={handleSetPageOption}
+                                            pageOption={pageOption}
+                                            handlePrevious={handlePrevious}
+                                            handleNext={handleNext}
+                                            pagination={transactions?.pagination}
+                                        />
+                                        <SlideOverWrapper dialogTitle="Transaction Details" open={slideOverOpen}
+                                                          setOpen={handleSlideOverOpen}>
                                             <div className="flex lg:px-8 px-4 py-4">
                                                 <TransactionDetails transaction={transaction}></TransactionDetails>
                                             </div>
                                         </SlideOverWrapper>
                                     </div>
-                                        ) : EmptyState()}
+                                ) : EmptyState()}
                             </div>
                         </div>
                     )}
 
                     {/*Loans*/}
                     {activeSection == 'Loans' && (
-                       loans && loans.data?.length > 0 ?  <div>
-                        <Table buttonText='' onButtonClick={handleTableButtonClicked}>
-                            {{
-                                headers: loanTableHeaders,
-                                body:
-                                    <>
-                                        {loans.data.map((loan) => (
-                                            <tr key={loan.externalId}>
-                                                <TData label={loan.stan}
-                                                       customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                                <TData label={loan.principalInGHS}
-                                                       customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                                <TData label={loan.totalRepaymentAmountInGHS}
-                                                       customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                                <TData label={loan.interestInGHS}
-                                                       customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                                <TData customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
-                                                    <Badge text={loan.status ?? ''} customClasses="capitalize"/>
-                                                </TData>
-                                                <TData label={loan.createdAt}
-                                                       customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                        loans && loans.data?.length > 0 ? <div>
+                            <Table buttonText='' onButtonClick={handleTableButtonClicked}>
+                                {{
+                                    headers: loanTableHeaders,
+                                    body:
+                                        <>
+                                            {loans.data.map((loan) => (
+                                                <tr key={loan.externalId}>
+                                                    <TData label={loan.stan}
+                                                           customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
+                                                    <TData label={loan.principalInGHS}
+                                                           customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
+                                                    <TData label={loan.totalRepaymentAmountInGHS}
+                                                           customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                    <TData label={loan.interestInGHS}
+                                                           customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
+                                                    <TData
+                                                        customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
+                                                        <Badge text={loan.status ?? ''} customClasses="capitalize"/>
+                                                    </TData>
+                                                    <TData label={loan.createdAt}
+                                                           customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
 
-                                                <TData label=""
-                                                       customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
-                                                    <Link
-                                                        onClick={() => handleViewLoanDetails(loan)}
-                                                        className="text-indigo-600 hover:text-indigo-900"
-                                                        href="">
-                                                        Details <span className="sr-only">, {loan.externalId}</span>
-                                                    </Link>
-                                                </TData>
-                                            </tr>
-                                        ))}
-                                    </>
-                            }}
-                        </Table>
+                                                    <TData label=""
+                                                           customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
+                                                        <Link
+                                                            onClick={() => handleViewLoanDetails(loan)}
+                                                            className="text-indigo-600 hover:text-indigo-900"
+                                                            href="">
+                                                            Details <span className="sr-only">, {loan.externalId}</span>
+                                                        </Link>
+                                                    </TData>
+                                                </tr>
+                                            ))}
+                                        </>
+                                }}
+                            </Table>
 
-                        <Pagination
-                        perPageOptions={perPageOptions}
-                    setPageOption={setPageOption}
-                    pageOption={pageOption}
-                    handlePrevious={handleLoanPrevious}
-                    handleNext={handleLoanNext}
-                    pagination={loans?.pagination}
-                />
+                            <Pagination
+                                perPageOptions={perPageOptions}
+                                setPageOption={setPageOption}
+                                pageOption={pageOption}
+                                handlePrevious={handleLoanPrevious}
+                                handleNext={handleLoanNext}
+                                pagination={loans?.pagination}
+                            />
 
-                <SlideOverWrapper open={slideOverOpen} setOpen={handleSlideOverOpen}>
-                    <div className="border-b border-gray-200 bg-slate-800">
-                        <div className="px-6">
-                            <nav className="-mb-px flex space-x-6" x-descriptions="Tab component">
-                                {loanDetailsTabs.map((tab) => (
-                                    <Link
-                                        onClick={() => setLoanDetailsActiveTab(tab.name)}
-                                        key={tab.name}
-                                        href=""
-                                        className={`${loanDetailsActiveTab === tab.name
-                                            ? 'border-white text-white'
-                                            : 'border-transparent text-gray-500 hover:border-gray-100 hover:text-gray-700'}
+                            <SlideOverWrapper open={slideOverOpen} setOpen={handleSlideOverOpen}>
+                                <div className="border-b border-gray-200 bg-slate-800">
+                                    <div className="px-6">
+                                        <nav className="-mb-px flex space-x-6" x-descriptions="Tab component">
+                                            {loanDetailsTabs.map((tab) => (
+                                                <Link
+                                                    onClick={() => setLoanDetailsActiveTab(tab.name)}
+                                                    key={tab.name}
+                                                    href=""
+                                                    className={`${loanDetailsActiveTab === tab.name
+                                                        ? 'border-white text-white'
+                                                        : 'border-transparent text-gray-500 hover:border-gray-100 hover:text-gray-700'}
                                                                 whitespace-nowrap border-b-2 px-1 pb-4 text-sm font-medium`
-                                        }
-                                    >
-                                        {tab.label}
-                                    </Link>
-                                ))}
-                            </nav>
-                        </div>
-                    </div>
-                    {loanDetailsActiveTab === 'summary' && <LoanSummary/>}
-                    {loanDetailsActiveTab === 'history' && <LoanRepaymentHistory/>}
-                    {/*<LoanSummary/>*/}
-                </SlideOverWrapper>
+                                                    }
+                                                >
+                                                    {tab.label}
+                                                </Link>
+                                            ))}
+                                        </nav>
+                                    </div>
+                                </div>
+                                {loanDetailsActiveTab === 'summary' && <LoanSummary/>}
+                                {loanDetailsActiveTab === 'history' && <LoanRepaymentHistory/>}
+                            </SlideOverWrapper>
                         </div> : EmptyState()
                     )}
                 </main>

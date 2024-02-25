@@ -36,8 +36,8 @@ export async function listUserTransactions(externalId?: string, params: string =
     });
 }
 
-export async function listUserLoans(bearerToken?: string, externalId?: string, params: string = '') {
+export async function listUserLoans(externalId?: string, params: string = '') {
     return await loanFetcher(`${LOAN_ENDPOINT}/${externalId}/loans?${params}`, {
-        headers: getJSONHeaders(bearerToken),
+        headers: getJSONHeaders(),
     });
 }
