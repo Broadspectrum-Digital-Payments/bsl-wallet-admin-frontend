@@ -308,11 +308,10 @@ const CustomerShow: React.FC = () => {
             .then(async response => {
                 const feedback = await response.json();
                 if (response.ok && feedback.success) {
-                    console.log('feedback: ', feedback)
-                    // const {data, meta} = feedback
+
                     const data = feedback.data.loans;
                     const meta = feedback.data.meta
-                    console.log('meta: ', meta)
+
                     const pagination = extractPaginationData(meta)
                     if (setLoans) setLoans({pagination, data})
                 }
