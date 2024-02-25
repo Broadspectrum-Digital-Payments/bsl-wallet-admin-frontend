@@ -30,8 +30,8 @@ export async function updateUser(externalId: string = '', data?: object) {
 }
 
 
-export async function listUserTransactions(bearerToken?: string, externalId?: string) {
-    return await walletFetcher(`${USER_ENDPOINT}/${externalId}/transactions`, {
-        headers: getJSONHeaders(bearerToken)
+export async function listUserTransactions(externalId?: string, params: string = '') {
+    return await walletFetcher(`${USER_ENDPOINT}/${externalId}/transactions?${params}`, {
+        headers: getJSONHeaders()
     });
 }
