@@ -14,6 +14,8 @@ import TransactionFilter from "@/components/transactions/TransactionFilter";
 import {FilterFormDataType} from "@/utils/types/FilterFormDataType";
 import Link from "next/link";
 import {TransactionType} from "@/utils/types/TransactionType";
+import SlideOverWrapper from "@/components/SlideOver";
+import TransactionDetails from "@/components/transactions/TransactionDetails";
 
 const TransactionList: React.FC = () => {
     const tableHeaders = [
@@ -89,7 +91,7 @@ const TransactionList: React.FC = () => {
     const [filterQueryString, setFilterQueryString] = useState<string>('pageSize=10');
     const [hasError, setHasError] = useState<boolean>(true);
 
-    const {setTransaction} = useTransactionStore()
+    const {setTransaction, transaction} = useTransactionStore()
 
     const handleFilterSubmitButtonClicked = (submit: boolean) => {
         setSubmitFilter(submit)
@@ -123,9 +125,16 @@ const TransactionList: React.FC = () => {
         setPageOption(pageOption)
     }
 
-    const handleShowDetails = (transaction: TransactionType) => {
-        console.log('showing details')
-        console.log(transaction)
+    const [slideOverOpen, setSlideOverOpen] = useState<boolean>(false);
+
+
+    const handleViewTransactionDetails = (transaction: TransactionType) => {
+        setTransaction(transaction)
+        setSlideOverOpen(true)
+    }
+
+    const handleSlideOverOpen = () => {
+        setSlideOverOpen(!slideOverOpen)
     }
 
     return (
@@ -173,11 +182,18 @@ const TransactionList: React.FC = () => {
                                         <TData label=""
                                                customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
 
+                                            {/*<Link*/}
+                                            {/*    className="text-indigo-600 hover:text-indigo-900"*/}
+                                            {/*    onClick={() => setTransaction(transaction)}*/}
+                                            {/*    href={`/transactions/${transaction.externalId}`}>*/}
+                                            {/*    View <span className="sr-only">, {transaction.amount}</span>*/}
+                                            {/*</Link>*/}
+
                                             <Link
+                                                onClick={() => handleViewTransactionDetails(transaction)}
                                                 className="text-indigo-600 hover:text-indigo-900"
-                                                onClick={() => setTransaction(transaction)}
-                                                href={`/transactions/${transaction.externalId}`}>
-                                                View <span className="sr-only">, {transaction.amount}</span>
+                                                href="">
+                                                View <span className="sr-only">, {transaction.externalId}</span>
                                             </Link>
                                         </TData>
                                     </tr>
@@ -193,6 +209,11 @@ const TransactionList: React.FC = () => {
                     handleNext={handleNext}
                     pagination={transactions?.pagination}
                 />
+                <SlideOverWrapper dialogTitle="Transaction Details" open={slideOverOpen} setOpen={handleSlideOverOpen}>
+                    <div className="flex lg:px-8 px-4 py-4">
+                        <TransactionDetails transaction={transaction}></TransactionDetails>
+                    </div>
+                </SlideOverWrapper>
             </div>
         </>
     )
