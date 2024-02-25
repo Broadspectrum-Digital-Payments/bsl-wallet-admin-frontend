@@ -1,9 +1,10 @@
 import SectionCard from "@/components/SectionCard";
 import React from "react";
 import Slider from "@/components/overview/Slider";
+import {useLenderStore} from "@/store/LenderStore";
 
 const OverviewCardsContainer = () => {
-    const pages = [
+    const adminPages = [
         {
             id: 1,
             name: 'Lenders',
@@ -41,11 +42,35 @@ const OverviewCardsContainer = () => {
             href: '/customers'
         },
     ]
+    const lenderPages = [
+        {
+            id: 1,
+            name: 'Loans',
+            color: 'sky',
+            background: 'bg-sky-100',
+            description: 'We would like to ensure that your account is in safe hands. Verify your email today to enjoy the full features on the platform.',
+            image: 'assets.gif',
+            href: '/loans',
+        },
+        {
+            id: 1,
+            name: 'Settings',
+            color: 'gray',
+            background: 'bg-gray-100',
+            description: 'We would like to ensure that your account is in safe hands. Verify your email today to enjoy the full features on the platform.',
+            image: 'maintenance.gif',
+            href: '/settings',
+        },
+    ]
+
+    const {isLenderAuthenticated} = useLenderStore()
 
     return (
         <div className="w-full flex">
             <Slider customClasses="gap-5">
-                {pages.map((page) => (
+                {isLenderAuthenticated ? lenderPages.map((page) => (
+                    <SectionCard key={page.id} item={page} customClasses="max-w-sm carousel-item"/>
+                )) : adminPages.map((page) => (
                     <SectionCard key={page.id} item={page} customClasses="max-w-sm carousel-item"/>
                 ))}
             </Slider>

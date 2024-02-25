@@ -208,7 +208,6 @@ const LenderShow: React.FC = () => {
                             <div className="">
 
                                 <form className="">
-
                                     <div className="flex lg:px-8 px-4 py-t">
                                         <div className="flex-1 mr-4">
                                             <TextInput
