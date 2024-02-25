@@ -1,7 +1,6 @@
 import React, {useState} from 'react'
 import TextInput from "@/components/forms/TextInput";
 import Button from "@/components/forms/Button";
-import DragAndDrop from "@/components/forms/DragAndDrop";
 import {storeLender} from "@/api/lenders";
 import {useLenderStore} from "@/store/LenderStore";
 import Toast from "@/components/Toast";
