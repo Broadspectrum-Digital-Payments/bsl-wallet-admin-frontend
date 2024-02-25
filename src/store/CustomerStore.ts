@@ -3,6 +3,7 @@ import {UserType} from "@/utils/types/UserType";
 import {CustomerStoreType} from "@/utils/types/CustomerStoreType";
 import {devtools, persist} from 'zustand/middleware';
 import {getEmptyPaginationData} from "@/utils/helpers";
+import {TransactionType} from "@/utils/types/TransactionType";
 
 export const useCustomerStore = create<CustomerStoreType>()(
     devtools(
@@ -25,6 +26,15 @@ export const useCustomerStore = create<CustomerStoreType>()(
                     customer: {},
                     loading: false
                 }),
+                setTransaction: (transaction?: TransactionType) => set({transaction}),
+                getTransaction: (reference?: string) => get()?.transactions?.data.filter(transaction =>
+                    transaction.externalId === reference || transaction.internalId === reference),
+                transaction: {},
+                setTransactions: (data) => set({transactions: data}),
+                transactions: {
+                    pagination: getEmptyPaginationData(),
+                    data: []
+                },
             }),
             {
                 name: 'customer'

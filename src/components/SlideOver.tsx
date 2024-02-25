@@ -2,7 +2,7 @@ import React, {Fragment} from 'react'
 import {Dialog, Transition} from '@headlessui/react'
 import {ISlideOverWrapper} from "@/utils/interfaces/ISlideOverWrapper";
 
-const SlideOverWrapper: React.FC<ISlideOverWrapper> = ({open, setOpen, children}) => {
+const SlideOverWrapper: React.FC<ISlideOverWrapper> = ({open, setOpen, children, dialogTitle}) => {
     return (
         <Transition.Root show={open} as={Fragment}>
             <Dialog as="div" className="relative z-50" onClose={setOpen}>
@@ -25,7 +25,7 @@ const SlideOverWrapper: React.FC<ISlideOverWrapper> = ({open, setOpen, children}
                                         <div className="p-6 bg-slate-800">
                                             <div className="flex items-start justify-between">
                                                 <Dialog.Title
-                                                    className="text-base font-semibold leading-6 text-white">Loans</Dialog.Title>
+                                                    className="text-base font-semibold leading-6 text-white">{dialogTitle ?? 'Loans'}</Dialog.Title>
                                             </div>
                                         </div>
                                         {children}
