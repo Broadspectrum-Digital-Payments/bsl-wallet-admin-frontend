@@ -1,8 +1,6 @@
 import {create} from 'zustand'
 import {devtools, persist} from 'zustand/middleware';
-import {AdminStoreType} from "@/utils/types/AdminStoreType";
 import {getEmptyPaginationData} from "@/utils/helpers";
-import {AdminType} from "@/utils/types/AdminType";
 import {LenderStoreType} from "@/utils/types/LenderStoreType";
 import {LenderType} from "@/utils/types/LenderType";
 
@@ -14,7 +12,8 @@ export const useLenderStore = create<LenderStoreType>()(
                 lenders: get()?.lenders,
 
                 setLender: (data) => set({lender: data}),
-                lender: get()?.lender,
+                lender: {},
+                
                 setAuthenticatedLender: (authenticatedLender?: LenderType) => set({authenticatedLender}),
                 authenticatedLender: {},
 

@@ -6,7 +6,7 @@ import CustomerList from "@/components/customers/CustomerList";
 const CustomersPage: React.FC = () => {
     return (
         <DashboardLayout>
-           <CustomerList></CustomerList>
+           <CustomerList/>
         </DashboardLayout>
     )
 }

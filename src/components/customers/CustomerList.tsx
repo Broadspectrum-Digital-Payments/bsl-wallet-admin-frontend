@@ -4,7 +4,7 @@ import Pagination from "@/components/table/Pagination";
 import React, {useEffect, useState} from "react";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
 import Link from "next/link";
-import {extractPaginationData, getError, prepareFilterQueryString} from "@/utils/helpers";
+import {extractPaginationData, prepareFilterQueryString} from "@/utils/helpers";
 import {listUsers} from "@/api/user";
 import {useCustomerStore} from "@/store/CustomerStore";
 import Badge from "@/components/Badge";
@@ -20,7 +20,6 @@ const CustomerList: React.FC = () => {
         {label: 'Status', classes: 'px-3 py-3.5 text-left'},
         {label: 'Action', classes: 'relative py-3.5 pl-3 pr-4 sm:pr-0'},
     ]
-
 
     useEffect(() => {
         fetchCustomers(filterQueryString)
@@ -185,7 +184,7 @@ const CustomerList: React.FC = () => {
                                            customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
                                     <TData label=""
                                            customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
-                                        <Badge text={customer.status ?? ''} customClasses="capitalize"></Badge>
+                                        <Badge text={customer.status ?? ''} customClasses="capitalize"/>
                                     </TData>
 
                                     <TData label=""

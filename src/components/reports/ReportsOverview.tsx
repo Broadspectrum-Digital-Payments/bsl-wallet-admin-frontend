@@ -11,10 +11,11 @@ import TransactionList from "@/components/transactions/TransactionList";
 
 const ReportsOverview = () => {
     const stats = [
-        {name: 'Revenue', value: '$405,091.00', change: '+4.75%', changeType: 'positive'},
-        {name: 'Overdue invoices', value: '$12,787.00', change: '+54.02%', changeType: 'negative'},
-        {name: 'Outstanding invoices', value: '$245,988.00', change: '-1.39%', changeType: 'positive'},
-        {name: 'Expenses', value: '$30,156.00', change: '+10.18%', changeType: 'negative'},
+        {name: 'Total Loan Count', value: '481', change: '+4.75%', changeType: 'positive'},
+        {name: 'Transaction Value', value: '12,787.00', change: '+54.02%', changeType: 'negative'},
+        {name: 'Customers', value: '4,988', change: '-1.39%', changeType: 'positive'},
+        {name: 'Lenders', value: '2,056', change: '+10.18%', changeType: 'negative'},
+        {name: 'Agents', value: '956', change: '+10.18%', changeType: 'negative'},
     ]
     const statuses: Record<string, string> = {
         completed: 'text-green-700 bg-green-50 ring-green-600/20',
@@ -23,7 +24,7 @@ const ReportsOverview = () => {
     }
     const days = [
         {
-            date: 'Today',
+            date: 'Data',
             dateTime: '2023-03-22',
             transactions: [
                 {
@@ -60,23 +61,6 @@ const ReportsOverview = () => {
                 },
             ],
         },
-        {
-            date: 'Yesterday',
-            dateTime: '2023-03-21',
-            transactions: [
-                {
-                    id: 4,
-                    invoiceNumber: '00010',
-                    href: '#',
-                    amount: '$14,000.00 USD',
-                    tax: '$900.00',
-                    status: 'Paid',
-                    client: 'SavvyCal',
-                    description: 'Website redesign',
-                    icon: ArrowUpCircleIcon,
-                },
-            ],
-        },
     ]
     const {reportType, setReportType} = useReportStore();
 
@@ -108,11 +92,16 @@ const ReportsOverview = () => {
                     {reportType === 'analytics' &&
                         <>
                             <div className="border-b border-b-gray-900/10 lg:border-t lg:border-t-gray-900/5">
-                                <dl className="mx-auto grid max-w-7xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:px-2 xl:px-0">
+                                <dl className="mx-auto grid max-w-7xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 lg:px-2 xl:px-0">
                                     {stats.map((stat, statIdx) => (
                                         <div
                                             key={stat.name}
-                                            className={`flex items-baseline flex-wrap justify-between gap-y-2 gap-x-4 border-t border-gray-900/5 px-4 py-10 sm:px-6 lg:border-t-0 xl:px-8 ${statIdx % 2 === 1 ? 'sm:border-l' : statIdx === 2 ? 'lg:border-l' : ''}`}
+                                            className={`flex items-baseline flex-wrap justify-between gap-y-2 gap-x-4 px-4 py-10 sm:px-6 xl:px-8`}
+                                            style={{
+                                                borderLeftWidth: statIdx % 2 === 1 ? '1px' : '0',
+                                                borderRightWidth: statIdx < stats.length - 1 ? '1px' : '0',
+                                                borderColor: 'rgba(0, 0, 0, 0.08)',
+                                            }}
                                         >
                                             <dt className="text-sm font-medium leading-6 text-gray-500">{stat.name}</dt>
                                             <dd
@@ -127,7 +116,6 @@ const ReportsOverview = () => {
                                     ))}
                                 </dl>
                             </div>
-
 
                             <div
                                 className="absolute left-0 top-full -z-10 mt-96 origin-top-left translate-y-40 -rotate-90 transform-gpu opacity-20 blur-3xl sm:left-1/2 sm:-ml-96 sm:-mt-10 sm:translate-y-0 sm:rotate-0 sm:transform-gpu sm:opacity-50"
@@ -220,9 +208,8 @@ const ReportsOverview = () => {
                                                                 >
                                                                     View<span
                                                                     className="hidden sm:inline"> transaction</span>
-                                                                    <span className="sr-only">
-                                      , invoice #{transaction.invoiceNumber}, {transaction.client}
-                                    </span>
+                                                                    <span
+                                                                        className="sr-only">, invoice #{transaction.invoiceNumber}, {transaction.client}</span>
                                                                 </a>
                                                             </div>
                                                             <div className="mt-1 text-xs leading-5 text-gray-500">

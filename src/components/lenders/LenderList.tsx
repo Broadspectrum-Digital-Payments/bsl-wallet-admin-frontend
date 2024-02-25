@@ -6,7 +6,6 @@ import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import Badge from "@/components/Badge";
-import {useAdminStore} from "@/store/AdminStore";
 import {extractPaginationData, formatDate, prepareFilterQueryString} from "@/utils/helpers";
 import {useLenderStore} from "@/store/LenderStore";
 import {listLenders} from "@/api/lenders";
@@ -26,17 +25,15 @@ const LenderList: React.FC = () => {
         {label: 'Action', classes: 'relative py-3.5 pl-3 pr-4 sm:pr-0'},
     ]
     const {lenders, setLenders} = useLenderStore()
-    const {authenticatedAdmin} = useAdminStore()
     const [filterQueryString, setFilterQueryString] = useState<string>('pageSize=10');
     const [hasError, setHasError] = useState<boolean>(false);
-
 
     useEffect(() => {
         fetchLenders()
     }, [])
 
     const fetchLenders = (params: string = filterQueryString) => {
-        listLenders(authenticatedAdmin?.bearerToken, `type=lender&${params}`)
+        listLenders(`type=lender&${params}`)
             .then(async response => {
                 const feedback = await response.json();
                 if (response.ok && feedback.success) {

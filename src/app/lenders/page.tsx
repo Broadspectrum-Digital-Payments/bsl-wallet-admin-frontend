@@ -17,8 +17,10 @@ const LendersPage: React.FC = () => {
 
     return (
         <DashboardLayout>
-            {lenders && lenders.data.length > 0 && <LenderList/>}
-            {lenders && !lenders.data.length && <EmptyState/>}
+            <>
+                {lenders && lenders?.data.length > 0 && <LenderList/>}
+                {!lenders && <EmptyState/>}
+            </>
         </DashboardLayout>
     )
 }

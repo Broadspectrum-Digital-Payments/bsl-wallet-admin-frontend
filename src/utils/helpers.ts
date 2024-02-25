@@ -157,6 +157,7 @@ export const getJSONHeaders = (bearerToken: string = '') => {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'X-Admin-Header': 'bsl-wallet-admin',
+        'Access-Control-Allow-Origin': '*'
     }
 }
 
