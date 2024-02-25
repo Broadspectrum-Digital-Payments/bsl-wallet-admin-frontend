@@ -1,17 +1,23 @@
 import React from "react";
-import {PencilIcon} from "@heroicons/react/24/outline";
 import {useLoanStore} from "@/store/LoanStore";
-import {formatAmount} from "@/utils/helpers";
 import ListItem from "@/components/ListItem";
 import Button from "@/components/forms/Button";
 import Badge from "../Badge";
 import { useLenderStore } from "@/store/LenderStore";
+import {ILoanSummary} from "@/utils/interfaces/ILoanSummary";
 
-const LoanSummary: React.FC = () => {
+const LoanSummary: React.FC<ILoanSummary> = ({onApproveLoan, onRejectLoan}) => {
     const {loan} = useLoanStore()
     const {authenticatedLender} = useLenderStore()
 
-    console.log(Object.keys(authenticatedLender).length)
+    const lenderCanApproveLoan = () => {
+        if (authenticatedLender && authenticatedLender?.availableBalance ) {
+           if (loan && loan.principalInGHS){
+               return loan.principalInGHS <= authenticatedLender?.availableBalance
+           }
+        }
+        return false
+    }
     return (
         <div className="h-full overflow-y-auto bg-white p-8">
             <div className="space-y-6 pb-10">
@@ -106,12 +112,14 @@ const LoanSummary: React.FC = () => {
                             <Button
                                 styleType=""
                                 customStyles="flex-1 rounded-md bg-green-500 px-3 py-5"
+                                onClick={onApproveLoan}
                                 buttonType="button">
                                 Approve
                             </Button>
                             <Button
                                 styleType=""
                                 customStyles="flex-1 rounded-md bg-red-500 px-3 py-2"
+                                onClick={onRejectLoan}
                                 buttonType="button">
                                 <span className="">Reject</span>
                             </Button>

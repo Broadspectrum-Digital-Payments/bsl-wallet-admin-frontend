@@ -17,3 +17,11 @@ export async function downloadLoans(params: string = '', fileName: string = 'loa
 
     return await downloadFile(response, fileName)
 }
+
+export async function updateLoan(id: string, data: any) {
+    return await loanFetcher(`${LOAN_ENDPOINT}/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: getJSONHeaders(),
+    });
+}
