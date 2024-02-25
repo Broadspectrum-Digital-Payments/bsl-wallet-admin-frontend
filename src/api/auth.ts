@@ -18,7 +18,7 @@ export async function login(email: string | undefined, password: string | undefi
             headers: getJSONHeaders(),
             body: JSON.stringify({email, password})
         })
-        : await walletFetcher('v1/users/login', {
+        : await walletFetcher('v1/lenders/login', {
             method: 'POST',
             headers: getJSONHeaders(),
             body: JSON.stringify({email, password})
@@ -63,4 +63,3 @@ export async function resetPassword(password: string = '', token: string | null)
         body: JSON.stringify({password, token})
     });
 }
-
