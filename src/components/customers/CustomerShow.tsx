@@ -217,8 +217,7 @@ const CustomerShow: React.FC = () => {
 
 
     const fetchTransactions = (params: string = '') => {
-        // listUserTransactions(authenticatedAdmin?.bearerToken, params)
-        listTransactions(authenticatedAdmin?.bearerToken, params)
+        listUserTransactions(authenticatedAdmin?.bearerToken, params)
             .then(async response => {
                 const feedback = await response.json();
                 if (response.ok && feedback.success) {

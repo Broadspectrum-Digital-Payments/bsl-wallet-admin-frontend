@@ -11,7 +11,7 @@ import {
     prepareFilterQueryString,
     stringToTitleCase
 } from "@/utils/helpers";
-import {updateUser} from "@/api/user";
+import {listUserTransactions, updateUser} from "@/api/user";
 import {UserType} from "@/utils/types/UserType";
 import Toast from "@/components/Toast";
 import Table from "@/components/table/Table";
@@ -152,8 +152,7 @@ const AgentShow: React.FC = () => {
 
 
     const fetchTransactions = (params: string = '') => {
-        // listUserTransactions(authenticatedAdmin?.bearerToken, params)
-        listTransactions(authenticatedAdmin?.bearerToken, params)
+        listUserTransactions(authenticatedAdmin?.bearerToken, params)
             .then(async response => {
                 const feedback = await response.json();
                 if (response.ok && feedback.success) {
