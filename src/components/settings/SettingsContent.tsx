@@ -4,6 +4,7 @@ import {useAdminStore} from "@/store/AdminStore";
 import Button from "@/components/forms/Button";
 import Loader from "@/components/Loader";
 import Toast from "@/components/Toast";
+import {capitalizeFirstLetter, formatDate} from "@/utils/helpers";
 
 const SettingsContent: React.FC = () => {
     const {authenticatedAdmin} = useAdminStore()
@@ -148,7 +149,7 @@ const SettingsContent: React.FC = () => {
                                         name="status"
                                         type="text"
                                         placeholder=""
-                                        value={authenticatedAdmin?.status}
+                                        value={capitalizeFirstLetter(authenticatedAdmin?.status)}
                                         required={true}
                                         autoComplete="false"
                                         disabled={true}
@@ -160,7 +161,7 @@ const SettingsContent: React.FC = () => {
                                         name="actualBalance"
                                         type="text"
                                         placeholder=""
-                                        value={authenticatedAdmin?.createdAt}
+                                        value={formatDate(authenticatedAdmin?.createdAt)}
                                         required={false}
                                         autoComplete="false"
                                         disabled={true}

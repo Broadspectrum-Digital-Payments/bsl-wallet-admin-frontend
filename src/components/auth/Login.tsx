@@ -116,7 +116,6 @@ export default function Login() {
                         ])
                     }
 
-
                     if (setAuthenticatedAdmin) setAuthenticatedAdmin(authData)
                     return router.push('/overview')
                 }
