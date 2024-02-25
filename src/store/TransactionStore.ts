@@ -18,15 +18,6 @@ export const useTransactionStore = create<TransactionStoreType>()(
                     data: []
                 },
 
-                setCollections: (data) => set({collections: data}),
-                collections: get()?.collections,
-
-                setDisbursements: (data) => set({disbursements: data}),
-                disbursements: get()?.disbursements,
-
-                setScheduledPayments: (data) => set({scheduledPayments: data}),
-                scheduledPayments: get()?.scheduledPayments,
-
                 setTransactionSummary: (summary) => set({transactionSummary: summary ?? []}),
                 transactionSummary: {},
 
@@ -38,18 +29,6 @@ export const useTransactionStore = create<TransactionStoreType>()(
                     transactions: {
                         pagination: getEmptyPaginationData(),
                         data: []
-                    },
-                    collections: {
-                        pagination: getEmptyPaginationData(),
-                        transactions: []
-                    },
-                    disbursements: {
-                        pagination: getEmptyPaginationData(),
-                        transactions: []
-                    },
-                    scheduledPayments: {
-                        pagination: getEmptyPaginationData(),
-                        transactions: []
                     },
                     transactionSummary: {},
                     loading: false

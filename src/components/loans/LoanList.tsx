@@ -4,7 +4,7 @@ import Pagination from "@/components/table/Pagination";
 import React, {useEffect, useState} from "react";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
 import {extractPaginationData, formatAmount, prepareFilterQueryString} from "@/utils/helpers";
-import {listLoans} from "@/api/loan";
+import {downloadLoans, listLoans} from "@/api/loan";
 import {useLoanStore} from "@/store/LoanStore";
 import Link from "next/link";
 import AgentFilter from "@/components/agents/AgentFilter";
@@ -15,8 +15,9 @@ import SlideOverWrapper from "@/components/SlideOver";
 import LoanSummary from "@/components/loans/LoanSummary";
 import {LoanType} from "@/utils/types/LoanType";
 import LoanRepaymentHistory from "@/components/loans/RepaymentHistory";
+import {ILoanList} from "@/utils/interfaces/ILoanList";
 
-const LoanList: React.FC = () => {
+const LoanList: React.FC<ILoanList> = ({downloadable = false}) => {
     const tableHeaders = [
         {label: 'Id', classes: 'py-3.5 pl-4 pr-3 text-left  sm:pl-0'},
         {label: 'Amount', classes: 'hidden px-3 py-3.5 text-left lg:table-cell'},
@@ -123,10 +124,15 @@ const LoanList: React.FC = () => {
         setSlideOverOpen(!slideOverOpen)
         if (!slideOverOpen) setDetailsActiveTab('summary')
     }
+
     const loanDetailsTabs = [
         {name: 'summary', label: 'Loan Summary'},
         {name: 'history', label: 'Repayment History'}
     ]
+
+    const handleTableButtonClicked = () => {
+        return downloadLoans(filterQueryString)
+    }
 
     return (
         <div>
@@ -141,7 +147,7 @@ const LoanList: React.FC = () => {
                 />
             </FilterWrapper>
 
-            <Table>
+            <Table buttonText={downloadable ? 'Download' : ''} onButtonClick={handleTableButtonClicked}>
                 {{
                     headers: tableHeaders,
                     body:
