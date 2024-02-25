@@ -20,7 +20,6 @@ const LenderList: React.FC = () => {
     const tableHeaders = [
         {label: 'Id', classes: 'py-3.5 pl-4 pr-3 text-left  sm:pl-0'},
         {label: 'Name', classes: 'hidden px-3 py-3.5 text-left lg:table-cell'},
-        {label: 'Email', classes: 'hidden px-3 py-3.5 text-left lg:table-cell'},
         {label: 'Phone', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
         {label: 'Status', classes: 'px-3 py-3.5 text-left'},
         {label: 'Date Created', classes: 'px-3 py-3.5 text-left'},
@@ -120,16 +119,17 @@ const LenderList: React.FC = () => {
 
     return (
         <>
-            {lenders && lenders?.data.length > 0 ? <div> <FilterWrapper onSubmit={handleFilterSubmitButtonClicked} onReset={handleResetFilter}
-                                                                        hasError={hasError}>
-                <LenderFilter
-                    submit={submitFilter}
-                    reset={resetFilter}
-                    onChange={handleFilterChange}
-                    hasError={hasError}
-                    setHasError={handleFilterError}
-                />
-            </FilterWrapper>
+            {lenders && lenders?.data.length > 0 ? <div>
+                <FilterWrapper onSubmit={handleFilterSubmitButtonClicked} onReset={handleResetFilter}
+                               hasError={hasError}>
+                    <LenderFilter
+                        submit={submitFilter}
+                        reset={resetFilter}
+                        onChange={handleFilterChange}
+                        hasError={hasError}
+                        setHasError={handleFilterError}
+                    />
+                </FilterWrapper>
 
                 <div className="mt-4">
                     <Table buttonText="Add Lender" onButtonClick={handleAddLender}>
@@ -141,9 +141,7 @@ const LenderList: React.FC = () => {
                                         <tr key={lender.externalId}>
                                             <TData label={lender.ghanaCardNumber}
                                                    customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                            <TData label={lender.email}
-                                                   customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                            <TData label={lender.name}
+                                             <TData label={lender.name}
                                                    customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
                                             <TData label={lender.phoneNumber}
                                                    customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
@@ -175,7 +173,8 @@ const LenderList: React.FC = () => {
                         handleNext={handleNext}
                         pagination={lenders?.pagination}
                     />
-                </div></div> : EmptyState()}
+                </div>
+            </div> : EmptyState()}
         </>
     )
 }
