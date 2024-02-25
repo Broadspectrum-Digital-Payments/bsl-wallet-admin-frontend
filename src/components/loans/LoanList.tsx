@@ -16,6 +16,7 @@ import LoanSummary from "@/components/loans/LoanSummary";
 import {LoanType} from "@/utils/types/LoanType";
 import LoanRepaymentHistory from "@/components/loans/RepaymentHistory";
 import {ILoanList} from "@/utils/interfaces/ILoanList";
+import Alert from "@/components/Alert";
 
 const LoanList: React.FC<ILoanList> = ({downloadable = false}) => {
     const tableHeaders = [
@@ -137,8 +138,33 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false}) => {
         return downloadLoans(filterQueryString)
     }
 
+    const {loan} = useLoanStore()
+
+    const handleApproveLoan = () => {
+    console.log(loan)
+        fetchLoans();
+        setSlideOverOpen(!slideOverOpen)
+
+        setToastInfo({type: 'success', description: 'Loan Approved Successfully'})
+    }
+
+    const handleRejectLoan = () => {
+        console.log(loan)
+        fetchLoans();
+        setSlideOverOpen(!slideOverOpen)
+
+        setToastInfo({type: 'success', description: 'Loan Rejected'})
+    }
+
+
+    const [toastInfo, setToastInfo] = useState<{ type: string, description: string, }>({
+        type: '',
+        description: '',
+    });
+
     return (
         <div>
+            {toastInfo.description && <Alert alertType="success" description={toastInfo.description} customClasses="rounded p-2 mt-3 mb-1"/>}
             <FilterWrapper onSubmit={handleFilterSubmitButtonClicked} onReset={handleResetFilter}
                            hasError={hasError}>
                 <AgentFilter
@@ -195,6 +221,7 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false}) => {
                 pagination={loans?.pagination}
             />
 
+
             <SlideOverWrapper open={slideOverOpen} setOpen={handleSlideOverOpen}>
                 <div className="border-b border-gray-200 bg-slate-800">
                     <div className="px-6">
@@ -216,9 +243,11 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false}) => {
                         </nav>
                     </div>
                 </div>
-                {detailsActiveTab === 'summary' && <LoanSummary/>}
+                {detailsActiveTab === 'summary' && <LoanSummary onApproveLoan={handleApproveLoan} onRejectLoan={handleRejectLoan}/>}
                 {detailsActiveTab === 'history' && <LoanRepaymentHistory/>}
+
             </SlideOverWrapper>
+
         </div>
     )
 }
