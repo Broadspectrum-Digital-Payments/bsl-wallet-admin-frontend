@@ -5,9 +5,13 @@ import {formatAmount} from "@/utils/helpers";
 import ListItem from "@/components/ListItem";
 import Button from "@/components/forms/Button";
 import Badge from "../Badge";
+import { useLenderStore } from "@/store/LenderStore";
 
 const LoanSummary: React.FC = () => {
     const {loan} = useLoanStore()
+    const {authenticatedLender} = useLenderStore()
+
+    console.log(Object.keys(authenticatedLender).length)
     return (
         <div className="h-full overflow-y-auto bg-white p-8">
             <div className="space-y-6 pb-10">
@@ -97,7 +101,7 @@ const LoanSummary: React.FC = () => {
                     {/*    Download*/}
                     {/*</Button>*/}
 
-                    {(loan.status == 'submitted' || loan.status == 'approved')  && (
+                    {(Object.keys(authenticatedLender).length !==  0 && loan.status == 'submitted')  && (
                         <>
                             <Button
                                 styleType=""

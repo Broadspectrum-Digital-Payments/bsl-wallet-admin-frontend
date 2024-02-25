@@ -304,67 +304,22 @@ const CustomerShow: React.FC = () => {
 
 
     const fetchLoans = (params: string = '') => {
-        // listUserLoans( authenticatedAdmin?.bearerToken, customerId, params)
-        //     .then(async response => {
-        //         const feedback = await response.json();
-        //         if (response.ok && feedback.success) {
-        //             console.log('feedback: ', feedback)
-        //             const {data, meta} = feedback
-        //             const pagination = extractPaginationData(meta)
-        //             if (setLoans) setLoans({pagination, data})
-        //         }
-        //     })
-        //     .catch((error) => {
-        //         console.log('error: ', error)
-        //     })
-
-        const feedback = {
-            "success": true,
-            "data": [
-                    {
-                        "externalId": "d1a77bbf-2863-406f-bb4b-ffafaeb14f3e",
-                        "stan": "240225152607563501",
-                        "principal": 1000,
-                        "principalInGHS": "GHS10.00",
-                        "interest": 151,
-                        "interestInGHS": "GHS1.51",
-                        "interestRate": 18,
-                        "monthlyInstallment": 64,
-                        "monthlyInstallmentInGHS": "GHS0.64",
-                        "totalRepaymentAmount": 1152,
-                        "totalRepaymentAmountInGHS": "GHS11.52",
-                        "taxes": 10,
-                        "taxesInGHS": "GHS0.10",
-                        "fees": null,
-                        "feesInGHS": "GHS0.00",
-                        "status": "submitted",
-                        "createdAt": "2024-02-25 15:26:07",
-                        "approvedAt": null,
-                        "disbursedAt": null
-                    }
-                ],
-            "message": "Operation successful",
-            "meta": {
-                "firstPageUrl": "http://localhost:8002/v1/borrowers/4f133ead-35eb-4e84-ae3b-652b6abea13a/loans?page=1",
-                "previousPage": null,
-                "nextPage": null,
-                "lastPageUrl": "http://localhost:8002/v1/borrowers/4f133ead-35eb-4e84-ae3b-652b6abea13a/loans?page=1",
-                "currentPage": 1,
-                "onLastPage": true,
-                "onFirstPage": true,
-                "total": 1,
-                "pageSize": 50,
-                "path": "http://localhost:8002/v1/borrowers/4f133ead-35eb-4e84-ae3b-652b6abea13a/loans",
-                "from": 1,
-                "to": 1,
-                "numberOfRecords": 1,
-                "hasPages": false
-            }
-        }
-                    const {data, meta} = feedback
+        listUserLoans( authenticatedAdmin?.bearerToken, customerId, params)
+            .then(async response => {
+                const feedback = await response.json();
+                if (response.ok && feedback.success) {
+                    console.log('feedback: ', feedback)
+                    // const {data, meta} = feedback
+                    const data = feedback.data.loans;
+                    const meta = feedback.data.meta
+                    console.log('meta: ', meta)
                     const pagination = extractPaginationData(meta)
                     if (setLoans) setLoans({pagination, data})
-
+                }
+            })
+            .catch((error) => {
+                console.log('error: ', error)
+            })
     }
 
 
