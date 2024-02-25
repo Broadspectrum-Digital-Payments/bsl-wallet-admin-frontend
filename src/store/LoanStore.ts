@@ -29,7 +29,7 @@ export const useLoanStore = create<LoanStoreType>()(
                     loading: false
                 }),
             }),
-            {name: 'transaction'},
+            {name: 'loan'},
         ),
     ),
 )

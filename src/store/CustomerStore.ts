@@ -1,5 +1,4 @@
 import {create} from 'zustand'
-import {UserType} from "@/utils/types/UserType";
 import {CustomerStoreType} from "@/utils/types/CustomerStoreType";
 import {devtools, persist} from 'zustand/middleware';
 import {getEmptyPaginationData} from "@/utils/helpers";

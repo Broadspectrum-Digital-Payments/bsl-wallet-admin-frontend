@@ -11,13 +11,12 @@ import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
 import TextInput from "@/components/forms/TextInput";
 import {listAdmins, storeAdmin, updateAdmin} from "@/api/admin";
 import {useAdminStore} from "@/store/AdminStore";
-import {extractPaginationData, getError} from "@/utils/helpers";
+import {extractPaginationData, getError, prepareFilterQueryString} from "@/utils/helpers";
 import {DropdownInputItemType} from "@/utils/types/DropdownInputItemType";
 import {DropdownInput} from "@/components/forms/DropdownInput";
 import {AdminType} from "@/utils/types/AdminType";
 import Badge from "@/components/Badge";
 import Link from "next/link";
-import {FilterQueryType} from "@/utils/types/FilterQueryType";
 import Toast from "@/components/Toast";
 
 const AdminList: React.FC = () => {
@@ -166,39 +165,11 @@ const AdminList: React.FC = () => {
     const [selectedStatus, setSelectedStatus] = useState(statuses[0])
 
     const handleSetPageOption = (pageOption: IListBoxItem) => {
-        const queryString = prepareFilterQueryString({pageSize: pageOption.value})
+        const queryString = prepareFilterQueryString({pageSize: pageOption.value}, filterQueryString)
         setFilterQueryString(queryString);
         fetchAdmins(queryString)
         setPageOption(pageOption)
     }
-
-    const prepareFilterQueryString = (queryObject: FilterQueryType) => {
-        const queryParams = filterQueryString.split('&')
-            .map(param => param.split('='))
-            .reduce((obj: Record<string, string>, [key, value]) => {
-                if (key !== '' && value != undefined)
-                    return {...obj, [key]: value};
-
-                return obj;
-            }, {});
-
-        const {startDate, endDate, ...remainingParams} = queryParams;
-
-        const mergedParams = {
-            ...remainingParams,
-            ...queryObject,
-        };
-
-        const filteredParams = Object.fromEntries(
-            Object.entries(mergedParams).filter(([key, value]) => {
-                return ![undefined, ''].includes(String(value));
-            })
-        );
-
-        return Object.entries(filteredParams)
-            .map(([key, value]) => `${key}=${value}`)
-            .join('&');
-    };
 
     return (
         <>
