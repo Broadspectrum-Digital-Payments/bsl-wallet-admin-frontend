@@ -263,8 +263,7 @@ const CustomerShow: React.FC = () => {
     const [slideOverOpen, setSlideOverOpen] = useState<boolean>(false);
 
 
-    const handleViewLoanDetails = (transaction: TransactionType) => {
-        console.log(transaction)
+    const handleViewTransactionDetails = (transaction: TransactionType) => {
         setTransaction(transaction)
         setSlideOverOpen(true)
     }
@@ -517,7 +516,7 @@ const CustomerShow: React.FC = () => {
                                                                customClasses="py-4 pl-3 pr-4 text-center text-sm font-medium sm:pr-0">
 
                                                             <Link
-                                                                onClick={() => handleViewLoanDetails(transaction)}
+                                                                onClick={() => handleViewTransactionDetails(transaction)}
                                                                 className="text-indigo-600 hover:text-indigo-900"
                                                                 href="">
                                                                 Details <span className="sr-only">, {transaction.externalId}</span>
