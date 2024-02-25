@@ -7,7 +7,7 @@ import LenderCreate from "@/components/lenders/LenderCreate";
 export default function NewLender() {
   return (
       <DashboardLayout>
-        <LenderCreate></LenderCreate>
+        <LenderCreate/>
       </DashboardLayout>
   )
 }

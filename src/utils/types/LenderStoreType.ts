@@ -11,7 +11,6 @@ export type LenderStoreType = {
     setLoading?: (loading: boolean) => void
     loading?: boolean
 
-
     setAuthenticatedLender: (authenticatedLender: LenderType) => void
     authenticatedLender: LenderType
     setIsAuthenticated?: (isAuthenticated: boolean) => void

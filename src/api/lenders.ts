@@ -3,9 +3,10 @@ import {getJSONHeaders} from "@/utils/helpers";
 
 const LENDERS_ENDPOINT = 'v1/admin/users'
 
-export async function listLenders(bearerToken: string = '', params: string = '') {
-    return await walletFetcher(`${LENDERS_ENDPOINT}?type=lender&${params}`, {
-        headers: getJSONHeaders(bearerToken),
+export async function listLenders(params: string = '') {
+    return await walletFetcher(`${LENDERS_ENDPOINT}?${params}`, {
+        method: 'GET',
+        headers: getJSONHeaders(),
     });
 }
 
