@@ -12,5 +12,6 @@ export type UserType = {
     availableBalance?: string,
     verificationToken?: string,
     createdAt?: string,
-    files?: [FileType]
+    files?: [FileType],
+    ghanaPostGPS?: string
 }
