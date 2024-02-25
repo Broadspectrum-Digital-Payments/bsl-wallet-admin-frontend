@@ -9,7 +9,7 @@ import EmptyState from "@/components/EmptyState";
 
 const LendersPage: React.FC = () => {
     const {isAuthenticated, setIsAuthenticated} = useAdminStore();
-    const {lenders} = useLenderStore();
+
     useAuthHelper({
         isAuthenticated,
         setIsAuthenticated
@@ -17,10 +17,7 @@ const LendersPage: React.FC = () => {
 
     return (
         <DashboardLayout>
-            <>
-                {lenders && lenders?.data.length > 0 && <LenderList/>}
-                {!lenders && <EmptyState/>}
-            </>
+            <LenderList/>
         </DashboardLayout>
     )
 }
