@@ -33,5 +33,22 @@ export type LoanType = {
     channel?: string,
     sender?: string,
     balance?: string,
-    description?: string
+    description?: string,
+    stan?: string,
+    principal?: number;
+    principalInGHS?: string;
+    interest?: number;
+    interestInGHS?: string;
+    interestRate?: number;
+    monthlyInstallment?: number;
+    monthlyInstallmentInGHS?: string;
+    totalRepaymentAmount?: number;
+    totalRepaymentAmountInGHS?: string;
+    taxes?: number;
+    taxesInGHS?: string;
+    fees?: string | null
+    feesInGHS?: string;
+    approvedAt?: string | null;
+    disbursedAt?: string | null;
+
 }
