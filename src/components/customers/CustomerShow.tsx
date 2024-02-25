@@ -5,7 +5,7 @@ import Button from "@/components/forms/Button";
 import Loader from "@/components/Loader";
 import {useCustomerStore} from "@/store/CustomerStore";
 import {useAdminStore} from "@/store/AdminStore";
-import {listUserTransactions, showUser} from "@/api/user";
+import {listUserLoans, listUserTransactions, showUser} from "@/api/user";
 import CustomSelectInput from "@/components/forms/CustomSelectInput";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
 import {extractPaginationData, formatAmount, isObjectEmpty, prepareFilterQueryString} from "@/utils/helpers";
@@ -110,6 +110,10 @@ const CustomerShow: React.FC = () => {
 
         if (sectionName === 'Transactions') {
             fetchTransactions(filterQueryString)
+        }
+
+        if (sectionName === 'Loans') {
+            fetchLoans(filterQueryString)
         }
     };
 
@@ -223,7 +227,7 @@ const CustomerShow: React.FC = () => {
 
 
     const fetchTransactions = (params: string = '') => {
-        listUserTransactions(authenticatedAdmin?.bearerToken, params)
+        listUserTransactions(authenticatedAdmin?.bearerToken, customerId, params)
             .then(async response => {
                 const feedback = await response.json();
                 if (response.ok && feedback.success) {
@@ -282,9 +286,9 @@ const CustomerShow: React.FC = () => {
     const loanTableHeaders = [
         {label: 'Id', classes: 'py-3.5 pl-4 pr-3 text-left  sm:pl-0'},
         {label: 'Amount', classes: 'hidden px-3 py-3.5 text-left lg:table-cell'},
-        {label: 'Repayment Duration', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
+        // {label: 'Repayment Duration', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
         {label: 'Repayment Amount', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
-        {label: 'Amount Paid', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
+        {label: 'Interest', classes: 'hidden px-3 py-3.5 text-left sm:table-cell'},
         {label: 'Status', classes: 'px-3 py-3.5 text-left'},
         {label: 'Date Created', classes: 'px-3 py-3.5 text-left'},
         {label: 'Action', classes: 'relative py-3.5 pl-3 pr-4 sm:pr-0'},
@@ -298,12 +302,16 @@ const CustomerShow: React.FC = () => {
     const [loanDetailsActiveTab, setLoanDetailsActiveTab] = useState<string>('summary');
 
 
+
     const fetchLoans = (params: string = '') => {
-        listLoans(params)
+        listUserLoans( authenticatedAdmin?.bearerToken, customerId, params)
             .then(async response => {
                 const feedback = await response.json();
                 if (response.ok && feedback.success) {
-                    const {data, meta} = feedback
+
+                    const data = feedback.data.loans;
+                    const meta = feedback.data.meta
+
                     const pagination = extractPaginationData(meta)
                     if (setLoans) setLoans({pagination, data})
                 }
@@ -644,23 +652,21 @@ const CustomerShow: React.FC = () => {
 
                     {/*Loans*/}
                     {activeSection == 'Loans' && (
-                        <div>
-                        <Table buttonText='Download' onButtonClick={handleTableButtonClicked}>
+                       loans && loans.data?.length > 0 ?  <div>
+                        <Table buttonText='' onButtonClick={handleTableButtonClicked}>
                             {{
                                 headers: loanTableHeaders,
                                 body:
                                     <>
                                         {loans.data.map((loan) => (
                                             <tr key={loan.externalId}>
-                                                <TData label={loan.externalId}
+                                                <TData label={loan.stan}
                                                        customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                                <TData label={formatAmount(loan.amount)}
+                                                <TData label={loan.principalInGHS}
                                                        customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
-                                                <TData label={formatAmount(loan.amount)}
+                                                <TData label={loan.totalRepaymentAmountInGHS}
                                                        customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                                <TData label={formatAmount(loan.amount)}
-                                                       customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
-                                                <TData label={formatAmount(loan.amount)}
+                                                <TData label={loan.interestInGHS}
                                                        customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"/>
                                                 <TData customClasses="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">
                                                     <Badge text={loan.status ?? ''} customClasses="capitalize"/>
@@ -715,8 +721,9 @@ const CustomerShow: React.FC = () => {
                     </div>
                     {loanDetailsActiveTab === 'summary' && <LoanSummary/>}
                     {loanDetailsActiveTab === 'history' && <LoanRepaymentHistory/>}
+                    {/*<LoanSummary/>*/}
                 </SlideOverWrapper>
-                        </div>
+                        </div> : EmptyState()
                     )}
                 </main>
             </div>
