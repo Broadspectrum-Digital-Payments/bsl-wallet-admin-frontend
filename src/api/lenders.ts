@@ -1,4 +1,4 @@
-import {walletFetcher} from "@/api/http";
+import {walletFetcher, loanFetcher} from "@/api/http";
 import {getJSONHeaders} from "@/utils/helpers";
 
 const LENDERS_ENDPOINT = 'v1/admin/users'
@@ -29,5 +29,12 @@ export async function updateLender(bearerToken: string = '', lenderExternalId: s
         headers: getJSONHeaders(bearerToken),
         method: 'PUT',
         body: JSON.stringify(data)
+    });
+}
+
+export async function listLenderLoans(externalId?: string, params: string = '') {
+    return await loanFetcher(`v1/lenders/${externalId}/loans?${params}`, {
+        headers: getJSONHeaders(),
+        method: 'GET',
     });
 }

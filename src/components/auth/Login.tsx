@@ -89,7 +89,8 @@ export default function Login() {
                         if (setAuthenticatedLender) setAuthenticatedLender(authData)
                         if (setMainMenuItemsList) setMainMenuItemsList([
                             {name: 'overview', label: 'Overview', href: '/overview', icon: true, category: 'Dashboard'},
-                            {name: 'loans', label: 'Loans', href: '/loans', icon: true, category: 'Core'},
+                            {name: 'requests', label: 'Requests', href: '/requests', icon: true, category: 'Core'},
+                            {name: 'loans', label: 'Loans', href: '/loans', icon: true, category: ''},
                         ])
                     } else {
                         if (setMainMenuItemsList) setMainMenuItemsList([
@@ -99,7 +100,7 @@ export default function Login() {
                             {name: 'agents', label: 'Agents', href: '/agents', icon: true, category: ''},
                             {name: 'customers', label: 'Customers', href: '/customers', icon: true, category: ''},
                             {name: 'kyc', label: 'KYC', href: '/kyc', icon: true, category: ''},
-                            {name: 'loans', label: 'Loans', href: '/loans', icon: true, category: 'Core'},
+                            {name: 'requests', label: 'Requests', href: '/requests', icon: true, category: 'Core'},
                             {
                                 name: 'transactions',
                                 label: 'Transactions',

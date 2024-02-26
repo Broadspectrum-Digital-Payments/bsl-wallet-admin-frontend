@@ -6,7 +6,6 @@ import {IMenuItem} from '@/utils/interfaces/IMenuItem';
 import {
     ChartPieIcon,
     Cog6ToothIcon,
-    CogIcon,
     UsersIcon,
     UserCircleIcon,
     LockClosedIcon,
@@ -16,7 +15,8 @@ import {
     ArrowsRightLeftIcon,
     BuildingOffice2Icon,
     WalletIcon,
-    UserPlusIcon
+    UserPlusIcon,
+    ArchiveBoxArrowDownIcon,
 } from '@heroicons/react/24/outline';
 import {IconsType} from "@/utils/types/IconType";
 
@@ -34,6 +34,7 @@ const MenuItem: React.FC<IMenuItem> = ({menuItem}) => {
         customers: <UsersIcon className="h-6 w-6 shrink-0" aria-hidden="true"/>,
         agents: <BuildingOffice2Icon className="h-6 w-6 shrink-0" aria-hidden="true"/>,
         lenders: <BanknotesIcon className="h-6 w-6 shrink-0" aria-hidden="true"/>,
+        requests: <ArchiveBoxArrowDownIcon className="h-6 w-6 shrink-0" aria-hidden="true"/>,
         loans: <WalletIcon className="h-6 w-6 shrink-0" aria-hidden="true"/>,
         transactions: <ArrowsRightLeftIcon className="h-6 w-6 shrink-0" aria-hidden="true"/>,
         reports: <ChartPieIcon className="h-6 w-6 shrink-0" aria-hidden="true"/>,

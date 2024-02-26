@@ -5,7 +5,7 @@ import {
     ArrowUpCircleIcon,
 } from '@heroicons/react/24/outline'
 import {useReportStore} from "@/store/ReportStore";
-import LoanList from "@/components/loans/LoanList";
+import LoanContent from "@/components/loans/LoanList";
 import TransactionList from "@/components/transactions/TransactionList";
 import {SelectInputItemType} from "@/utils/types/SelectInputItemType";
 import SmallCardOptions from "@/components/forms/SmallCardOptions";
@@ -91,9 +91,8 @@ const ReportsOverview = () => {
                             <div className="ml-auto rounded-md py-2 text-sm">
                                 <SmallCardOptions selected={selectedReportType}
                                                   setSelected={handleSelectedReportType}
-                                                  data={reportTypeList} customClasses="" />
+                                                  data={reportTypeList}/>
                             </div>
-
                         </div>
                     </header>
                     {reportType === 'analytics' &&
@@ -235,7 +234,7 @@ const ReportsOverview = () => {
                         </div>
                     </div>
                 </div>}
-                {reportType === 'loans' && <LoanList downloadable={true}/>}
+                {reportType === 'loans' && <LoanContent downloadable={true}/>}
                 {reportType === 'transactions' && <TransactionList/>}
             </main>
         </>
