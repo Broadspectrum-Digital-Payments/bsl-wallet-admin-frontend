@@ -128,7 +128,7 @@ const LoanSummary: React.FC<ILoanSummary> = ({onApproveLoan, onRejectLoan}) => {
                     {/*    Download*/}
                     {/*</Button>*/}
 
-                    {(Object.keys(authenticatedLender).length !== 0 && loan.status == 'submitted') && (
+                    {lenderCanApproveLoan() && (Object.keys(authenticatedLender).length !== 0 && loan.status == 'submitted') && (
                         <>
                             <Button
                                 styleType=""
