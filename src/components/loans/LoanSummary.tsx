@@ -12,6 +12,7 @@ const LoanSummary: React.FC<ILoanSummary> = ({onApproveLoan, onRejectLoan}) => {
     const {authenticatedLender} = useLenderStore()
 
     useEffect(() => {
+        console.log(authenticatedLender)
         loan.externalId && showLoan(loan.externalId)
             .then(async response => {
                 const feedback = await response.json();
@@ -128,7 +129,7 @@ const LoanSummary: React.FC<ILoanSummary> = ({onApproveLoan, onRejectLoan}) => {
                     {/*    Download*/}
                     {/*</Button>*/}
 
-                    {lenderCanApproveLoan() && (Object.keys(authenticatedLender).length !== 0 && loan.status == 'submitted') && (
+                    {(Object.keys(authenticatedLender).length !== 0 && loan.status == 'submitted') && (
                         <>
                             <Button
                                 styleType=""
