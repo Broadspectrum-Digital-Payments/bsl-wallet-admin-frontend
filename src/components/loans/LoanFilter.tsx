@@ -25,7 +25,10 @@ const LoanFilter: React.FC<ITransactionFilter> = ({
         {label: 'select status', value: 'select status'},
         {label: 'submitted', value: 'submitted'},
         {label: 'approved', value: 'approved'},
-        {label: 'completed', value: 'completed'},
+        {label: 'declined', value: 'decline'},
+        {label: 'disbursed', value: 'disbursed'},
+        {label: 'paid', value: 'paid'},
+        {label: 'delayed', value: 'delayed'},
     ]
 
     const [filterHasError, setFilterHasError] = useState<boolean>(false);
