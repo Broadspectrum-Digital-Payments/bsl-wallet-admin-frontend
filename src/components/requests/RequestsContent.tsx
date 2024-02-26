@@ -7,6 +7,8 @@ import {LoanStatType} from "@/utils/types/LoanStatType";
 import LoanList from "@/components/loans/LoanList";
 import {listLoans} from "@/api/loan";
 import EmptyState from "@/components/EmptyState";
+import {useLenderStore} from "@/store/LenderStore";
+import {useAdminStore} from "@/store/AdminStore";
 
 const LoanContent: React.FC<ILoanList> = ({downloadable = false, filter = false, stats = false}) => {
 
@@ -16,8 +18,13 @@ const LoanContent: React.FC<ILoanList> = ({downloadable = false, filter = false,
 
     const {loans, setLoans} = useLoanStore()
     const [loanStats, setLoanStats] = useState<LoanStatItemType[] | undefined>(undefined);
+    const {lender} = useLenderStore()
+    const {authenticatedAdmin} = useAdminStore()
 
     const fetchLoans = (params: string = '') => {
+        if(authenticatedAdmin.externalId == lender?.externalId) {
+            params = 'status=submitted'
+        }
         listLoans(params)
             .then(async response => {
                 const feedback = await response.json();
@@ -43,10 +50,25 @@ const LoanContent: React.FC<ILoanList> = ({downloadable = false, filter = false,
         return setLoanStats(statsList);
     }
 
+    const authIsLender = authenticatedAdmin.externalId == lender?.externalId
+
     return (<>
-        {loans.data.length > 0 && <LoanList stats={loanStats}/>}
-        {!loans.data.length && <EmptyState/>}
+        {loans.data.length > 0 &&
+            (<div>
+                {authenticatedAdmin.externalId == lender?.externalId ? (<dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
+                    <dt className="truncate text-sm font-medium text-indigo-600">Available Balance</dt>
+                    <dd className="mt-1 text-3xl font-semibold tracking-tight text-gray-900">{lender.availableBalance ?? 0}</dd>
+                </div>
+                <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
+                    <dt className="truncate text-sm font-medium text-indigo-600">Actual Balance</dt>
+                    <dd className="mt-1 text-3xl font-semibold tracking-tight text-gray-900">{lender.actualBalance ?? 0}</dd>
+                </div>
+            </dl>) : ''}
+        </div>)}
+        <LoanList filter={!authIsLender} stats={loanStats} passedParam={authIsLender ? 'status=submitted' : ''}/>
     </>)
+
 }
 
 export default LoanContent
