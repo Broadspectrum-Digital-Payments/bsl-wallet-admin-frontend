@@ -12,6 +12,7 @@ const LoanSummary: React.FC<ILoanSummary> = ({onApproveLoan, onRejectLoan}) => {
     const {authenticatedLender} = useLenderStore()
 
     useEffect(() => {
+        console.log(authenticatedLender)
         loan.externalId && showLoan(loan.externalId)
             .then(async response => {
                 const feedback = await response.json();
