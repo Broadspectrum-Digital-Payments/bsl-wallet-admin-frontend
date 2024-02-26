@@ -17,7 +17,7 @@ const ListBox: React.FC<IListBoxProps> = ({
             {({open}) => (
                 <div className={`relative ${customClasses}`}>
                     <Listbox.Button
-                        className={`flex justify-between w-full cursor-pointer rounded-md bg-white gap-3 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none sm:text-sm sm:leading-6 ${customButtonClasses}
+                        className={`flex justify-between w-full cursor-pointer rounded-md bg-white gap-3 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none sm:text-sm sm:leading-6 z-50 ${customButtonClasses}
                         ${disableButton ? 'pointer-events-none opacity-50' : ''}`}
                     >
                         <span
@@ -33,7 +33,7 @@ const ListBox: React.FC<IListBoxProps> = ({
                         leaveTo="opacity-0"
                     >
                         <Listbox.Options
-                            className="absolute mt-2 w-full overflow-scroll rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-10"
+                            className="absolute mt-2 w-full overflow-scroll rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-50"
                         >
                             {data?.map((item, key) => (
                                 <Listbox.Option key={key} value={item} disabled={disableFirstKey ? key === 0 : false}>
