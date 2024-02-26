@@ -58,9 +58,9 @@ const LoanSummary: React.FC<ILoanSummary> = ({onApproveLoan, onRejectLoan}) => {
                         </ListItem>
 
 
-                        {loan.lender && (<div> 
-                            <ListItem title="Lender Name" description={loan?.lender?.name ?? ''}/>
-                            <ListItem title="Lender Phone" description={loan?.lender?.phoneNumber ?? ''}/></div>
+                        {loan.lender && (<div>
+                                <ListItem title="Lender Name" description={loan?.lender?.name ?? ''}/>
+                                <ListItem title="Lender Phone" description={loan?.lender?.phoneNumber ?? ''}/></div>
                         )}
 
 
@@ -97,7 +97,7 @@ const LoanSummary: React.FC<ILoanSummary> = ({onApproveLoan, onRejectLoan}) => {
                                         type="button"
                                         target="_blank"
                                         className="ml-6 rounded-md bg-white text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                     href={document.url}>
+                                        href={document.url}>
                                         View<span className="sr-only"> {loan.externalId}</span>
                                     </a>
                                 </li>
@@ -105,6 +105,14 @@ const LoanSummary: React.FC<ILoanSummary> = ({onApproveLoan, onRejectLoan}) => {
 
                         ))
                     )}
+
+                    {
+                        !loan.documents || loan.documents?.length == 0 && (
+                            <div>
+                                <p>No documents uploaded</p>
+                            </div>
+                        )
+                    }
                 </div>
                 <div className="flex justify-start gap-4 mt-4">
                     {/*<Button*/}
