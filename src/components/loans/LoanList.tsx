@@ -215,7 +215,7 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false, filter = false, st
             {stats && <LoanStats data={loanStats}/>}
 
             {toastInfo.description &&
-                <Alert alertType="success" description={toastInfo.description} customClasses="rounded p-2 mt-3 mb-1"/>}
+                <Alert alertType={ toastInfo.type } description={toastInfo.description} customClasses="rounded p-2 mt-3 mb-1"/>}
             {filter && <FilterWrapper onSubmit={handleFilterSubmitButtonClicked} onReset={handleResetFilter}
                                       hasError={hasError}>
                 <LoanFilter
