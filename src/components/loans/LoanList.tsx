@@ -7,7 +7,6 @@ import {extractPaginationData, formatAmount, prepareFilterQueryString} from "@/u
 import {downloadLoans, listLoans} from "@/api/loan";
 import {useLoanStore} from "@/store/LoanStore";
 import Link from "next/link";
-import AgentFilter from "@/components/agents/AgentFilter";
 import FilterWrapper from "@/components/FilterWrapper";
 import {FilterFormDataType} from "@/utils/types/FilterFormDataType";
 import Badge from "@/components/Badge";
