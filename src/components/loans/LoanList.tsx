@@ -3,7 +3,7 @@ import TData from "@/components/table/TData";
 import Pagination from "@/components/table/Pagination";
 import React, {useEffect, useState} from "react";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
-import {extractPaginationData, formatAmount, prepareFilterQueryString} from "@/utils/helpers";
+import {extractPaginationData, prepareFilterQueryString} from "@/utils/helpers";
 import {downloadLoans, listLoans} from "@/api/loan";
 import {useLoanStore} from "@/store/LoanStore";
 import Link from "next/link";
@@ -17,8 +17,10 @@ import LoanRepaymentHistory from "@/components/loans/RepaymentHistory";
 import {ILoanList} from "@/utils/interfaces/ILoanList";
 import Alert from "@/components/Alert";
 import LoanFilter from "@/components/loans/LoanFilter";
+import LoanStats from "@/components/loans/LoanStats";
+import {LoanStatItemType} from "@/utils/types/LoanStatItemType";
 
-const LoanList: React.FC<ILoanList> = ({downloadable = false}) => {
+const LoanList: React.FC<ILoanList> = ({downloadable = false, filter = false, stats}) => {
     const tableHeaders = [
         {label: 'Id', classes: 'py-3.5 pl-4 pr-3 text-left  sm:pl-0'},
         {label: 'Amount', classes: 'hidden px-3 py-3.5 text-left lg:table-cell'},
@@ -29,7 +31,7 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false}) => {
         {label: 'Date Created', classes: 'px-3 py-3.5 text-left'},
         {label: 'Action', classes: 'relative py-3.5 pl-3 pr-4 sm:pr-0'},
     ]
-    const {loans, setLoans, setLoan, loading, setLoading} = useLoanStore()
+    const {loans, setLoans, setLoan} = useLoanStore()
 
     const [filterQueryString, setFilterQueryString] = useState<string>('pageSize=10');
     const [resetFilter, setResetFilter] = useState<boolean>(false);
@@ -43,9 +45,10 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false}) => {
     const [hasError, setHasError] = useState<boolean>(false);
     const [slideOverOpen, setSlideOverOpen] = useState<boolean>(false);
     const [detailsActiveTab, setDetailsActiveTab] = useState<string>('summary');
+    const [loanStats, setLoanStats] = useState<LoanStatItemType[]>([]);
 
     useEffect(() => {
-        fetchLoans(filterQueryString)
+        // fetchLoans(filterQueryString)
     }, [])
 
     const fetchLoans = (params: string = '') => {
@@ -54,11 +57,9 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false}) => {
                 const feedback = await response.json();
                 if (response.ok && feedback.success) {
 
-                    const data = feedback.data.loans;
-                    const meta = feedback.data.meta
-
+                    const {loans, meta} = feedback.data;
                     const pagination = extractPaginationData(meta)
-                    if (setLoans) setLoans({pagination, data})
+                    if (setLoans) setLoans({pagination, data: loans})
                 }
             })
             .catch((error) => {
@@ -141,7 +142,7 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false}) => {
     const {loan} = useLoanStore()
 
     const handleApproveLoan = () => {
-    console.log(loan)
+        console.log(loan)
         fetchLoans();
         setSlideOverOpen(!slideOverOpen)
 
@@ -149,13 +150,11 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false}) => {
     }
 
     const handleRejectLoan = () => {
-        console.log(loan)
         fetchLoans();
         setSlideOverOpen(!slideOverOpen)
 
         setToastInfo({type: 'success', description: 'Loan Rejected'})
     }
-
 
     const [toastInfo, setToastInfo] = useState<{ type: string, description: string, }>({
         type: '',
@@ -164,9 +163,12 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false}) => {
 
     return (
         <div>
-            {toastInfo.description && <Alert alertType="success" description={toastInfo.description} customClasses="rounded p-2 mt-3 mb-1"/>}
-            <FilterWrapper onSubmit={handleFilterSubmitButtonClicked} onReset={handleResetFilter}
-                           hasError={hasError}>
+            {stats && <LoanStats data={loanStats}/>}
+
+            {toastInfo.description &&
+                <Alert alertType="success" description={toastInfo.description} customClasses="rounded p-2 mt-3 mb-1"/>}
+            {filter && <FilterWrapper onSubmit={handleFilterSubmitButtonClicked} onReset={handleResetFilter}
+                                      hasError={hasError}>
                 <LoanFilter
                     submit={submitFilter}
                     reset={resetFilter}
@@ -174,7 +176,7 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false}) => {
                     hasError={hasError}
                     setHasError={handleFilterError}
                 />
-            </FilterWrapper>
+            </FilterWrapper>}
 
             <Table buttonText={downloadable ? 'Download' : ''} onButtonClick={handleTableButtonClicked}>
                 {{
@@ -221,7 +223,6 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false}) => {
                 pagination={loans?.pagination}
             />
 
-
             <SlideOverWrapper open={slideOverOpen} setOpen={handleSlideOverOpen}>
                 <div className="border-b border-gray-200 bg-slate-800">
                     <div className="px-6">
@@ -243,7 +244,8 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false}) => {
                         </nav>
                     </div>
                 </div>
-                {detailsActiveTab === 'summary' && <LoanSummary onApproveLoan={handleApproveLoan} onRejectLoan={handleRejectLoan}/>}
+                {detailsActiveTab === 'summary' &&
+                    <LoanSummary onApproveLoan={handleApproveLoan} onRejectLoan={handleRejectLoan}/>}
                 {detailsActiveTab === 'history' && <LoanRepaymentHistory/>}
 
             </SlideOverWrapper>

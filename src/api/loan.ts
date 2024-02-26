@@ -1,7 +1,6 @@
-import {loanFetcher, walletFetcher} from "@/api/http";
+import {loanFetcher} from "@/api/http";
 import {downloadFile, getJSONHeaders} from "@/utils/helpers";
 
-const TRANSACTION_ENDPOINT = 'v1/admin/transactions'
 const LOAN_ENDPOINT = 'v1/loans'
 
 export async function listLoans(params: string = '') {

@@ -74,12 +74,12 @@ export const isValidEmail = (email: string): boolean => {
     return emailRegex.test(email);
 };
 
-export const formatAmount = (amount: number | string = 0, currency: string = 'GHS') => {
+export const formatAmount = (amount: number | string = 0, currency: string = 'GHS', convert = true) => {
     return `${currency}  ${(new Intl.NumberFormat('en-GH', {
         style: 'decimal',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
-    }).format(Number(amount) / 100))}`
+    }).format(convert ? (Number(amount) / 100) : amount))}`
 }
 
 export const formatDate = (dateString: string = '') => {
