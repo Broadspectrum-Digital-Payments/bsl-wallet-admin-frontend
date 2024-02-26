@@ -1,13 +1,14 @@
-import React, {Fragment} from 'react'
+import React, {Fragment, useState} from 'react'
 import {
     ArrowDownCircleIcon,
     ArrowPathIcon,
     ArrowUpCircleIcon,
 } from '@heroicons/react/24/outline'
-import Button from "@/components/forms/Button";
 import {useReportStore} from "@/store/ReportStore";
 import LoanList from "@/components/loans/LoanList";
 import TransactionList from "@/components/transactions/TransactionList";
+import {SelectInputItemType} from "@/utils/types/SelectInputItemType";
+import SmallCardOptions from "@/components/forms/SmallCardOptions";
 
 const ReportsOverview = () => {
     const stats = [
@@ -64,9 +65,17 @@ const ReportsOverview = () => {
     ]
     const {reportType, setReportType} = useReportStore();
 
-    const handleGetReports = () => (['loans', 'transactions'].includes(reportType))
-        ? setReportType('analytics')
-        : setReportType('loans')
+    const reportTypeList = [
+        {name: 'analytics', label: 'Analytics'},
+        {name: 'loans', label: 'Loans'},
+        {name: 'transactions', label: 'Transactions'},
+    ]
+    const [selectedReportType, setSelectedReportType] = useState<SelectInputItemType>(reportTypeList[0])
+    const handleSelectedReportType = (report: SelectInputItemType) => {
+        setSelectedReportType(report)
+        setReportType(report.name)
+        setSelectedReportType(report)
+    }
 
     return (
         <>
@@ -79,14 +88,12 @@ const ReportsOverview = () => {
                             <div
                                 className="order-last flex w-full gap-x-8 text-sm font-semibold leading-6 sm:order-none sm:w-auto sm:border-l sm:border-gray-200 sm:pl-6 sm:leading-7">
                             </div>
-                            <Button
-                                buttonType="button"
-                                customStyles="ml-auto rounded-md py-2 text-sm max-w-[150px]"
-                                styleType="primary"
-                                onClick={handleGetReports}
-                            >
-                                Get Reports
-                            </Button>
+                            <div className="ml-auto rounded-md py-2 text-sm">
+                                <SmallCardOptions selected={selectedReportType}
+                                                  setSelected={handleSelectedReportType}
+                                                  data={reportTypeList} customClasses="" />
+                            </div>
+
                         </div>
                     </header>
                     {reportType === 'analytics' &&
