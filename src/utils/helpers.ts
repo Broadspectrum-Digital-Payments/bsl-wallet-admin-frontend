@@ -79,7 +79,7 @@ export const formatAmount = (amount: number | string = 0, currency: string = 'GH
         style: 'decimal',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
-    }).format(convert ? (Number(amount) / 100) : amount))}`
+    }).format(convert ? (Number(amount) / 100) : Number(amount)))}`
 }
 
 export const formatDate = (dateString: string = '') => {
