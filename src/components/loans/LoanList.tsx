@@ -20,8 +20,10 @@ import LoanFilter from "@/components/loans/LoanFilter";
 import LoanStats from "@/components/loans/LoanStats";
 import {LoanStatItemType} from "@/utils/types/LoanStatItemType";
 import {useLenderStore} from "@/store/LenderStore";
+import {showLender} from "@/api/lenders";
+import EmptyState from "@/components/EmptyState";
 
-const LoanList: React.FC<ILoanList> = ({downloadable = false, filter = false, stats}) => {
+const LoanList: React.FC<ILoanList> = ({downloadable = false, filter = false, stats, passedParam = ''}) => {
     const tableHeaders = [
         {label: 'Id', classes: 'py-3.5 pl-4 pr-3 text-left  sm:pl-0'},
         {label: 'Amount', classes: 'hidden px-3 py-3.5 text-left lg:table-cell'},
@@ -34,7 +36,7 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false, filter = false, st
     ]
     const {loans, setLoans, setLoan} = useLoanStore()
 
-    const [filterQueryString, setFilterQueryString] = useState<string>('status=submitted&pageSize=10');
+    const [filterQueryString, setFilterQueryString] = useState<string>('pageSize=10');
     const [resetFilter, setResetFilter] = useState<boolean>(false);
     const [submitFilter, setSubmitFilter] = useState<boolean>(false);
     const [formData, setFormData] = useState<FilterFormDataType>({
@@ -53,8 +55,15 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false, filter = false, st
         // fetchLoans(filterQueryString)
     }, [])
 
-    const fetchLoans = (params: string = 'status=submitted') => {
-        listLoans(params)
+    const fetchLoans = (params: string = 'pageSize=10') => {
+        let stringParams = params
+        if (passedParam && params) {
+            stringParams = `${passedParam}&${params}`
+        } else if(passedParam) {
+            stringParams = passedParam
+        }
+
+        listLoans(stringParams)
             .then(async response => {
                 const feedback = await response.json();
                 if (response.ok && feedback.success) {
@@ -142,7 +151,7 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false, filter = false, st
     }
 
     const {loan} = useLoanStore()
-    const {authenticatedLender} = useLenderStore()
+    const {authenticatedLender, setLender, lender} = useLenderStore()
 
     const handleApproveLoan = () => {
         const lenderExternalId = authenticatedLender?.externalId ?? ''
@@ -154,13 +163,28 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false, filter = false, st
 
                     const currentLoans = loans.data.filter((submittedLoans: LoanType) => submittedLoans.externalId != loanExternalId)
 
+                    const newPagination = loans.pagination;
+                    newPagination.totalElements = newPagination.totalElements ? newPagination.totalElements - 1 : 0
+                    newPagination.to = newPagination.to ? newPagination.to - 1 : 0
+
                     setLoans({
                         ...loans,
-                        data: currentLoans
+                        data: currentLoans,
+                        pagination: newPagination
                     })
+
+                    showLender(authenticatedLender.bearerToken, lenderExternalId).then(async response => {
+                        if (response.status == 200) {
+                            const feedback = await response.json()
+                            setLender({...lender, availableBalance: feedback.data.availableBalance, actualBalance: feedback.data.actualBalance})
+                        }
+                    })
+                    
 
                     setSlideOverOpen(!slideOverOpen)
                     setToastInfo({type: 'success', description: 'Loan Approved Successfully'})
+
+
 
                 }else{
                     const feedback = await response.json()
@@ -202,7 +226,6 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false, filter = false, st
             .catch((error) => {
                 console.log('error: ', error)
             })
-
     }
 
     const [toastInfo, setToastInfo] = useState<{ type: string, description: string, }>({
@@ -227,12 +250,15 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false, filter = false, st
                 />
             </FilterWrapper>}
 
+            {loans.data.length ? (<div>
+
             <Table buttonText={downloadable ? 'Download' : ''} onButtonClick={handleTableButtonClicked}>
                 {{
                     headers: tableHeaders,
                     body:
                         <>
-                            {loans.data.map((loan) => (
+                            {
+                                loans.data.map((loan) => (
                                 <tr key={loan.externalId}>
                                     <TData label={loan.stan}
                                            customClasses="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"/>
@@ -271,6 +297,10 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false, filter = false, st
                 handleNext={handleNext}
                 pagination={loans?.pagination}
             />
+
+            </div>) :
+
+            <EmptyState/>}
 
             <SlideOverWrapper open={slideOverOpen} setOpen={handleSlideOverOpen}>
                 <div className="border-b border-gray-200 bg-slate-800">

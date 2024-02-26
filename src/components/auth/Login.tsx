@@ -30,7 +30,7 @@ export default function Login() {
     } = useAdminStore()
     const {resetTransactionStore} = useTransactionStore()
     const {mainMenuItemsList, setMainMenuItemsList, setActiveSidebarMenu} = useDashboardStore();
-    const {setAuthenticatedLender, resetLenderStore} = useLenderStore();
+    const {setAuthenticatedLender, resetLenderStore, setLender} = useLenderStore();
 
     useEffect(() => {
         handleUserLogout()
@@ -86,7 +86,10 @@ export default function Login() {
                             availableBalance: data.availableBalance,
                             files: data.files,
                         });
-                        if (setAuthenticatedLender) setAuthenticatedLender(authData)
+                        if (setAuthenticatedLender){
+                            setAuthenticatedLender(authData)
+                            setLender(authData)
+                        } 
                         if (setMainMenuItemsList) setMainMenuItemsList([
                             {name: 'overview', label: 'Overview', href: '/overview', icon: true, category: 'Dashboard'},
                             {name: 'requests', label: 'Requests', href: '/requests', icon: true, category: 'Core'},
