@@ -7,7 +7,6 @@ import {extractPaginationData, formatAmount, prepareFilterQueryString} from "@/u
 import {downloadLoans, listLoans} from "@/api/loan";
 import {useLoanStore} from "@/store/LoanStore";
 import Link from "next/link";
-import AgentFilter from "@/components/agents/AgentFilter";
 import FilterWrapper from "@/components/FilterWrapper";
 import {FilterFormDataType} from "@/utils/types/FilterFormDataType";
 import Badge from "@/components/Badge";
@@ -17,6 +16,7 @@ import {LoanType} from "@/utils/types/LoanType";
 import LoanRepaymentHistory from "@/components/loans/RepaymentHistory";
 import {ILoanList} from "@/utils/interfaces/ILoanList";
 import Alert from "@/components/Alert";
+import LoanFilter from "@/components/loans/LoanFilter";
 
 const LoanList: React.FC<ILoanList> = ({downloadable = false}) => {
     const tableHeaders = [
@@ -167,7 +167,7 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false}) => {
             {toastInfo.description && <Alert alertType="success" description={toastInfo.description} customClasses="rounded p-2 mt-3 mb-1"/>}
             <FilterWrapper onSubmit={handleFilterSubmitButtonClicked} onReset={handleResetFilter}
                            hasError={hasError}>
-                <AgentFilter
+                <LoanFilter
                     submit={submitFilter}
                     reset={resetFilter}
                     onChange={handleFilterChange}
