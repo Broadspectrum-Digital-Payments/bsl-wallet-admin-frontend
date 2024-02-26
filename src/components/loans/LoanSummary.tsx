@@ -1,20 +1,34 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {useLoanStore} from "@/store/LoanStore";
 import ListItem from "@/components/ListItem";
 import Button from "@/components/forms/Button";
 import Badge from "../Badge";
-import { useLenderStore } from "@/store/LenderStore";
+import {useLenderStore} from "@/store/LenderStore";
 import {ILoanSummary} from "@/utils/interfaces/ILoanSummary";
+import {showLoan} from "@/api/loan";
 
 const LoanSummary: React.FC<ILoanSummary> = ({onApproveLoan, onRejectLoan}) => {
-    const {loan} = useLoanStore()
+    const {loan, setLoan} = useLoanStore()
     const {authenticatedLender} = useLenderStore()
 
+    useEffect(() => {
+        loan.externalId && showLoan(loan.externalId)
+            .then(async response => {
+                const feedback = await response.json();
+                if (response.ok && feedback.success) {
+                    if (setLoan) setLoan(feedback.data.loan)
+                }
+            })
+            .catch((error) => {
+                console.log('error: ', error)
+            })
+    }, []);
+
     const lenderCanApproveLoan = () => {
-        if (authenticatedLender && authenticatedLender?.availableBalance ) {
-           if (loan && loan.principalInGHS){
-               return loan.principalInGHS <= authenticatedLender?.availableBalance
-           }
+        if (authenticatedLender && authenticatedLender?.availableBalance) {
+            if (loan && loan.principalInGHS) {
+                return loan.principalInGHS <= authenticatedLender?.availableBalance
+            }
         }
         return false
     }
@@ -24,6 +38,8 @@ const LoanSummary: React.FC<ILoanSummary> = ({onApproveLoan, onRejectLoan}) => {
                 <div>
                     <h3 className="font-medium text-gray-900">Loan Information</h3>
                     <dl className="mt-2 divide-y divide-gray-200 border-b border-t border-gray-200">
+                        <ListItem title="Customer Name" description={loan?.borrower?.name ?? ''}/>
+                        <ListItem title="Customer Phone" description={loan?.borrower?.phoneNumber ?? ''}/>
                         <ListItem title="Application Date" description={loan.createdAt}/>
                         <ListItem title="Amount" description={loan.principalInGHS}/>
                         {/*<ListItem title="Duration" description={loan.amount, '')}/>*/}
@@ -37,10 +53,17 @@ const LoanSummary: React.FC<ILoanSummary> = ({onApproveLoan, onRejectLoan}) => {
                         <ListItem title="Approved Date" description={loan.approvedAt ?? 'N/A'}/>
                         <ListItem title="Disbursed Date" description={loan.disbursedAt ?? 'N/A'}/>
                         <ListItem title="Stan" description={loan.stan}/>
-
-                        <ListItem title="Status"  customClasses="capitalize">
+                        <ListItem title="Status" customClasses="capitalize">
                             <Badge text={loan.status ?? ''}></Badge>
                         </ListItem>
+
+
+                        {loan.lender && (<div> 
+                            <ListItem title="Lender Name" description={loan?.lender?.name ?? ''}/>
+                            <ListItem title="Lender Phone" description={loan?.lender?.phoneNumber ?? ''}/></div>
+                        )}
+
+
                     </dl>
                 </div>
                 {/*<div>*/}
@@ -56,43 +79,33 @@ const LoanSummary: React.FC<ILoanSummary> = ({onApproveLoan, onRejectLoan}) => {
                 {/*        </button>*/}
                 {/*    </div>*/}
                 {/*</div>*/}
-                {/*<div>*/}
-                {/*    <h3 className="font-medium text-gray-900">Documents</h3>*/}
-                {/*    <ul role="list" className="mt-2 divide-y divide-gray-200 border-b border-t border-gray-200">*/}
-                {/*        <li className="flex items-center justify-between py-3">*/}
-                {/*            <div className="flex items-center">*/}
-                {/*                <img*/}
-                {/*                    src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=1024&h=1024&q=80"*/}
-                {/*                    alt=""*/}
-                {/*                    className="h-8 w-8 rounded-full"*/}
-                {/*                />*/}
-                {/*                <p className="ml-4 text-sm font-medium text-gray-900">Aimee Douglas</p>*/}
-                {/*            </div>*/}
-                {/*            <button*/}
-                {/*                type="button"*/}
-                {/*                className="ml-6 rounded-md bg-white text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"*/}
-                {/*            >*/}
-                {/*                Download<span className="sr-only"> {loan.externalId}</span>*/}
-                {/*            </button>*/}
-                {/*        </li>*/}
-                {/*        <li className="flex items-center justify-between py-3">*/}
-                {/*            <div className="flex items-center">*/}
-                {/*                <img*/}
-                {/*                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixqx=oilqXxSqey&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"*/}
-                {/*                    alt=""*/}
-                {/*                    className="h-8 w-8 rounded-full"*/}
-                {/*                />*/}
-                {/*                <p className="ml-4 text-sm font-medium text-gray-900">Andrea McMillan</p>*/}
-                {/*            </div>*/}
-                {/*            <button*/}
-                {/*                type="button"*/}
-                {/*                className="ml-6 rounded-md bg-white text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"*/}
-                {/*            >*/}
-                {/*                Download<span className="sr-only"> Andrea McMillan</span>*/}
-                {/*            </button>*/}
-                {/*        </li>*/}
-                {/*    </ul>*/}
-                {/*</div>*/}
+                <div>
+                    <h3 className="font-medium text-gray-900">Documents</h3>
+                    {loan.documents && (
+                        loan.documents.map(document => (
+                            <ul role="list" className="mt-2 divide-y divide-gray-200 border-b border-t border-gray-200">
+                                <li className="flex items-center justify-between py-3">
+                                    <div className="flex items-center">
+                                        <img
+                                            src={document.url}
+                                            alt=""
+                                            className="h-8 w-8 rounded-full"
+                                        />
+                                        <p className="ml-4 text-sm font-medium text-gray-900 capitalize">{document.name}</p>
+                                    </div>
+                                    <a
+                                        type="button"
+                                        target="_blank"
+                                        className="ml-6 rounded-md bg-white text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                     href={document.url}>
+                                        View<span className="sr-only"> {loan.externalId}</span>
+                                    </a>
+                                </li>
+                            </ul>
+
+                        ))
+                    )}
+                </div>
                 <div className="flex justify-start gap-4 mt-4">
                     {/*<Button*/}
                     {/*    styleType="tertiary"*/}
@@ -107,7 +120,7 @@ const LoanSummary: React.FC<ILoanSummary> = ({onApproveLoan, onRejectLoan}) => {
                     {/*    Download*/}
                     {/*</Button>*/}
 
-                    {(Object.keys(authenticatedLender).length !==  0 && loan.status == 'submitted')  && (
+                    {(Object.keys(authenticatedLender).length !== 0 && loan.status == 'submitted') && (
                         <>
                             <Button
                                 styleType=""

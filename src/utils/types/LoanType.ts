@@ -1,3 +1,7 @@
+import {BorrowerType} from "@/utils/types/BorrowerType";
+import {LenderType} from "@/utils/types/LenderType";
+import {DocumentType} from "@/utils/types/DocumentType";
+
 export type LoanType = {
     externalId?: string,
     internalId?: string,
@@ -50,5 +54,7 @@ export type LoanType = {
     feesInGHS?: string;
     approvedAt?: string | null;
     disbursedAt?: string | null;
-
+    borrower?: BorrowerType;
+    documents?: DocumentType[];
+    lender?: LenderType;
 }

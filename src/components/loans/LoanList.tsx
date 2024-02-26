@@ -3,8 +3,8 @@ import TData from "@/components/table/TData";
 import Pagination from "@/components/table/Pagination";
 import React, {useEffect, useState} from "react";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
-import {extractPaginationData, prepareFilterQueryString} from "@/utils/helpers";
-import {downloadLoans, listLoans} from "@/api/loan";
+import {extractPaginationData, formatAmount, prepareFilterQueryString} from "@/utils/helpers";
+import {downloadLoans, listLoans, updateLoan} from "@/api/loan";
 import {useLoanStore} from "@/store/LoanStore";
 import Link from "next/link";
 import FilterWrapper from "@/components/FilterWrapper";
@@ -19,6 +19,7 @@ import Alert from "@/components/Alert";
 import LoanFilter from "@/components/loans/LoanFilter";
 import LoanStats from "@/components/loans/LoanStats";
 import {LoanStatItemType} from "@/utils/types/LoanStatItemType";
+import {useLenderStore} from "@/store/LenderStore";
 
 const LoanList: React.FC<ILoanList> = ({downloadable = false, filter = false, stats}) => {
     const tableHeaders = [
@@ -33,7 +34,7 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false, filter = false, st
     ]
     const {loans, setLoans, setLoan} = useLoanStore()
 
-    const [filterQueryString, setFilterQueryString] = useState<string>('pageSize=10');
+    const [filterQueryString, setFilterQueryString] = useState<string>('status=submitted&pageSize=10');
     const [resetFilter, setResetFilter] = useState<boolean>(false);
     const [submitFilter, setSubmitFilter] = useState<boolean>(false);
     const [formData, setFormData] = useState<FilterFormDataType>({
@@ -47,11 +48,12 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false, filter = false, st
     const [detailsActiveTab, setDetailsActiveTab] = useState<string>('summary');
     const [loanStats, setLoanStats] = useState<LoanStatItemType[]>([]);
 
+
     useEffect(() => {
         // fetchLoans(filterQueryString)
     }, [])
 
-    const fetchLoans = (params: string = '') => {
+    const fetchLoans = (params: string = 'status=submitted') => {
         listLoans(params)
             .then(async response => {
                 const feedback = await response.json();
@@ -140,20 +142,67 @@ const LoanList: React.FC<ILoanList> = ({downloadable = false, filter = false, st
     }
 
     const {loan} = useLoanStore()
+    const {authenticatedLender} = useLenderStore()
 
     const handleApproveLoan = () => {
-        console.log(loan)
-        fetchLoans();
-        setSlideOverOpen(!slideOverOpen)
+        const lenderExternalId = authenticatedLender?.externalId ?? ''
+        const loanExternalId = loan?.externalId ?? ''
 
-        setToastInfo({type: 'success', description: 'Loan Approved Successfully'})
+        updateLoan(lenderExternalId, loanExternalId, {status: 'approved'})
+            .then(async response => {
+                if (response.status == 204) {
+
+                    const currentLoans = loans.data.filter((submittedLoans: LoanType) => submittedLoans.externalId != loanExternalId)
+
+                    setLoans({
+                        ...loans,
+                        data: currentLoans
+                    })
+
+                    setSlideOverOpen(!slideOverOpen)
+                    setToastInfo({type: 'success', description: 'Loan Approved Successfully'})
+
+                }else{
+                    const feedback = await response.json()
+
+                    setSlideOverOpen(!slideOverOpen)
+                    setToastInfo({type: 'error', description: feedback.message})
+                }
+            })
+            .catch((error) => {
+                console.log('error: ', error)
+            })
     }
 
     const handleRejectLoan = () => {
-        fetchLoans();
-        setSlideOverOpen(!slideOverOpen)
+        const lenderExternalId = authenticatedLender?.externalId ?? ''
+        const loanExternalId = loan?.externalId ?? ''
 
-        setToastInfo({type: 'success', description: 'Loan Rejected'})
+        updateLoan(lenderExternalId, loanExternalId, {status: 'declined'})
+            .then(async response => {
+                if (response.status == 204) {
+
+                    const currentLoans = loans.data.filter((submittedLoans: LoanType) => submittedLoans.externalId != loanExternalId)
+
+                    setLoans({
+                        ...loans,
+                        data: currentLoans
+                    })
+
+                    setSlideOverOpen(!slideOverOpen)
+                    setToastInfo({type: 'success', description: 'Loan Rejected'})
+
+                }else{
+                    const feedback = await response.json()
+
+                    setSlideOverOpen(!slideOverOpen)
+                    setToastInfo({type: 'error', description: feedback.message})
+                }
+            })
+            .catch((error) => {
+                console.log('error: ', error)
+            })
+
     }
 
     const [toastInfo, setToastInfo] = useState<{ type: string, description: string, }>({

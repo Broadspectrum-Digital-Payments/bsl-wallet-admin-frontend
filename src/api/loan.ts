@@ -2,6 +2,7 @@ import {loanFetcher} from "@/api/http";
 import {downloadFile, getJSONHeaders} from "@/utils/helpers";
 
 const LOAN_ENDPOINT = 'v1/loans'
+const LENDER_ENDPOINT = 'v1/lenders/'
 
 export async function listLoans(params: string = '') {
     return await loanFetcher(`${LOAN_ENDPOINT}?${params}`, {
@@ -17,10 +18,16 @@ export async function downloadLoans(params: string = '', fileName: string = 'loa
     return await downloadFile(response, fileName)
 }
 
-export async function updateLoan(id: string, data: any) {
-    return await loanFetcher(`${LOAN_ENDPOINT}/${id}`, {
+export async function updateLoan(lenderExternalId: string, loanExternalId: string, data: object, bearerToken: string = '') {
+    return await loanFetcher(`${LENDER_ENDPOINT}${lenderExternalId}/loans/${loanExternalId}`, {
+        headers: getJSONHeaders(bearerToken),
         method: 'PUT',
-        body: JSON.stringify(data),
-        headers: getJSONHeaders(),
+        body: JSON.stringify(data)
+    });
+}
+
+export async function showLoan(loanExternalId: string, bearerToken: string = '') {
+    return await loanFetcher(`${LOAN_ENDPOINT}/${loanExternalId}`, {
+        headers: getJSONHeaders(bearerToken),
     });
 }
