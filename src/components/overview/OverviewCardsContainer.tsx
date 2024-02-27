@@ -2,6 +2,7 @@ import SectionCard from "@/components/SectionCard";
 import React from "react";
 import Slider from "@/components/overview/Slider";
 import {useAdminStore} from "@/store/AdminStore";
+import {getCookie} from "@/utils/helpers";
 
 const OverviewCardsContainer = () => {
     const adminPages = [
@@ -62,12 +63,11 @@ const OverviewCardsContainer = () => {
             href: '/settings',
         },
     ]
-    const {authenticatedAdmin} = useAdminStore()
 
     return (
         <div className="w-full flex">
             <Slider customClasses="gap-5">
-                {authenticatedAdmin && authenticatedAdmin.userType === 'lender' ? lenderPages.map((page) => (
+                {getCookie('userType') === 'lender' ? lenderPages.map((page) => (
                     <SectionCard key={page.id} item={page} customClasses="max-w-sm carousel-item"/>
                 )) : adminPages.map((page) => (
                     <SectionCard key={page.id} item={page} customClasses="max-w-sm carousel-item"/>

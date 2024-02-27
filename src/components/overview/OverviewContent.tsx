@@ -1,4 +1,4 @@
-import {getGreeting, plotGraphData, splitName} from "@/utils/helpers";
+import {formatAmount, getGreeting, plotGraphData, splitName} from "@/utils/helpers";
 import React, {useEffect, useState} from "react";
 import OverviewCardsContainer from "@/components/overview/OverviewCardsContainer";
 import PageInfoCard from "@/components/PageInfoCard";
@@ -9,6 +9,8 @@ import {TransactionGraphDataType} from "@/utils/types/TranasctionGraphDataType";
 import {useTransactionStore} from "@/store/TransactionStore";
 import ReBarGraph from "@/components/charts/ReBarGraph";
 import {useAdminStore} from "@/store/AdminStore";
+import Svg from "@/components/Svg";
+import Image from "next/image";
 
 const OverviewContent = () => {
     const [activeNav, setActiveNav] = useState<string>('collections');
@@ -18,6 +20,7 @@ const OverviewContent = () => {
         setActiveSidebarMenu,
         setPageInfo,
     } = useDashboardStore();
+    const [showBalance, setShowBalance] = useState<boolean | null>(true);
 
     const {transactionSummary} = useTransactionStore()
 
@@ -44,6 +47,14 @@ const OverviewContent = () => {
     const barGraphData: TransactionGraphDataType[] = volume
     const areaGraphData: TransactionGraphDataType[] = value
 
+    const asterisks = (count: number) => Array.from({length: count}).map((_, index) => (
+        <Image src="/assets/icons/asterisks-white.svg" alt="hidden" width={24} height={24}/>
+    ));
+
+    const handleToggleBalance = () => {
+        setShowBalance(!showBalance);
+    }
+
     return (
         <div className="flex flex-col">
             <div className="max-w-full">
@@ -52,17 +63,35 @@ const OverviewContent = () => {
                     <PageInfoCard customClasses="lg:col-start-4"/>
 
                     <div className="sm:mx-0 lg:col-span-3 lg:row-span-3 lg:row-end-3 mb-8">
-                        <div className="">
-                            <div className=" flex flex-col mb-10">
-                                <span className="font-semibold capitalize">{`${getGreeting()}, ${splitName(authenticatedAdmin?.name ?? '')[0]}!`}</span>
-                                <span className="text-xs text-gray-500">Welcome to your dashboard!</span>
-                            </div>
-
-                            <div className=" flex flex-col">
-                                <span>Getting Started</span>
-                                <span className="text-xs text-gray-500">
-                                  Complete these simple steps to get started with managing your dashboard
-                                </span>
+                        <div>
+                            <div className="border rounded-lg bg-slate-700 lg:w-1/3 md:w-2/3 shadow-xl py-5 h-40"
+                                 style={{
+                                     backgroundImage: 'url("/assets/images/balance.png")',
+                                     backgroundSize: 'cover',
+                                     backgroundPosition: 'center',
+                                     backgroundRepeat: 'no-repeat'
+                                 }}>
+                                <div className="flex flex-col justify-center text-white px-6 w-full gap-y-3">
+                                    <div className="flex items-center gap-x-4 mt-5">
+                                        <Image src="/assets/icons/wallet.svg" alt="wallet" width={39} height={39}/>
+                                        <div className="font-medium leading-6 text-xl capitalize">{authenticatedAdmin?.name}</div>
+                                    </div>
+                                    <div className="flex justify-between gap-x-4 mt-7">
+                                        <h5 className="font-medium leading-6 flex text-xl font-semibold">
+                                            {showBalance ? `GHS ${authenticatedAdmin?.availableBalance}` : asterisks(6)}
+                                        </h5>
+                                        <div className="flex justify-center items-center cursor-pointer"
+                                             onClick={handleToggleBalance}>
+                                            {showBalance ?
+                                                <Image src="/assets/icons/eye-slash-white.svg" alt="eye-opened"
+                                                       height={39}
+                                                       width={39} style={{width: 'auto'}}/>
+                                                : <Image src="/assets/icons/eye-opened-white.svg" alt="eye-slash"
+                                                         height={39}
+                                                         width={39} style={{width: 'auto'}}/>}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

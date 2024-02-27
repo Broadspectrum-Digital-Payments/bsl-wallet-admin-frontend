@@ -42,6 +42,7 @@ export default function Login() {
             if (resetAdminStore) resetAdminStore()
             if (resetLenderStore) resetLenderStore()
             if (setMainMenuItemsList) setMainMenuItemsList([])
+            document.cookie = 'authUserToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         }
     }
 
@@ -51,6 +52,13 @@ export default function Login() {
     };
 
     const resolveUserType = () => activeUser === 'admin' ? 'lender' : 'admin'
+    const setCookieInfo = (bearerToken: string, userType: string) => {
+        const expirationTime = new Date();
+        expirationTime.setHours(expirationTime.getHours() + 1);
+        const expirationString = expirationTime.toUTCString();
+        document.cookie = `authUserToken=${bearerToken}; userType=${userType}; expires=${expirationString}; path=/`
+        document.cookie = `userType=${userType}; path=/`
+    }
 
     const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
         event.preventDefault();
@@ -64,7 +72,6 @@ export default function Login() {
                 const feedback = (await response.json())
                 if (response.ok && feedback.success) {
                     const {data} = feedback;
-
                     if (setIsAuthenticated) setIsAuthenticated(true)
                     if (setActiveSidebarMenu) setActiveSidebarMenu(mainMenuItemsList[0]);
 
@@ -78,7 +85,8 @@ export default function Login() {
                         userType: activeUser === 'lender' ? data.type : data.userType,
                     };
 
-                    if (activeUser === 'lender') {
+                    setCookieInfo(data.bearerToken, activeUser === 'lender' ? data.type : data.userType)
+                    if (data.type === 'lender') {
                         Object.assign(authData, {
                             ghanaCardNumber: data.ghanaCardNumber,
                             phoneNumber: data.phoneNumber,
@@ -87,35 +95,6 @@ export default function Login() {
                             files: data.files,
                         });
                         if (setAuthenticatedLender) setAuthenticatedLender(authData)
-                        if (setMainMenuItemsList) setMainMenuItemsList([
-                            {name: 'overview', label: 'Overview', href: '/overview', icon: true, category: 'Dashboard'},
-                            {name: 'requests', label: 'Requests', href: '/requests', icon: true, category: 'Core'},
-                            {name: 'loans', label: 'Loans', href: '/loans', icon: true, category: ''},
-                        ])
-                    } else {
-                        if (setMainMenuItemsList) setMainMenuItemsList([
-                            {name: 'overview', label: 'Overview', href: '/overview', icon: true, category: 'Dashboard'},
-                            {name: 'admins', label: 'Admins', href: '/admins', icon: true, category: 'Management'},
-                            {name: 'lenders', label: 'Lenders', href: '/lenders', icon: true, category: ''},
-                            {name: 'agents', label: 'Agents', href: '/agents', icon: true, category: ''},
-                            {name: 'customers', label: 'Customers', href: '/customers', icon: true, category: ''},
-                            {name: 'kyc', label: 'KYC', href: '/kyc', icon: true, category: ''},
-                            {name: 'requests', label: 'Requests', href: '/requests', icon: true, category: 'Core'},
-                            {
-                                name: 'transactions',
-                                label: 'Transactions',
-                                href: '/transactions',
-                                icon: true,
-                                category: ''
-                            },
-                            {
-                                name: 'reports',
-                                label: 'Reports & Analytics',
-                                href: 'reports',
-                                icon: true,
-                                category: 'Other'
-                            },
-                        ])
                     }
 
                     if (setAuthenticatedAdmin) setAuthenticatedAdmin(authData)
