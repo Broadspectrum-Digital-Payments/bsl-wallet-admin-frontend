@@ -30,7 +30,7 @@ export default function Login() {
     } = useAdminStore()
     const {resetTransactionStore} = useTransactionStore()
     const {mainMenuItemsList, setMainMenuItemsList, setActiveSidebarMenu} = useDashboardStore();
-    const {setAuthenticatedLender, resetLenderStore} = useLenderStore();
+    const {setAuthenticatedLender, resetLenderStore, setLender} = useLenderStore();
 
     useEffect(() => {
         handleUserLogout()

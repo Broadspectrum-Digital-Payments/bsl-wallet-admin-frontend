@@ -7,4 +7,5 @@ export interface ILoanList {
     stats?: LoanStatItemType[];
     customClasses?: string;
     children?: React.ReactNode
+    passedParam?: string
 }
