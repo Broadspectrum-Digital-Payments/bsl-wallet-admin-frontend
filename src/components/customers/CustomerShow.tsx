@@ -486,24 +486,22 @@ const CustomerShow: React.FC = () => {
 
                                     <div className="flex lg:px-8 px-4">
 
-                                        <div className="flex-1 mr-4">
-
-                                            <TextInput
-                                                label="Ghana Post GPS"
-                                                id="ghanaPostGPS"
-                                                name="ghanaPostGPS"
-                                                type="text"
-                                                placeholder="GA-6778-789"
-                                                value={customer.ghanaCardNumber}
-                                                required={true}
-                                                onInputChange={handleInputChange}
-                                                hasError={setHasError}
-                                                autoComplete="false"
-                                                disabled={true}
-                                                customInputClasses="capitalize"
-                                            />
-
-                                        </div>
+                                        {/*<div className="flex-1 mr-4">*/}
+                                            {/*<TextInput*/}
+                                            {/*    label="Ghana Post GPS"*/}
+                                            {/*    id="ghanaPostGPS"*/}
+                                            {/*    name="ghanaPostGPS"*/}
+                                            {/*    type="text"*/}
+                                            {/*    placeholder="GA-6778-789"*/}
+                                            {/*    value={customer.ghanaCardNumber}*/}
+                                            {/*    required={true}*/}
+                                            {/*    onInputChange={handleInputChange}*/}
+                                            {/*    hasError={setHasError}*/}
+                                            {/*    autoComplete="false"*/}
+                                            {/*    disabled={true}*/}
+                                            {/*    customInputClasses="capitalize"*/}
+                                            {/*/>*/}
+                                        {/*</div>*/}
 
                                         <div className="flex-1">
                                             {/*{customer && <CustomSelectInput options={kycStatuses}*/}
