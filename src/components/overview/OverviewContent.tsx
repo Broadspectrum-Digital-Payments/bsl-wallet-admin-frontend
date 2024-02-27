@@ -47,7 +47,8 @@ const OverviewContent = () => {
     const areaGraphData: TransactionGraphDataType[] = value
 
     const asterisks = (count: number) => Array.from({length: count}).map((_, index) => (
-        <Image src="/assets/icons/asterisks-white.svg" alt="hidden" width={24} height={24}/>
+        <Image src="/assets/icons/asterisks-white.svg" alt="hidden" width={24} height={24}
+               style={{width: 'auto', height: 24}}/>
     ));
 
     const handleToggleBalance = () => setShowBalance(!showBalance);
@@ -70,7 +71,8 @@ const OverviewContent = () => {
                                  }}>
                                 <div className="flex flex-col justify-center text-white px-6 w-full gap-y-3">
                                     <div className="flex items-center gap-x-4 mt-5">
-                                        <Image src="/assets/icons/wallet.svg" alt="wallet" width={39} height={39}/>
+                                        <Image src="/assets/icons/wallet.svg" alt="wallet" width={30} height={30}
+                                               style={{width: 'auto', height: 38}}/>
                                         <div
                                             className="font-medium leading-6 text-xl capitalize">{authenticatedAdmin?.name}</div>
                                     </div>
@@ -82,11 +84,11 @@ const OverviewContent = () => {
                                              onClick={handleToggleBalance}>
                                             {showBalance ?
                                                 <Image src="/assets/icons/eye-slash-white.svg" alt="eye-opened"
-                                                       height={39}
-                                                       width={39} style={{width: 'auto', height: 39}}/>
+                                                       height={24}
+                                                       width={24} style={{width: 'auto', height: 26}}/>
                                                 : <Image src="/assets/icons/eye-opened-white.svg" alt="eye-slash"
-                                                         height={39}
-                                                         width={39} style={{width: 'auto', height: 39}}/>}
+                                                         height={24}
+                                                         width={24} style={{width: 'auto', height: 26}}/>}
                                         </div>
                                     </div>
                                 </div>

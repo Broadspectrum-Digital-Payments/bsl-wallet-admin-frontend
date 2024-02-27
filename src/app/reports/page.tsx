@@ -1,18 +1,11 @@
 "use client"
 import React, {useEffect} from 'react'
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import {useAdminStore} from "@/store/AdminStore";
-import {useAuthHelper} from "@/hooks/useAuthEffect";
 import ReportsOverview from "@/components/reports/ReportsOverview";
 import {useReportStore} from "@/store/ReportStore";
 import {useDashboardStore} from "@/store/DashboardStore";
 
 const ReportsPage: React.FC = () => {
-    const {isAuthenticated, setIsAuthenticated} = useAdminStore();
-    useAuthHelper({
-        isAuthenticated,
-        setIsAuthenticated
-    })
     const {setReportType} = useReportStore();
     const {activeSidebarMenu} = useDashboardStore();
 
