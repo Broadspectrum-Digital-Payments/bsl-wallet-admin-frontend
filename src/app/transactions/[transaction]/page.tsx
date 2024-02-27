@@ -6,7 +6,7 @@ import TransactionShow from "@/components/transactions/TransactionShow";
 const TransactionShowPage: React.FC = () => {
     return (
         <DashboardLayout>
-           <TransactionShow></TransactionShow>
+           <TransactionShow/>
         </DashboardLayout>
     )
 }
