@@ -15,8 +15,6 @@ const OverviewContent = () => {
     const [activeNav, setActiveNav] = useState<string>('collections');
     const {authenticatedAdmin, firstTimeLogin} = useAdminStore();
     const {
-        mainMenuItemsList,
-        setActiveSidebarMenu,
         setPageInfo,
     } = useDashboardStore();
     const [showBalance, setShowBalance] = useState<boolean | null>(true);
@@ -94,7 +92,7 @@ const OverviewContent = () => {
                             </div>
                         </div> : <div>
                             <div className=" flex flex-col mb-10 gap-2">
-                                <span className="font-semibold">{`${getGreeting()}, ${splitName(authenticatedAdmin?.name)[0]}!`}</span>
+                                <span className="font-semibold">{`${getGreeting()}, ${splitName(authenticatedAdmin?.name ?? '')[0]}!`}</span>
                                 <span className="text-sm text-gray-500">
                                   To get started, visit the cards below and start your admin journey now!
                                 </span>
