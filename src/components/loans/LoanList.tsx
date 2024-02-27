@@ -3,7 +3,7 @@ import TData from "@/components/table/TData";
 import Pagination from "@/components/table/Pagination";
 import React, {useEffect, useState} from "react";
 import {IListBoxItem} from "@/utils/interfaces/IDropdownProps";
-import {extractPaginationData, formatAmount, prepareFilterQueryString} from "@/utils/helpers";
+import {extractPaginationData, prepareFilterQueryString} from "@/utils/helpers";
 import {downloadLoans, listLoans, updateLoan} from "@/api/loan";
 import {useLoanStore} from "@/store/LoanStore";
 import Link from "next/link";

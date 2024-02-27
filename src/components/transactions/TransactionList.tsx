@@ -7,7 +7,7 @@ import Badge from "@/components/Badge";
 import {useTransactionStore} from "@/store/TransactionStore";
 import {extractPaginationData, formatAmount, prepareFilterQueryString} from "@/utils/helpers";
 import {useAdminStore} from "@/store/AdminStore";
-import {listTransactions} from "@/api/transaction";
+import {downloadTransactions, listTransactions} from "@/api/transaction";
 import {FilterQueryType} from "@/utils/types/FilterQueryType";
 import FilterWrapper from "@/components/FilterWrapper";
 import TransactionFilter from "@/components/transactions/TransactionFilter";
@@ -16,8 +16,10 @@ import Link from "next/link";
 import {TransactionType} from "@/utils/types/TransactionType";
 import SlideOverWrapper from "@/components/SlideOver";
 import TransactionDetails from "@/components/transactions/TransactionDetails";
+import {ITransactionList} from "@/utils/interfaces/ITransactionList";
+import {downloadLoans} from "@/api/loan";
 
-const TransactionList: React.FC = () => {
+const TransactionList: React.FC<ITransactionList> = ({downloadable = false}) => {
     const tableHeaders = [
         {label: 'Id', classes: 'py-3.5 pl-4 pr-3 text-left  sm:pl-0'},
         {label: 'Account Number', classes: 'hidden px-3 py-3.5 text-left lg:table-cell'},
@@ -137,6 +139,10 @@ const TransactionList: React.FC = () => {
         setSlideOverOpen(!slideOverOpen)
     }
 
+    const handleTableButtonClicked = () => {
+        return downloadTransactions(filterQueryString)
+    }
+
     return (
         <>
             <div>
@@ -151,8 +157,7 @@ const TransactionList: React.FC = () => {
                     />
                 </FilterWrapper>
 
-                <Table onButtonClick={() => {
-                }}>
+                <Table buttonText={downloadable ? 'Download' : ''} onButtonClick={handleTableButtonClicked}>
                     {{
                         headers: tableHeaders,
                         body:

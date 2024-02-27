@@ -9,12 +9,9 @@ export async function listTransactions(bearerToken: string = '', params: string 
     });
 }
 
-export async function downloadReport(merchant?: string, authToken: string = '', params: string = '', fileName: string = 'merchant-report.csv') {
-    const response = await walletFetcher(`api/v1/merchants/${merchant}/transactions/csv?${params}`, {
-        headers: {
-            'Authorization': `Bearer ${authToken}`,
-            'Content-Type': 'application/json',
-        },
+export async function downloadTransactions(params: string = '', fileName: string = 'transactionReport.csv') {
+    const response = await walletFetcher(`v1/admin/reports/transactions/download?${params}`, {
+        headers: getJSONHeaders(),
     });
 
     return await downloadFile(response, fileName)
