@@ -3,11 +3,11 @@ import type {NextRequest} from 'next/server'
 
 export function middleware(request: NextRequest) {
     const currentUser = request.cookies.get('authUserToken');
-    const expirationTime = request.cookies.get('expires');
+    const expirationTime = request.cookies.get('expires') ?? '';
 
     if (currentUser) {
         const currentTime = new Date();
-        const expirationDate = new Date(expirationTime);
+        const expirationDate = new Date(expirationTime?.toString());
         if (currentTime > expirationDate) {
             request.cookies.delete('authUserToken');
             request.cookies.delete('expires');

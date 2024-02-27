@@ -1,7 +1,6 @@
 import SectionCard from "@/components/SectionCard";
 import React from "react";
 import Slider from "@/components/overview/Slider";
-import {useAdminStore} from "@/store/AdminStore";
 import {getCookie} from "@/utils/helpers";
 
 const OverviewCardsContainer = () => {

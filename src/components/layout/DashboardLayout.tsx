@@ -10,13 +10,11 @@ import {
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import ProfileDropdown from "@/components/layout/ProfileDropdown";
-import {useAdminStore} from "@/store/AdminStore";
 import {getCookie} from "@/utils/helpers";
 
 const DashboardLayout: React.FC<IDashboardLayout> = ({children}) => {
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const {activeSidebarMenu, mainMenuItemsList} = useDashboardStore();
-    const {isAuthenticated, authenticatedAdmin} = useAdminStore();
 
     const userProfileMenuItems = [
         {name: 'account', label: 'Account', href: '/settings', icon: true, category: ''},
