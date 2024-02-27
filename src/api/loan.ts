@@ -1,4 +1,4 @@
-import {loanFetcher} from "@/api/http";
+import {loanFetcher, walletFetcher} from "@/api/http";
 import {downloadFile, getJSONHeaders} from "@/utils/helpers";
 
 const LOAN_ENDPOINT = 'v1/loans'
@@ -11,7 +11,7 @@ export async function listLoans(params: string = '') {
 }
 
 export async function downloadLoans(params: string = '', fileName: string = 'loanReport.csv') {
-    const response = await loanFetcher(`${LOAN_ENDPOINT}/download?${params}`, {
+    const response = await walletFetcher(`v1/admin/reports/loans/download?${params}`, {
         headers: getJSONHeaders(),
     });
 

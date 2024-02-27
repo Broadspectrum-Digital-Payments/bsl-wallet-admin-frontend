@@ -14,8 +14,7 @@ const SmallCardOptions: React.FC<ISmallCardOptions> = ({label, data, selected, s
                             key={option.name}
                             value={option}
                             className={({active, checked}) =>
-                                `${option.name === selected.name ? 'focus:outline-none' : ''}
-                                    ${active ? 'ring-2 ring-slate-600 ring-offset-2 font-semibold' : ''}
+                                `${option.name === selected.name ? 'focus:outline-none bg-slate-300' : ''}
                                     ${checked ? 'bg-slate-600 text-white hover:bg-slate-500' : 'ring-1 ring-inset ring-gray-300 bg-white text-gray-900 hover:bg-gray-50'} cursor-pointer  flex items-center justify-center rounded-md py-3 px-3 text-sm capitalize sm:flex-1`}
                         >
                             <RadioGroup.Label as="span">{option.name}</RadioGroup.Label>
