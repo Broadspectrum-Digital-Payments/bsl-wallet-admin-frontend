@@ -10,6 +10,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import ProfileDropdown from "@/components/layout/ProfileDropdown";
+import {getCookie} from "@/utils/helpers";
 
 const DashboardLayout: React.FC<IDashboardLayout> = ({children}) => {
     const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -38,6 +39,38 @@ const DashboardLayout: React.FC<IDashboardLayout> = ({children}) => {
         if (setMainMenuItemsList) setMainMenuItemsList(mainMenuItemsList)
         if (setProfileDropdownItems) setProfileDropdownItems(userProfileMenuItems)
         if (setBottomMenuItemsList) setBottomMenuItemsList(bottomMenuItems)
+
+        if (getCookie('userType') === 'lender') {
+            if (setMainMenuItemsList) setMainMenuItemsList([
+                {name: 'overview', label: 'Overview', href: '/overview', icon: true, category: 'Dashboard'},
+                {name: 'requests', label: 'Requests', href: '/requests', icon: true, category: 'Core'},
+                {name: 'loans', label: 'Loans', href: '/loans', icon: true, category: ''},
+            ])
+        } else {
+            if (setMainMenuItemsList) setMainMenuItemsList([
+                {name: 'overview', label: 'Overview', href: '/overview', icon: true, category: 'Dashboard'},
+                {name: 'admins', label: 'Admins', href: '/admins', icon: true, category: 'Management'},
+                {name: 'lenders', label: 'Lenders', href: '/lenders', icon: true, category: ''},
+                {name: 'agents', label: 'Agents', href: '/agents', icon: true, category: ''},
+                {name: 'customers', label: 'Customers', href: '/customers', icon: true, category: ''},
+                {name: 'kyc', label: 'KYC', href: '/kyc', icon: true, category: ''},
+                {name: 'requests', label: 'Requests', href: '/requests', icon: true, category: 'Core'},
+                {
+                    name: 'transactions',
+                    label: 'Transactions',
+                    href: '/transactions',
+                    icon: true,
+                    category: ''
+                },
+                {
+                    name: 'reports',
+                    label: 'Reports & Analytics',
+                    href: 'reports',
+                    icon: true,
+                    category: 'Other'
+                },
+            ])
+        }
     }
 
     return (
