@@ -1,4 +1,4 @@
-import {plotGraphData} from "@/utils/helpers";
+import {getCookie, getGreeting, plotGraphData, splitName} from "@/utils/helpers";
 import React, {useEffect, useState} from "react";
 import OverviewCardsContainer from "@/components/overview/OverviewCardsContainer";
 import PageInfoCard from "@/components/PageInfoCard";
@@ -28,7 +28,6 @@ const OverviewContent = () => {
     }, []);
 
     const setOverviewDashboardProps = () => {
-        if (setActiveSidebarMenu) setActiveSidebarMenu(mainMenuItemsList[0]);
         if (setPageInfo)
             setPageInfo({
                 title: "Help Center",
@@ -61,7 +60,7 @@ const OverviewContent = () => {
                     <PageInfoCard customClasses="lg:col-start-4"/>
 
                     <div className="sm:mx-0 lg:col-span-3 lg:row-span-3 lg:row-end-3 mb-8">
-                        <div>
+                        {getCookie('userType') === 'lender' ? <div>
                             <div className="border rounded-lg bg-slate-700 lg:w-1/3 md:w-2/3 shadow-xl py-5 h-40"
                                  style={{
                                      backgroundImage: 'url("/assets/images/balance.png")',
@@ -93,7 +92,15 @@ const OverviewContent = () => {
                                     </div>
                                 </div>
                             </div>
+                        </div> : <div>
+                            <div className=" flex flex-col mb-10 gap-2">
+                                <span className="font-semibold">{`${getGreeting()}, ${splitName(authenticatedAdmin?.name)[0]}!`}</span>
+                                <span className="text-sm text-gray-500">
+                                  To get started, visit the cards below and start your admin journey now!
+                                </span>
+                            </div>
                         </div>
+                        }
                     </div>
                 </div>
             </div>

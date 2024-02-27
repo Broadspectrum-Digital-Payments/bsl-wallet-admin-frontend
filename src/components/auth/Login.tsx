@@ -29,7 +29,7 @@ export default function Login() {
         resetAdminStore,
     } = useAdminStore()
     const {resetTransactionStore} = useTransactionStore()
-    const {mainMenuItemsList, setMainMenuItemsList, setActiveSidebarMenu} = useDashboardStore();
+    const {mainMenuItemsList, setMainMenuItemsList, setActiveSidebarMenu, activeSidebarMenu} = useDashboardStore();
     const {setAuthenticatedLender, resetLenderStore, setLender} = useLenderStore();
 
     useEffect(() => {
@@ -42,7 +42,9 @@ export default function Login() {
             if (resetAdminStore) resetAdminStore()
             if (resetLenderStore) resetLenderStore()
             if (setMainMenuItemsList) setMainMenuItemsList([])
-            document.cookie = 'authUserToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            document.cookie = 'authUserToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+            document.cookie = 'userType=; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+            document.cookie = 'activePage=; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
         }
     }
 
@@ -52,12 +54,13 @@ export default function Login() {
     };
 
     const resolveUserType = () => activeUser === 'admin' ? 'lender' : 'admin'
-    const setCookieInfo = (bearerToken: string, userType: string) => {
+    const setCookieInfo = (bearerToken: string, userType: string, activePage: string) => {
         const expirationTime = new Date();
         expirationTime.setHours(expirationTime.getHours() + 1);
         const expirationString = expirationTime.toUTCString();
-        document.cookie = `authUserToken=${bearerToken}; userType=${userType}; expires=${expirationString}; path=/`
-        document.cookie = `userType=${userType}; path=/`
+        document.cookie = `authUserToken=${bearerToken}; expires=${expirationString}; path=/`
+        document.cookie = `userType=${userType}`
+        document.cookie = `activePage=${activePage};`
     }
 
     const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
@@ -72,8 +75,6 @@ export default function Login() {
                 const feedback = (await response.json())
                 if (response.ok && feedback.success) {
                     const {data} = feedback;
-                    if (setIsAuthenticated) setIsAuthenticated(true)
-                    if (setActiveSidebarMenu) setActiveSidebarMenu(mainMenuItemsList[0]);
 
                     const authData = {
                         externalId: data.externalId,
@@ -85,7 +86,6 @@ export default function Login() {
                         userType: activeUser === 'lender' ? data.type : data.userType,
                     };
 
-                    setCookieInfo(data.bearerToken, activeUser === 'lender' ? data.type : data.userType)
                     if (data.type === 'lender') {
                         Object.assign(authData, {
                             ghanaCardNumber: data.ghanaCardNumber,
@@ -98,6 +98,13 @@ export default function Login() {
                     }
 
                     if (setAuthenticatedAdmin) setAuthenticatedAdmin(authData)
+                    if (setIsAuthenticated) setIsAuthenticated(true)
+                    if (setActiveSidebarMenu) setActiveSidebarMenu(mainMenuItemsList[0]);
+                    setCookieInfo(
+                        data.bearerToken,
+                        activeUser === 'lender' ? data.type : data.userType,
+                        activeSidebarMenu.name
+                    )
                     return router.push('/overview')
                 }
                 setLoading(false)
