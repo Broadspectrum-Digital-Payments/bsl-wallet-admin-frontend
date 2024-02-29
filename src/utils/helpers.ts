@@ -4,6 +4,8 @@ import {ApiMetaType} from "@/utils/types/ApiMetaType";
 import {PaginationType} from "@/utils/types/PaginationType";
 import {ErrorType} from "@/utils/types/ErrorType";
 import {FilterQueryType} from "@/utils/types/FilterQueryType";
+import numeral from "numeral";
+import {ReportAggregateType} from "@/utils/types/ReportAggregateType";
 
 export const camelCaseToWords = (text: string = '') => {
     return text.replace(/([A-Z])/g, ' $1').toLowerCase();
@@ -74,12 +76,14 @@ export const isValidEmail = (email: string): boolean => {
     return emailRegex.test(email);
 };
 
-export const formatAmount = (amount: number | string = 0, currency: string = 'GHS', convert = true) => {
-    return `${currency}  ${(new Intl.NumberFormat('en-GH', {
+export const formatAmount = (amount: number | string = 0, currency: string = 'GHS', convert = true, format: string = '0.00') => {
+
+    const formattedAmount = new Intl.NumberFormat('en-GH', {
         style: 'decimal',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
-    }).format(convert ? (Number(amount) / 100) : Number(amount)))}`
+    }).format(convert ? (Number(amount) / 100) : Number(amount))
+    return format ? numeral(formattedAmount).format(format) : formattedAmount
 }
 
 export const formatDate = (dateString: string = '') => {
@@ -235,3 +239,28 @@ export const getCookie = (name: string = '') => {
     }
     return null;
 };
+
+export const compareMonthlyData = (currentMonth: ReportAggregateType, previousMonth: ReportAggregateType) => {
+    const totalLoanValue = currentMonth.loanValue + previousMonth.loanValue;
+    const totalLoanVolume = currentMonth.loanVolume + previousMonth.loanVolume;
+    const totalTransactionValue = parseFloat(currentMonth.transactionValue.toString()) + parseFloat(previousMonth.transactionValue.toString());
+    const totalTransactionVolume = currentMonth.transactionVolume + previousMonth.transactionVolume;
+    const percentageLoanValueChange = ((totalLoanValue / previousMonth.loanValue) * 100).toFixed(0) + '%';
+    const percentageLoanVolumeChange = ((totalLoanVolume / previousMonth.loanVolume) * 100).toFixed(0) + '%';
+    const percentageTransactionValueChange = ((totalTransactionValue / parseFloat(previousMonth.transactionValue.toString())) * 100).toFixed(0) + '%';
+    const percentageTransactionVolumeChange = ((totalTransactionVolume / previousMonth.transactionVolume) * 100).toFixed(0) + '%';
+
+    return {
+        totalLoanValue,
+        totalLoanVolume,
+        percentageLoanValueChange,
+        percentageLoanVolumeChange,
+        totalTransactionValue,
+        totalTransactionVolume,
+        percentageTransactionValueChange,
+        percentageTransactionVolumeChange,
+        name: `${currentMonth.name}-${previousMonth.name}`
+    };
+};
+
+
